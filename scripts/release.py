@@ -1,4 +1,4 @@
-"""Build reproducible download archives without credentials or local configuration."""
+"""Build download archives without credentials or local configuration."""
 import hashlib,os,pathlib,subprocess,tarfile,zipfile
 root=pathlib.Path(__file__).resolve().parents[1]
 dist=root/'dist';dist.mkdir(exist_ok=True)
