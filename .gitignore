@@ -1,0 +1,5 @@
+/dist/
+.env
+profiles.json
+*.log
+.DS_Store
