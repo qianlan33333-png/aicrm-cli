@@ -2,21 +2,21 @@
 
 这是 AI-CRM 的独立 HTTP 命令行客户端。当前提供 **24 个导航入口的命令映射、现有管理接口的薄客户端、20 项既有机器 V1 操作及权限管理调用**。CLI 调用业务 Owner，不连接数据库或企微 Provider。
 
-**登记与验收分别记录。** 编译目录含 549 项：497 项人类接口绑定、20 项机器绑定、32 项不可执行项。其中 31 项是未核验企微能力及另需业务合同的扩展，1 项旧签名接口不能使用人类会话；其机器 V1 替代操作独立授权。绑定只是源码契约；不证明路由已安装、资源授权、Provider 就绪或业务成功。
+**登记与验收分别记录。** 编译目录含 564 项：512 项人类接口绑定、20 项机器绑定、32 项不可执行项。其中 31 项是未核验企微能力及另需业务合同的扩展，1 项旧签名接口不能使用人类会话；其机器 V1 替代操作独立授权。绑定只是源码契约；不证明路由已安装、资源授权、Provider 就绪或业务成功。
 
-完整逐项目录见 [能力索引](docs/capability-index.md)，机器可读目录是 `internal/clicatalog/port/catalog.json`。
+完整逐项目录见 [能力索引](docs/capability-index.md)，群运营的 54 项命令见 [群运营能力](docs/group-ops-capabilities.md)，机器可读目录是 `internal/clicatalog/port/catalog.json`。
 
 ## 构建与环境
 
 从 [GitHub Release](https://github.com/qianlan33333-png/aicrm-cli/releases/latest) 下载适合系统的压缩包，解压后将 `aicrm-cli` 放入 PATH。也可以从源码安装（Go 1.26.6 或更高）：
 
 ```sh
-go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.1.0
+go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.1.1
 aicrm-cli profile add staging https://your-staging-origin.example
 aicrm-cli profile use staging
 ```
 
-服务必须安装本候选，才能使用新增 challenge/self-session/V2 discovery/can-i。既有接口的执行仍由其原角色、CSRF、资源与业务规则授权。
+服务端须提供相应认证和业务路由；当前客户端目录与 AI-CRM-v4 已安装的 `c52c738` 契约同步。既有接口的执行仍由其原角色、CSRF、资源与业务规则授权。
 
 `profile` 只保存 HTTPS Origin，不产生权限。凭证保存在系统密钥环，精确绑定 Origin；不接受跨 Origin 凭证或转发重定向。密钥环不可用时不降级为明文文件。一个 Origin 当前保存一种身份，切换人类或机器需要重新登录。
 
@@ -75,7 +75,7 @@ aicrm-cli owners customer-owner-handoff-batch get --param batch_id=YOUR_BATCH_ID
 
 `--all` 只沿响应中明确存在的 `next_cursor` 前进，输出 NDJSON；不猜测页码或重试游标。无游标、重复游标或服务器拒绝旧游标时停止。它不为原接口制造新的授权游标合同。
 
-`--wait` 只轮询已登记的 GET 状态操作，输出 NDJSON；使用 `--status-field` 对齐 Owner 状态字段。单纯受理可正常返回，但等待超时/待员工执行/仅技术执行不能作为业务完成。分页及等待不能与文件输出混用。
+`--wait` 使用统一等待截止时间约束请求、响应读取和轮询；只轮询已登记的 GET 状态操作，输出 NDJSON；使用 `--status-field` 对齐 Owner 状态字段。单纯受理可正常返回，但等待超时/待员工执行/仅技术执行不能作为业务完成。分页及等待不能与文件输出混用。
 
 ## 结果、异常与退出码
 
@@ -95,4 +95,4 @@ aicrm-cli owners customer-owner-handoff-batch get --param batch_id=YOUR_BATCH_ID
 
 ## 服务端边界
 
-当前目录保留 549 项元数据；目录存在不表示服务端已安装或 Provider 就绪。32 项没有执行绑定。机器身份只使用已登记的机器合同；人类管理接口仍由服务器授权。客户端不包含服务端、数据库、Provider、应用部署或账号恢复工具。目录更新需同步兼容服务端契约。
+当前目录保留 564 项元数据；目录存在不表示服务端已安装或 Provider 就绪。32 项没有执行绑定。机器身份只使用已登记的机器合同；人类管理接口仍由服务器授权。客户端不包含服务端、数据库、Provider、应用部署或账号恢复工具。目录更新需同步兼容服务端契约。

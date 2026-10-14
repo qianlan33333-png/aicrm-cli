@@ -23,7 +23,7 @@ import (
 )
 
 // Version is replaced for release builds.
-var Version = "0.1.0"
+var Version = "0.1.1"
 
 type Options struct {
 	Profile, Format string
@@ -104,7 +104,7 @@ func Run(args []string, in io.Reader, out, stderr io.Writer) int {
 	return 0
 }
 func NewCommand(o *Options) *cobra.Command {
-	root := &cobra.Command{Use: "aicrm-cli", Short: "CRM business operations; human and machine authorization remain independent", Version: Version, SilenceUsage: true, SilenceErrors: true}
+	root := &cobra.Command{Use: "aicrm-cli", Version: Version, Short: "CRM business operations; human and machine authorization remain independent", SilenceUsage: true, SilenceErrors: true}
 	root.PersistentPreRunE = func(*cobra.Command, []string) error {
 		if o.Format != "json" && o.Format != "table" && o.Format != "ndjson" {
 			return fail("validation", "format must be json, table or ndjson", 2)
@@ -357,11 +357,28 @@ func (o *Options) invoke(cmd *cobra.Command, op catalog.Operation) error {
 		}
 		defer destination.Close()
 	}
-	deadline := time.Now().Add(duration)
+	requestContext := ctx(cmd)
+	if wait {
+		var cancel context.CancelFunc
+		requestContext, cancel = context.WithTimeout(requestContext, duration)
+		defer cancel()
+	}
+	waitEnded := func() error {
+		if errors.Is(requestContext.Err(), context.DeadlineExceeded) {
+			return fail("pending", "wait timed out; original operation remains queryable", 6)
+		}
+		return fail("pending", "wait cancelled", 6)
+	}
 	seen := map[string]bool{}
 	for {
-		resp, e := c.Call(ctx(cmd), op, input)
+		if wait && requestContext.Err() != nil {
+			return waitEnded()
+		}
+		resp, e := c.Call(requestContext, op, input)
 		if e != nil {
+			if wait && requestContext.Err() != nil {
+				return waitEnded()
+			}
 			return e
 		}
 		if output != "" || secret != "" {
@@ -392,6 +409,9 @@ func (o *Options) invoke(cmd *cobra.Command, op catalog.Operation) error {
 		typ := resp.Header.Get("Content-Type")
 		body, e := io.ReadAll(resp.Body)
 		resp.Body.Close()
+		if wait && requestContext.Err() != nil {
+			return waitEnded()
+		}
 		if e != nil {
 			if op.Binding.Method != "GET" {
 				return fail("outcome_unknown", "write response incomplete; query the original operation before retrying", 7)
@@ -486,12 +506,9 @@ func (o *Options) invoke(cmd *cobra.Command, op catalog.Operation) error {
 			default:
 				return fail("unsupported_status", "unknown status; inspect result without retrying writes", 1)
 			}
-			if time.Now().After(deadline) {
-				return fail("pending", "wait timed out; original operation remains queryable", 6)
-			}
 			select {
-			case <-ctx(cmd).Done():
-				return fail("pending", "wait cancelled", 6)
+			case <-requestContext.Done():
+				return waitEnded()
 			case <-time.After(time.Second):
 			}
 			continue

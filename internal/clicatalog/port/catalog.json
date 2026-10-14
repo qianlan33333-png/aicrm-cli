@@ -4383,13 +4383,19 @@
       "responses": {
         "200": {
           "content": {
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
             "text/csv": {
               "schema": {
                 "type": "string"
               }
             }
           },
-          "description": "Receipt-backed CSV"
+          "description": "Receipt-backed full-data order spreadsheet with 27 fixed columns. Missing facts are blank."
         },
         "400": {
           "$ref": "#/components/responses/Error"
@@ -4446,13 +4452,19 @@
       "responses": {
         "200": {
           "content": {
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
             "text/csv": {
               "schema": {
                 "type": "string"
               }
             }
           },
-          "description": "PII-safe local order CSV"
+          "description": "Receipt-backed full-data WeChat order spreadsheet with the same 27 columns."
         },
         "400": {
           "$ref": "#/components/responses/Error"
@@ -4904,6 +4916,9 @@
           "$ref": "#/components/responses/Error"
         },
         "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "413": {
           "$ref": "#/components/responses/Error"
         }
       },
@@ -7352,6 +7367,55 @@
       }
     },
     {
+      "id": "admin.downloadSurveyRedemptionTemplate",
+      "group": "questionnaires",
+      "module": "questionnaires",
+      "command": "survey-redemption-template download",
+      "summary": "",
+      "owner": "survey",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            }
+          },
+          "description": "XLSX template with text-formatted redemption column"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/questionnaires/{questionnaire_id}/redemption-codes/template",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "questionnaire_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PositiveID"
+            }
+          }
+        ],
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
       "id": "admin.duplicateSurveyQuestionnaire",
       "group": "questionnaires",
       "module": "questionnaires",
@@ -8327,6 +8391,108 @@
             "required": true,
             "schema": {
               "$ref": "#/components/schemas/PositiveID"
+            }
+          }
+        ],
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
+      "id": "admin.getAIAssistantRecipientControl",
+      "group": "ai",
+      "module": "ai",
+      "command": "aiassistant-recipient-control get",
+      "summary": "",
+      "owner": "aiplan",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "control": {
+                    "$ref": "#/components/schemas/AIAssistantPrivateMessageControl"
+                  },
+                  "ok": {
+                    "type": "boolean"
+                  },
+                  "plan_id": {
+                    "type": "integer"
+                  },
+                  "read_only": {
+                    "type": "boolean"
+                  },
+                  "recipient_id": {
+                    "type": "integer"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          },
+          "description": "Safe control lifecycle and actual delivery or stop evidence"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "404": {
+          "$ref": "#/components/responses/Error"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/ai-assistant/plans/{plan_id}/recipients/{recipient_id}/control",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plan_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PositiveID"
+            }
+          },
+          {
+            "in": "path",
+            "name": "recipient_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PositiveID"
+            }
+          },
+          {
+            "in": "query",
+            "name": "action",
+            "schema": {
+              "default": "stop",
+              "enum": [
+                "stop",
+                "reconcile"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "effect_id",
+            "schema": {
+              "pattern": "^eer_[1-9][0-9]*$",
+              "type": "string"
             }
           }
         ],
@@ -10881,6 +11047,49 @@
       }
     },
     {
+      "id": "admin.getInvoiceCardConfiguration",
+      "group": "config",
+      "module": "config",
+      "command": "invoice-card-configuration get",
+      "summary": "读取卡券配置结果",
+      "owner": "config",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "description": "configuration_applied 表示当前 API 已读取发布配置；state/card_id 是独立官方效果回执"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Error"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/config/invoice-card",
+        "auth": "human",
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
       "id": "admin.getLegacyAppSettings",
       "group": "config",
       "module": "config",
@@ -11417,7 +11626,8 @@
                 "thumb_320",
                 "mobile_1080",
                 "large_1440",
-                "original"
+                "original",
+                "web_1080"
               ],
               "type": "string"
             }
@@ -11519,7 +11729,8 @@
                 "thumb_320",
                 "mobile_1080",
                 "large_1440",
-                "original"
+                "original",
+                "web_1080"
               ],
               "type": "string"
             }
@@ -13105,6 +13316,47 @@
       }
     },
     {
+      "id": "admin.getWeChatShopProductRefreshStatus",
+      "group": "products",
+      "module": "products",
+      "command": "we-chat-shop-product-refresh-status get",
+      "summary": "Read refresh counts; requires Product edit permission",
+      "owner": "product",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WeChatShopRefreshStatus"
+              }
+            }
+          },
+          "description": "Current refresh receipt"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Error"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/products/wechat-shop/refresh-status",
+        "auth": "human",
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
       "id": "admin.getWeComCallbackReceipt",
       "group": "wecom",
       "module": "wecom",
@@ -13711,6 +13963,100 @@
       }
     },
     {
+      "id": "admin.importSurveyRedemptionCodes",
+      "group": "questionnaires",
+      "module": "questionnaires",
+      "command": "survey-redemption-codes import",
+      "summary": "",
+      "owner": "survey",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "duplicates": {
+                    "type": "integer"
+                  },
+                  "empty_rows": {
+                    "type": "integer"
+                  },
+                  "imported": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "imported",
+                  "duplicates",
+                  "empty_rows"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "description": "Import receipt"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/admin/questionnaires/{questionnaire_id}/redemption-codes/imports",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "questionnaire_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PositiveID"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "file": {
+              "format": "binary",
+              "type": "string"
+            }
+          },
+          "required": [
+            "file"
+          ],
+          "type": "object"
+        },
+        "content_type": "multipart/form-data",
+        "idempotency_required": true,
+        "body_required": true
+      }
+    },
+    {
       "id": "admin.initiateMediaAttachmentMultipartUpload",
       "group": "materials",
       "module": "materials",
@@ -13818,6 +14164,204 @@
             "required": true,
             "schema": {
               "$ref": "#/components/schemas/PositiveID"
+            }
+          }
+        ],
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
+      "id": "admin.listAIAssistantExecutionReceipts",
+      "group": "ai",
+      "module": "ai",
+      "command": "aiassistant-execution-receipts list",
+      "summary": "Read managed original WeCom task receipts and optional live delivery evidence",
+      "owner": "aiplan",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "chat_type": {
+                    "type": "string"
+                  },
+                  "items": {
+                    "items": {
+                      "properties": {
+                        "customer_id": {
+                          "type": "integer"
+                        },
+                        "customer_name": {
+                          "type": "string"
+                        },
+                        "effect": {
+                          "$ref": "#/components/schemas/AIAssistantEffect"
+                        },
+                        "local_execution_state": {
+                          "type": "string"
+                        },
+                        "receipt": {
+                          "properties": {
+                            "creation_errcode": {
+                              "nullable": true,
+                              "type": "integer"
+                            },
+                            "creation_errcode_evidence": {
+                              "type": "string"
+                            },
+                            "failure_reason": {
+                              "type": "string"
+                            },
+                            "local_delivery_status": {
+                              "nullable": true,
+                              "type": "integer"
+                            },
+                            "local_observed_at": {
+                              "format": "date-time",
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "local_sent_at": {
+                              "format": "date-time",
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "msgid": {
+                              "type": "string"
+                            },
+                            "provider_delivery_status": {
+                              "nullable": true,
+                              "type": "integer"
+                            },
+                            "provider_observed_at": {
+                              "format": "date-time",
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "provider_sent_at": {
+                              "format": "date-time",
+                              "nullable": true,
+                              "type": "string"
+                            },
+                            "query_errcode": {
+                              "nullable": true,
+                              "type": "integer"
+                            },
+                            "query_failure": {
+                              "type": "string"
+                            },
+                            "query_http_status": {
+                              "type": "integer"
+                            },
+                            "query_state": {
+                              "type": "string"
+                            },
+                            "receipt_found": {
+                              "type": "boolean"
+                            },
+                            "sender_userid": {
+                              "type": "string"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "recipient_id": {
+                          "type": "integer"
+                        },
+                        "staff_display_name": {
+                          "type": "string"
+                        },
+                        "staff_id": {
+                          "type": "integer"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "next_cursor": {
+                    "type": "string"
+                  },
+                  "ok": {
+                    "type": "boolean"
+                  },
+                  "plan_id": {
+                    "type": "integer"
+                  },
+                  "query_interface": {
+                    "type": "string"
+                  },
+                  "read_only": {
+                    "type": "boolean"
+                  },
+                  "send_interface": {
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          },
+          "description": "Local evidence and independently classified Provider read result"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "404": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/ai-assistant/plans/{plan_id}/execution-receipts",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plan_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PositiveID"
+            }
+          },
+          {
+            "in": "query",
+            "name": "live",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "maximum": 50,
+              "minimum": 1,
+              "type": "integer"
             }
           }
         ],
@@ -17294,7 +17838,8 @@
                 "wechat",
                 "wechat_pay",
                 "wechat_shop",
-                "alipay"
+                "alipay",
+                "external_history"
               ],
               "type": "string"
             }
@@ -19596,6 +20141,70 @@
         "method": "GET",
         "path": "/api/admin/questionnaires",
         "auth": "human",
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
+      "id": "admin.listSurveyRedemptionCodes",
+      "group": "questionnaires",
+      "module": "questionnaires",
+      "command": "survey-redemption-codes list",
+      "summary": "",
+      "owner": "survey",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "description": "Operator-only questionnaire code library and aggregate counts"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/questionnaires/{questionnaire_id}/redemption-codes",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "questionnaire_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PositiveID"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 100,
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "default": 0,
+              "maximum": 1000000,
+              "minimum": 0,
+              "type": "integer"
+            }
+          }
+        ],
         "idempotency_required": false,
         "body_required": false
       }
@@ -22694,12 +23303,11 @@
           "content": {
             "application/json": {
               "schema": {
-                "additionalProperties": true,
-                "type": "object"
+                "$ref": "#/components/schemas/TransactionExportPreview"
               }
             }
           },
-          "description": "Bounded export preview"
+          "description": "Current filter across all pages. total is bounded detail rows; order_count and row_count distinguish orders from items. truncated indicates the existing export limit."
         },
         "400": {
           "$ref": "#/components/responses/Error"
@@ -24084,6 +24692,89 @@
       }
     },
     {
+      "id": "admin.readSurveyAnswerAttachment",
+      "group": "questionnaires",
+      "module": "questionnaires",
+      "command": "read-survey-answer-attachment invoke",
+      "summary": "",
+      "owner": "survey",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "image/gif": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "image/jpeg": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            },
+            "image/png": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            }
+          },
+          "description": "Private image requiring the same admin authorization as its answer; never a public or provider URL."
+        },
+        "401": {
+          "description": "Authentication required"
+        },
+        "403": {
+          "description": "Answer access forbidden"
+        },
+        "404": {
+          "description": "Image or scoped answer not found"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/questionnaires/{questionnaire_id}/submissions/{submission_id}/answers/{answer_id}/attachment",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "questionnaire_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PositiveID"
+            }
+          },
+          {
+            "in": "path",
+            "name": "submission_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PositiveID"
+            }
+          },
+          {
+            "in": "path",
+            "name": "answer_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PositiveID"
+            }
+          }
+        ],
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
       "id": "admin.reconcileAIAssistantEffect",
       "group": "ai",
       "module": "ai",
@@ -24152,6 +24843,117 @@
         ],
         "body": {
           "$ref": "#/components/schemas/AIAssistantReconcileRequest"
+        },
+        "content_type": "application/json",
+        "idempotency_required": true,
+        "body_required": true
+      }
+    },
+    {
+      "id": "admin.reconcileAIAssistantRecipientDelivery",
+      "group": "ai",
+      "module": "ai",
+      "command": "aiassistant-recipient-delivery reconcile",
+      "summary": "",
+      "owner": "aiplan",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "202": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "control": {
+                    "$ref": "#/components/schemas/AIAssistantPrivateMessageControl"
+                  },
+                  "ok": {
+                    "type": "boolean"
+                  },
+                  "send_triggered": {
+                    "type": "boolean"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          },
+          "description": "Original-task delivery reconciliation accepted"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "404": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/admin/ai-assistant/plans/{plan_id}/recipients/{recipient_id}/reconcile-delivery",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plan_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PositiveID"
+            }
+          },
+          {
+            "in": "path",
+            "name": "recipient_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PositiveID"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "expected_version": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "reason": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": [
+            "expected_version",
+            "reason"
+          ],
+          "type": "object"
         },
         "content_type": "application/json",
         "idempotency_required": true,
@@ -25096,6 +25898,56 @@
       }
     },
     {
+      "id": "admin.refreshAccessStaffDirectory",
+      "group": "access",
+      "module": "config",
+      "command": "access-staff-directory refresh",
+      "summary": "",
+      "owner": "access",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccessStaffDirectoryRefreshResponse"
+              }
+            }
+          },
+          "description": "Complete directory refresh committed"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Error"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/admin/access/users/refresh",
+        "auth": "human",
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
       "id": "admin.refreshAccessStaffNames",
       "group": "access",
       "module": "config",
@@ -25108,7 +25960,14 @@
       "version": 1,
       "responses": {
         "200": {
-          "$ref": "#/components/responses/MutationOK"
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccessStaffDirectoryRefreshResponse"
+              }
+            }
+          },
+          "description": "Complete directory refresh committed"
         },
         "400": {
           "$ref": "#/components/responses/Error"
@@ -25289,6 +26148,47 @@
         "content_type": "application/json",
         "idempotency_required": false,
         "body_required": true
+      }
+    },
+    {
+      "id": "admin.refreshWeChatShopProducts",
+      "group": "products",
+      "module": "products",
+      "command": "we-chat-shop-products refresh",
+      "summary": "Submit or reuse the daily/manual WeChat Shop SKU scan",
+      "owner": "product",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "202": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WeChatShopRefreshStatus"
+              }
+            }
+          },
+          "description": "Current refresh receipt"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Error"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/admin/products/wechat-shop/refresh",
+        "auth": "human",
+        "idempotency_required": false,
+        "body_required": false
       }
     },
     {
@@ -26684,6 +27584,65 @@
         "content_type": "application/json",
         "idempotency_required": false,
         "body_required": true
+      }
+    },
+    {
+      "id": "admin.revealCustomerContact",
+      "group": "customers",
+      "module": "customers",
+      "command": "reveal-customer-contact invoke",
+      "summary": "",
+      "owner": "customer",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerContactPrefill"
+              }
+            }
+          },
+          "description": "Latest business contact",
+          "headers": {
+            "Cache-Control": {
+              "schema": {
+                "const": "no-store",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "404": {
+          "$ref": "#/components/responses/Error"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/admin/customers/{customer_id}/contact-reveal",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "customer_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PositiveID"
+            }
+          }
+        ],
+        "idempotency_required": false,
+        "body_required": false
       }
     },
     {
@@ -28697,6 +29656,65 @@
       }
     },
     {
+      "id": "admin.stageInvoiceAPIv3Key",
+      "group": "config",
+      "module": "config",
+      "command": "stage-invoice-apiv3-key invoke",
+      "summary": "暂存服务商 APIv3 密钥到私密文件，发布时只引用文件 ID",
+      "owner": "config",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "201": {
+          "description": "已暂存，尚未启用。仅返回不透明 key_file_id 和 staged；不回显密钥或路径"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Error"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/admin/config/invoice-key",
+        "auth": "human",
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "key": {
+              "maxLength": 32,
+              "minLength": 32,
+              "type": "string",
+              "writeOnly": true
+            }
+          },
+          "required": [
+            "key"
+          ],
+          "type": "object"
+        },
+        "content_type": "application/json",
+        "idempotency_required": false,
+        "body_required": true
+      }
+    },
+    {
       "id": "admin.startOperationCycleAction",
       "group": "cycles",
       "module": "cycles",
@@ -28757,6 +29775,122 @@
         },
         "content_type": "application/json",
         "idempotency_required": false,
+        "body_required": true
+      }
+    },
+    {
+      "id": "admin.stopAIAssistantRecipient",
+      "group": "ai",
+      "module": "ai",
+      "command": "aiassistant-recipient stop",
+      "summary": "",
+      "owner": "aiplan",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "202": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "control": {
+                    "$ref": "#/components/schemas/AIAssistantPrivateMessageControl"
+                  },
+                  "ok": {
+                    "type": "boolean"
+                  },
+                  "send_triggered": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "ok",
+                  "control",
+                  "send_triggered"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "description": "Original-task stop accepted; inspect the control result"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "404": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/admin/ai-assistant/plans/{plan_id}/recipients/{recipient_id}/stop",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "plan_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PositiveID"
+            }
+          },
+          {
+            "in": "path",
+            "name": "recipient_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PositiveID"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "expected_version": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "reason": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": [
+            "expected_version",
+            "reason"
+          ],
+          "type": "object"
+        },
+        "content_type": "application/json",
+        "idempotency_required": true,
         "body_required": true
       }
     },
@@ -28829,6 +29963,49 @@
           "type": "object"
         },
         "content_type": "application/json",
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
+      "id": "admin.submitInvoiceCardConfiguration",
+      "group": "config",
+      "module": "config",
+      "command": "submit-invoice-card-configuration invoke",
+      "summary": "以已生效配置接受卡券模板意图，复用 External Effects；未知结果禁止重复覆盖",
+      "owner": "config",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "description": "configuration_applied 表示当前 API 已读取发布配置；state/card_id 是独立官方效果回执"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Error"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/admin/config/invoice-card",
+        "auth": "human",
         "idempotency_required": false,
         "body_required": false
       }
@@ -31367,6 +32544,9 @@
           "$ref": "#/components/responses/Error"
         },
         "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "413": {
           "$ref": "#/components/responses/Error"
         }
       },
@@ -35369,6 +36549,64 @@
       ],
       "type": "object"
     },
+    "AIAssistantPrivateMessageControl": {
+      "properties": {
+        "action": {
+          "enum": [
+            "stop",
+            "reconcile"
+          ],
+          "type": "string"
+        },
+        "effect_id": {
+          "pattern": "^eer_[1-9][0-9]*$",
+          "type": "string"
+        },
+        "observed_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "receipt_digest": {
+          "type": "string"
+        },
+        "replayed": {
+          "type": "boolean"
+        },
+        "sent_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "accepted",
+            "queued",
+            "attempted",
+            "executed",
+            "outcome_unknown",
+            "retryable_failed",
+            "final_failed",
+            "cancelled",
+            "reconciled",
+            "stopped",
+            "delivered",
+            "pending"
+          ],
+          "type": "string"
+        },
+        "stopped_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "effect_id",
+        "action",
+        "state",
+        "receipt_digest",
+        "replayed"
+      ],
+      "type": "object"
+    },
     "AIAssistantRecipient": {
       "additionalProperties": false,
       "properties": {
@@ -35713,6 +36951,10 @@
         "change_role": {
           "type": "boolean"
         },
+        "provision_access": {
+          "description": "Explicit first grant through the existing verified employee provision command.",
+          "type": "boolean"
+        },
         "reset_password": {
           "type": "boolean"
         },
@@ -35724,6 +36966,7 @@
         }
       },
       "required": [
+        "provision_access",
         "set_login_enabled",
         "change_role",
         "bind_wecom_userid",
@@ -35781,7 +37024,10 @@
       "properties": {
         "access_granted_at": {
           "format": "date-time",
-          "type": "string"
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "actions": {
           "$ref": "#/components/schemas/AccessGovernanceActions"
@@ -35791,6 +37037,10 @@
         },
         "admin_user_id": {
           "$ref": "#/components/schemas/PositiveID"
+        },
+        "authorized_account": {
+          "description": "False for discovered staff who have never been granted backend access.",
+          "type": "boolean"
         },
         "created_at": {
           "format": "date-time",
@@ -35841,6 +37091,7 @@
       "required": [
         "id",
         "admin_user_id",
+        "authorized_account",
         "username",
         "display_name",
         "wecom_userid",
@@ -35938,6 +37189,40 @@
       },
       "required": [
         "role"
+      ],
+      "type": "object"
+    },
+    "AccessStaffDirectoryRefreshResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "created": {
+          "format": "int64",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "directory_refreshed": {
+          "const": true
+        },
+        "discovered": {
+          "format": "int64",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "names_updated": {
+          "format": "int64",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "ok": {
+          "const": true
+        }
+      },
+      "required": [
+        "ok",
+        "directory_refreshed",
+        "discovered",
+        "created",
+        "names_updated"
       ],
       "type": "object"
     },
@@ -40301,11 +41586,6 @@
           "maxLength": 200,
           "minLength": 1,
           "type": "string"
-        },
-        "stock_quantity": {
-          "format": "int32",
-          "minimum": 0,
-          "type": "integer"
         }
       },
       "required": [
@@ -40314,7 +41594,6 @@
         "description",
         "price_minor",
         "currency",
-        "stock_quantity",
         "images"
       ],
       "type": "object"
@@ -40504,6 +41783,18 @@
         "as_of",
         "truncated"
       ],
+      "type": "object"
+    },
+    "CustomerContactPrefill": {
+      "additionalProperties": false,
+      "properties": {
+        "mobile_e164": {
+          "type": "string"
+        },
+        "shipping_address": {
+          "$ref": "#/components/schemas/SurveyPublicShippingContact"
+        }
+      },
       "type": "object"
     },
     "CustomerDetail": {
@@ -40780,6 +42071,211 @@
         "total",
         "total_is_estimate",
         "watermark"
+      ],
+      "type": "object"
+    },
+    "CustomerInvoiceHistoryPage": {
+      "properties": {
+        "items": {
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CustomerInvoiceReceipt"
+              },
+              {
+                "properties": {
+                  "created_at": {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "order_no": {
+                    "type": "string"
+                  },
+                  "product_names": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "order_no",
+                  "product_names",
+                  "created_at"
+                ],
+                "type": "object"
+              }
+            ]
+          },
+          "type": "array"
+        },
+        "next_cursor": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "items",
+        "next_cursor"
+      ],
+      "type": "object"
+    },
+    "CustomerInvoiceReceipt": {
+      "properties": {
+        "amount_minor": {
+          "description": "Frozen actual paid amount in CNY fen.",
+          "type": "integer"
+        },
+        "card_state": {
+          "enum": [
+            "pending",
+            "INSERT_ACCEPTED",
+            "INSERTED",
+            "DISCARD_ACCEPTED",
+            "DISCARDED"
+          ],
+          "type": "string"
+        },
+        "id": {
+          "description": "Original WeChat payment transaction number.",
+          "maxLength": 32,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_|*-]+$",
+          "type": "string"
+        },
+        "invoice_number": {
+          "type": "string"
+        },
+        "launch": {
+          "properties": {
+            "expires_at": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "miniprogram_appid": {
+              "type": "string"
+            },
+            "miniprogram_path": {
+              "type": "string"
+            },
+            "miniprogram_user_name": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "order_id": {
+          "type": "integer"
+        },
+        "red_number": {
+          "type": "string"
+        },
+        "refund_confirmed": {
+          "type": "boolean"
+        },
+        "state": {
+          "enum": [
+            "awaiting_title",
+            "queued",
+            "issuing",
+            "issued",
+            "failed",
+            "cancelled",
+            "reversing",
+            "reversed",
+            "reverse_failed"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "order_id",
+        "amount_minor",
+        "state",
+        "card_state",
+        "refund_confirmed"
+      ],
+      "type": "object"
+    },
+    "CustomerOrdersPage": {
+      "properties": {
+        "invoice_enabled": {
+          "type": "boolean"
+        },
+        "items": {
+          "items": {
+            "properties": {
+              "amount_minor": {
+                "type": "integer"
+              },
+              "currency": {
+                "type": "string"
+              },
+              "id": {
+                "type": "integer"
+              },
+              "invoice": {
+                "$ref": "#/components/schemas/CustomerInvoiceReceipt"
+              },
+              "invoice_eligible": {
+                "type": "boolean"
+              },
+              "invoice_reason": {
+                "type": "string"
+              },
+              "order_no": {
+                "type": "string"
+              },
+              "payment_path": {
+                "description": "Original payment page with order reference; not a credential.",
+                "type": "string"
+              },
+              "product_names": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "provider": {
+                "type": "string"
+              },
+              "refund_pending": {
+                "type": "boolean"
+              },
+              "refunded_minor": {
+                "type": "integer"
+              },
+              "state": {
+                "type": "string"
+              },
+              "time": {
+                "format": "date-time",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "time_kind": {
+                "enum": [
+                  "ordered",
+                  "paid",
+                  "unknown"
+                ],
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "next_cursor": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "items",
+        "next_cursor",
+        "invoice_enabled"
       ],
       "type": "object"
     },
@@ -42463,9 +43959,24 @@
           "pattern": "^[A-Za-z0-9._:-]{1,128}$",
           "type": "string"
         },
+        "display_name": {
+          "type": "string"
+        },
+        "external_member_count": {
+          "nullable": true,
+          "type": "integer"
+        },
         "group_asset_id": {
           "pattern": "^[1-9][0-9]{0,18}$",
           "type": "string"
+        },
+        "member_count": {
+          "nullable": true,
+          "type": "integer"
+        },
+        "owner_staff_id": {
+          "format": "int64",
+          "type": "integer"
         }
       },
       "required": [
@@ -46337,11 +47848,6 @@
           "minLength": 1,
           "type": "string"
         },
-        "stock_quantity": {
-          "format": "int32",
-          "minimum": 0,
-          "type": "integer"
-        },
         "updated_at": {
           "format": "date-time",
           "type": "string"
@@ -46357,7 +47863,6 @@
         "description",
         "price_minor",
         "currency",
-        "stock_quantity",
         "images",
         "created_by",
         "created_at",
@@ -47207,7 +48712,8 @@
             "thumb_320",
             "mobile_1080",
             "large_1440",
-            "original"
+            "original",
+            "web_1080"
           ],
           "type": "string"
         },
@@ -53135,10 +54641,12 @@
           "minimum": 0,
           "type": "integer"
         },
-        "stock_quantity": {
-          "format": "int32",
-          "minimum": 0,
-          "type": "integer"
+        "source_kind": {
+          "description": "External SKU source; absent for ordinary local products",
+          "enum": [
+            "wechat_shop"
+          ],
+          "type": "string"
         },
         "updated_at": {
           "format": "date-time",
@@ -53155,7 +54663,6 @@
         "description",
         "price_minor",
         "currency",
-        "stock_quantity",
         "images",
         "admin_projection",
         "created_by",
@@ -53307,6 +54814,104 @@
       "required": [
         "items",
         "next_cursor"
+      ],
+      "type": "object"
+    },
+    "PublicPaymentCheckoutRequest": {
+      "additionalProperties": false,
+      "description": "The server freezes price, contact requirements and attribution from the product and trusted session. Browser contact fields are encrypted Order snapshots and never identity claims. Optional provider defaults to the path provider; the path constrains its accepted channels.",
+      "properties": {
+        "beneficiary_selection": {
+          "enum": [
+            "payer_self"
+          ],
+          "type": "string"
+        },
+        "channel": {
+          "enum": [
+            "",
+            "mini_program",
+            "h5_official_account",
+            "alipay_wap",
+            "alipay_page"
+          ],
+          "type": "string"
+        },
+        "checkout_session_binding": {
+          "pattern": "^[A-Za-z0-9_-]{43}$",
+          "type": "string"
+        },
+        "city_code": {
+          "type": "string"
+        },
+        "city_name": {
+          "type": "string"
+        },
+        "contact_collection_level": {
+          "description": "The current product policy remains authoritative.",
+          "enum": [
+            "",
+            "none",
+            "mobile",
+            "shipping_address"
+          ],
+          "type": "string"
+        },
+        "coupon_claim_id": {
+          "description": "Zero means no coupon claim.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "detail_address": {
+          "type": "string"
+        },
+        "district_code": {
+          "type": "string"
+        },
+        "district_name": {
+          "type": "string"
+        },
+        "mobile": {
+          "pattern": "^\\+861[3-9][0-9]{9}$",
+          "type": "string"
+        },
+        "product_id": {
+          "$ref": "#/components/schemas/PositiveID"
+        },
+        "product_kind": {
+          "enum": [
+            "standard",
+            "service_period"
+          ],
+          "type": "string"
+        },
+        "promotion_context": {
+          "description": "Opaque Distribution credential; commission and participants are validated and frozen server-side.",
+          "pattern": "^(dpc_[A-Za-z0-9_-]{43})?$",
+          "type": "string"
+        },
+        "provider": {
+          "enum": [
+            "wechat_pay",
+            "alipay"
+          ],
+          "type": "string"
+        },
+        "province_code": {
+          "type": "string"
+        },
+        "province_name": {
+          "type": "string"
+        },
+        "recipient_name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "product_id",
+        "product_kind",
+        "beneficiary_selection",
+        "checkout_session_binding"
       ],
       "type": "object"
     },
@@ -55390,11 +56995,6 @@
         "service_product_id": {
           "$ref": "#/components/schemas/PositiveID"
         },
-        "stock_quantity": {
-          "format": "int32",
-          "minimum": 0,
-          "type": "integer"
-        },
         "updated_at": {
           "format": "date-time",
           "type": "string"
@@ -55410,7 +57010,6 @@
         "description",
         "price_minor",
         "currency",
-        "stock_quantity",
         "images",
         "admin_projection",
         "lifecycle",
@@ -55459,11 +57058,6 @@
           "maxLength": 200,
           "minLength": 1,
           "type": "string"
-        },
-        "stock_quantity": {
-          "format": "int32",
-          "minimum": 0,
-          "type": "integer"
         }
       },
       "required": [
@@ -55472,7 +57066,6 @@
         "description",
         "price_minor",
         "currency",
-        "stock_quantity",
         "images"
       ],
       "type": "object"
@@ -55593,11 +57186,6 @@
           "format": "int64",
           "minimum": 0,
           "type": "integer"
-        },
-        "stock_quantity": {
-          "format": "int32",
-          "minimum": 0,
-          "type": "integer"
         }
       },
       "required": [
@@ -55606,7 +57194,6 @@
         "description",
         "price_minor",
         "currency",
-        "stock_quantity",
         "images"
       ],
       "type": "object"
@@ -55740,6 +57327,164 @@
       ],
       "type": "object"
     },
+    "SidebarAILastCustomerMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "occurred_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "role": {
+          "const": "customer",
+          "type": "string"
+        },
+        "text": {
+          "description": "At most 16000 UTF-8 bytes; may be empty for non-text messages.",
+          "type": "string"
+        },
+        "type": {
+          "description": "Non-text message types are displayed without invented transcription.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "role",
+        "type",
+        "text",
+        "occurred_at"
+      ],
+      "type": "object"
+    },
+    "SidebarAIOperationsPublicSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "customer_id": {
+          "$ref": "#/components/schemas/PositiveID"
+        },
+        "last_customer_message": {
+          "oneOf": [
+            {
+              "$ref": "#/components/schemas/SidebarAILastCustomerMessage"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_version": {
+          "type": "string"
+        },
+        "summary": {
+          "description": "Historical cleaned summary, at most 32000 UTF-8 bytes.",
+          "type": "string"
+        },
+        "summary_updated_at": {
+          "format": "date-time",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "synced_at": {
+          "description": "Actual successful source watermark; request time is not sync time.",
+          "format": "date-time",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "customer_id",
+        "source_version",
+        "summary",
+        "summary_updated_at",
+        "synced_at",
+        "last_customer_message"
+      ],
+      "type": "object"
+    },
+    "SidebarAIOperationsReadResponse": {
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "$ref": "#/components/schemas/SidebarAIOperationsPublicSnapshot"
+            },
+            "expires_at": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "generation_ready": {
+              "type": "boolean"
+            },
+            "read_at": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "snapshot_token": {
+              "description": "Opaque signed snapshot bound to customer, employee and all private input; do not log.",
+              "type": "string"
+            },
+            "source": {
+              "const": "context_center_warehouse",
+              "type": "string"
+            },
+            "state": {
+              "const": "ready",
+              "type": "string"
+            }
+          },
+          "required": [
+            "state",
+            "source",
+            "data",
+            "read_at",
+            "snapshot_token",
+            "expires_at",
+            "generation_ready"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "generation_ready": {
+              "const": false,
+              "type": "boolean"
+            },
+            "read_at": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "source": {
+              "const": "context_center_warehouse",
+              "type": "string"
+            },
+            "state": {
+              "const": "unconfigured",
+              "type": "string"
+            },
+            "synced_at": {
+              "type": "null"
+            }
+          },
+          "required": [
+            "state",
+            "source",
+            "generation_ready",
+            "read_at",
+            "synced_at"
+          ],
+          "type": "object"
+        }
+      ]
+    },
     "SidebarBootstrapResponse": {
       "oneOf": [
         {
@@ -55792,6 +57537,51 @@
           "type": "object"
         }
       ]
+    },
+    "SidebarManualSuggestionRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmed": {
+          "const": true,
+          "type": "boolean"
+        },
+        "snapshot_token": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "snapshot_token",
+        "confirmed"
+      ],
+      "type": "object"
+    },
+    "SidebarManualSuggestionResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "auto_sent": {
+          "const": false,
+          "type": "boolean"
+        },
+        "snapshot_token": {
+          "type": "string"
+        },
+        "state": {
+          "const": "ready",
+          "type": "string"
+        },
+        "suggestion": {
+          "description": "Human-reviewed draft, at most 32000 UTF-8 bytes.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "state",
+        "snapshot_token",
+        "suggestion",
+        "auto_sent"
+      ],
+      "type": "object"
     },
     "SidebarSafety": {
       "additionalProperties": false,
@@ -55856,6 +57646,12 @@
           "type": "string"
         },
         "avatar_url": {
+          "type": "string"
+        },
+        "contact_phone_masked": {
+          "type": "string"
+        },
+        "contact_shipping_summary": {
           "type": "string"
         },
         "contact_type": {
@@ -56461,6 +58257,12 @@
           "minItems": 1,
           "type": "array"
         },
+        "region_options": {
+          "items": {
+            "$ref": "#/components/schemas/SurveyPublicRegion"
+          },
+          "type": "array"
+        },
         "slug": {
           "pattern": "^[a-z0-9][a-z0-9-]{0,127}$",
           "type": "string"
@@ -56501,10 +58303,38 @@
         "ok": {
           "const": false,
           "type": "boolean"
+        },
+        "question_id": {
+          "$ref": "#/components/schemas/PositiveID"
         }
       },
       "required": [
         "ok",
+        "code",
+        "message"
+      ],
+      "type": "object"
+    },
+    "SurveyPublicFieldError": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "redemption_code_required",
+            "redemption_code_invalid",
+            "redemption_code_used",
+            "submission_payload_conflict"
+          ],
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "question_id": {
+          "$ref": "#/components/schemas/PositiveID"
+        }
+      },
+      "required": [
         "code",
         "message"
       ],
@@ -56604,6 +58434,13 @@
           "maxLength": 128,
           "type": "string"
         },
+        "contact_field": {
+          "enum": [
+            "contact_phone",
+            "shipping_contact"
+          ],
+          "type": "string"
+        },
         "id": {
           "$ref": "#/components/schemas/PositiveID"
         },
@@ -56656,7 +58493,10 @@
             "single_choice",
             "multi_choice",
             "textarea",
-            "mobile"
+            "mobile",
+            "redemption_code",
+            "attachment",
+            "shipping_address"
           ],
           "type": "string"
         }
@@ -56672,6 +58512,30 @@
         "placeholder_text",
         "assessment_dimension_key",
         "options"
+      ],
+      "type": "object"
+    },
+    "SurveyPublicRegion": {
+      "properties": {
+        "c": {
+          "type": [
+            "string",
+            "integer"
+          ]
+        },
+        "ch": {
+          "items": {
+            "$ref": "#/components/schemas/SurveyPublicRegion"
+          },
+          "type": "array"
+        },
+        "n": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "c",
+        "n"
       ],
       "type": "object"
     },
@@ -56750,6 +58614,15 @@
         "completion_action": {
           "$ref": "#/components/schemas/CompletionAction"
         },
+        "contact_prefill": {
+          "additionalProperties": {
+            "$ref": "#/components/schemas/SurveyPublicSubmissionAnswer"
+          },
+          "type": "object"
+        },
+        "contact_prefill_unavailable": {
+          "type": "boolean"
+        },
         "display": {
           "enum": [
             "all",
@@ -56776,9 +58649,57 @@
       ],
       "type": "object"
     },
+    "SurveyPublicShippingContact": {
+      "additionalProperties": false,
+      "properties": {
+        "city_code": {
+          "type": "string"
+        },
+        "city_name": {
+          "type": "string"
+        },
+        "detail_address": {
+          "type": "string"
+        },
+        "district_code": {
+          "type": "string"
+        },
+        "district_name": {
+          "type": "string"
+        },
+        "mobile_e164": {
+          "type": "string"
+        },
+        "province_code": {
+          "type": "string"
+        },
+        "province_name": {
+          "type": "string"
+        },
+        "recipient_name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "mobile_e164",
+        "recipient_name",
+        "province_code",
+        "province_name",
+        "city_code",
+        "city_name",
+        "district_code",
+        "district_name",
+        "detail_address"
+      ],
+      "type": "object"
+    },
     "SurveyPublicSubmissionAnswer": {
       "additionalProperties": false,
       "properties": {
+        "attachment": {
+          "description": "True when the multipart request includes the image for this question",
+          "type": "boolean"
+        },
         "option_ids": {
           "items": {
             "$ref": "#/components/schemas/PositiveID"
@@ -56788,6 +58709,9 @@
         },
         "question_id": {
           "$ref": "#/components/schemas/PositiveID"
+        },
+        "shipping_address": {
+          "$ref": "#/components/schemas/SurveyPublicShippingContact"
         },
         "text_value": {
           "maxLength": 10000,
@@ -56845,10 +58769,6 @@
           "maxLength": 200,
           "type": "string"
         },
-        "staff_id": {
-          "maxLength": 200,
-          "type": "string"
-        },
         "submission_key": {
           "pattern": "^[A-Za-z0-9_-]{43}$",
           "type": "string"
@@ -56901,6 +58821,45 @@
       ],
       "type": "string"
     },
+    "TransactionExportPreview": {
+      "properties": {
+        "format": {
+          "enum": [
+            "xlsx",
+            "csv"
+          ],
+          "type": "string"
+        },
+        "order_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "resource": {
+          "const": "orders",
+          "type": "string"
+        },
+        "row_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "truncated": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "resource",
+        "format",
+        "total",
+        "order_count",
+        "row_count",
+        "truncated"
+      ],
+      "type": "object"
+    },
     "TransactionExportRequest": {
       "additionalProperties": false,
       "properties": {
@@ -56913,7 +58872,11 @@
           "type": "object"
         },
         "format": {
-          "const": "csv",
+          "default": "xlsx",
+          "enum": [
+            "xlsx",
+            "csv"
+          ],
           "type": "string"
         },
         "resource": {
@@ -56922,8 +58885,7 @@
         }
       },
       "required": [
-        "resource",
-        "format"
+        "resource"
       ],
       "type": "object"
     },
@@ -56935,6 +58897,7 @@
           "type": "string"
         },
         "created_at": {
+          "description": "Internal ordering time; external historical presentation uses source_paid_at exclusively.",
           "format": "date-time",
           "type": "string"
         },
@@ -57217,6 +59180,10 @@
         "id": {
           "$ref": "#/components/schemas/PositiveID"
         },
+        "imported_at": {
+          "format": "date-time",
+          "type": "string"
+        },
         "merchant_order_no": {
           "maxLength": 200,
           "type": "string"
@@ -57260,7 +59227,8 @@
           "enum": [
             "wechat",
             "wechat_shop",
-            "alipay"
+            "alipay",
+            "external_history"
           ],
           "type": "string"
         },
@@ -57270,7 +59238,8 @@
         "record_origin": {
           "enum": [
             "native",
-            "v1_history"
+            "v1_history",
+            "external"
           ],
           "type": "string"
         },
@@ -57278,6 +59247,24 @@
           "format": "int64",
           "minimum": 0,
           "type": "integer"
+        },
+        "refunded_minor": {
+          "format": "int64",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "source_after_sales": {
+          "type": "string"
+        },
+        "source_paid_at": {
+          "format": "date-time",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_status": {
+          "type": "string"
         },
         "status": {
           "type": "string"
@@ -57460,11 +59447,6 @@
           "format": "int64",
           "minimum": 0,
           "type": "integer"
-        },
-        "stock_quantity": {
-          "format": "int32",
-          "minimum": 0,
-          "type": "integer"
         }
       },
       "required": [
@@ -57473,7 +59455,6 @@
         "description",
         "price_minor",
         "currency",
-        "stock_quantity",
         "images",
         "admin_projection"
       ],
@@ -57488,6 +59469,49 @@
       },
       "required": [
         "expected_version"
+      ],
+      "type": "object"
+    },
+    "WeChatShopRefreshStatus": {
+      "properties": {
+        "added": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "existing": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "failed": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "id": {
+          "format": "int64",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "last_success_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "idle",
+            "queued",
+            "running",
+            "retrying",
+            "succeeded"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "state",
+        "added",
+        "existing",
+        "failed"
       ],
       "type": "object"
     },
