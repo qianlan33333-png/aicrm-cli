@@ -6,12 +6,21 @@
 
 完整逐项目录见 [能力索引](docs/capability-index.md)，群运营的 54 项命令见 [群运营能力](docs/group-ops-capabilities.md)，机器可读目录是 `internal/clicatalog/port/catalog.json`。
 
+**v0.1.2 新增带 HMAC 签名的群运营 Webhook 客户端**：独立密钥配置、状态检查、删除与动态消息提交，支持本地 dry-run、原事件安全重放及结果未知处理。完整安装、发送和投递查询见 [Webhook 使用说明书](docs/groupops-webhook.md)。这些本地命令不改写服务端 564 项目录，也不继承人类或机器身份。
+
+```sh
+aicrm-cli group-ops webhook configure
+aicrm-cli group-ops webhook status
+aicrm-cli schema webhook
+aicrm-cli group-ops webhook send --input groupops-request.json --event-id YOUR_STABLE_EVENT_ID --dry-run
+```
+
 ## 构建与环境
 
 从 [GitHub Release](https://github.com/qianlan33333-png/aicrm-cli/releases/latest) 下载适合系统的压缩包，解压后将 `aicrm-cli` 放入 PATH。也可以从源码安装（Go 1.26.6 或更高）：
 
 ```sh
-go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.1.1
+go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.1.2
 aicrm-cli profile add staging https://your-staging-origin.example
 aicrm-cli profile use staging
 ```

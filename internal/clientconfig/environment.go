@@ -6,6 +6,12 @@ import "os"
 // consumed as credentials, never serialized as diagnostic configuration.
 type CLIEnvironment struct{ ConfigDirectory, Token, CredentialOrigin, Password, ClientSecret string }
 
+type GroupOpsWebhookEnvironment struct{ Secret, Origin string }
+
+func LoadGroupOpsWebhookEnvironment() GroupOpsWebhookEnvironment {
+	return GroupOpsWebhookEnvironment{Secret: os.Getenv("AICRM_CLI_GROUP_OPS_WEBHOOK_SECRET"), Origin: os.Getenv("AICRM_CLI_GROUP_OPS_WEBHOOK_ORIGIN")}
+}
+
 func LoadCLIEnvironment() CLIEnvironment {
 	return CLIEnvironment{ConfigDirectory: os.Getenv("AICRM_CLI_CONFIG_DIR"), Token: os.Getenv("AICRM_CLI_TOKEN"), CredentialOrigin: os.Getenv("AICRM_CLI_CREDENTIAL_ORIGIN"), Password: os.Getenv("AICRM_CLI_PASSWORD"), ClientSecret: os.Getenv("AICRM_CLI_CLIENT_SECRET")}
 }

@@ -23,7 +23,7 @@ import (
 )
 
 // Version is replaced for release builds.
-var Version = "0.1.1"
+var Version = "0.1.2"
 
 type Options struct {
 	Profile, Format string
@@ -33,9 +33,20 @@ type Options struct {
 }
 
 func (o *Options) client() (*Client, error) {
-	cfg, e := LoadConfig()
+	origin, e := o.origin()
 	if e != nil {
 		return nil, e
+	}
+	credential, e := LoadCredential(origin)
+	if e != nil {
+		return nil, e
+	}
+	return NewClient(origin, credential, o.Timeout)
+}
+func (o *Options) origin() (string, error) {
+	cfg, e := LoadConfig()
+	if e != nil {
+		return "", e
 	}
 	name := o.Profile
 	if name == "" {
@@ -43,13 +54,9 @@ func (o *Options) client() (*Client, error) {
 	}
 	p, ok := cfg.Profiles[name]
 	if !ok {
-		return nil, fail("configuration", "select an existing profile", 2)
+		return "", fail("configuration", "select an existing profile", 2)
 	}
-	credential, e := LoadCredential(p.Origin)
-	if e != nil {
-		return nil, e
-	}
-	return NewClient(p.Origin, credential, o.Timeout)
+	return Origin(p.Origin)
 }
 func (o *Options) print(value any) error {
 	if o.Format != "json" && o.Format != "table" && o.Format != "ndjson" {
@@ -134,6 +141,7 @@ func NewCommand(o *Options) *cobra.Command {
 	root.AddCommand(caps)
 	schema := &cobra.Command{Use: "schema"}
 	schema.AddCommand(&cobra.Command{Use: "cli", Args: cobra.NoArgs, Short: "additive V2 authentication and discovery contracts", RunE: func(*cobra.Command, []string) error { return o.print(catalog.Load().CLIContract) }})
+	schema.AddCommand(&cobra.Command{Use: "webhook", Args: cobra.NoArgs, Short: "signed Group Ops webhook contract", RunE: func(*cobra.Command, []string) error { return o.print(groupOpsWebhookSchema()) }})
 	schema.AddCommand(&cobra.Command{Use: "get OPERATION_ID", Args: cobra.ExactArgs(1), RunE: func(_ *cobra.Command, args []string) error {
 		op, ok := catalog.Find(args[0])
 		if !ok {
@@ -185,6 +193,7 @@ func NewCommand(o *Options) *cobra.Command {
 		addCallFlags(cmd)
 		parent.AddCommand(cmd)
 	}
+	groups["group-ops"].AddCommand(groupOpsWebhookCommands(o))
 	root.AddCommand(&cobra.Command{Use: "doctor", RunE: func(cmd *cobra.Command, _ []string) error {
 		c, e := o.client()
 		if e != nil {
