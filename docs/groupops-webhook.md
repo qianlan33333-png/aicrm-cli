@@ -1,13 +1,13 @@
-# 群运营 Webhook CLI 使用说明书（v0.1.2）
+# 群运营 Webhook CLI 使用说明书（v0.1.3）
 
 此功能向已启用的 Webhook 群运营计划提交一次动态发送任务。每次请求指定话术和已绑定群的子集，无需标准编排节点。当前企微发送方式是企业群发任务，运营成员确认后才会发送；指定群需企微终端 4.1.10 或以上。
 
 ## 1. 安装并选择环境
 
-下载 [v0.1.2](https://github.com/qianlan33333-png/aicrm-cli/releases/tag/v0.1.2) 中对应系统的包；对照 `checksums.txt` 校验 SHA-256，解压并将可执行文件放入 PATH。源码安装需要 Go 1.26.6 或以上：
+下载 [v0.1.3](https://github.com/qianlan33333-png/aicrm-cli/releases/tag/v0.1.3) 中对应系统的包；对照 `checksums.txt` 校验 SHA-256，解压并将可执行文件放入 PATH。源码安装需要 Go 1.26.6 或以上：
 
 ```sh
-go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.1.2
+go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.1.3
 aicrm-cli --version
 aicrm-cli profile add crm https://www.youcangogogo.com
 aicrm-cli profile use crm
@@ -39,6 +39,52 @@ aicrm-cli group-ops webhook status
 | `AICRM_CLI_GROUP_OPS_WEBHOOK_ORIGIN` | 与 profile 完全相同的 HTTPS Origin |
 
 环境注入优先于密钥环。Origin 缺失或不匹配时拒绝使用；不要在共享 shell 历史中直接输入密钥。密钥长度沿服务端合同为 32–4096 字节，不允许首尾空白。
+
+## 最常用：计划 ID＋话术＋小程序，推送全部绑定群
+
+已经保留管理员登录并配置 Webhook 签名密钥后，直接运行：
+
+```sh
+aicrm-cli group-ops webhook push \
+  --plan-id 12 \
+  --text '这里填写要推送的话术。' \
+  --miniprogram-id 1195 \
+  --all-bound-groups
+```
+
+`--plan-id` 是后台运营计划的数字 ID；`--miniprogram-id` 是素材库中已启用小程序卡片的数字 ID，不是微信 AppID。`--all-bound-groups` 明确选择该计划的全部绑定群，必须显式填写。CLI 自动读取计划描述符、按 `limit/offset` 分页读完群绑定，并检查计划版本和完整群集合，无需手写群 ID 数组。只读取这个计划的群；超过 100 群也会继续读到末页。绑定为空、分页不完整或读取期间计划变化时不提交，避免漏群。
+
+素材选择仍使用原接口：
+
+```sh
+aicrm-cli materials media-mini-programs list --query enabled_only=true --query limit=10
+```
+
+新推送无需自行填写事件 ID；CLI 会产生随机事件，并在 POST 前将原始正文和事件保存为本机 0600 请求快照，同时向 stderr 和最终 JSON 输出 `event_id`、`request_snapshot`、`target_count`。快照位于 CLI 配置目录的 `webhook-requests` 子目录，保存业务正文、Origin、计划版本，不保存 Cookie、令牌或签名密钥。设置 `AICRM_CLI_CONFIG_DIR` 可选择配置和快照目录；目录不可写时不会提交。
+
+每次不带事件运行都代表一次新的推送。自动化可用 `--event-id` 提供稳定事件；同事件同计划、话术和卡片会复用保存的原始正文及原群列表，不重新取群；同事件改输入会被拒绝。已保存快照只能作为当时的范围，不能表示目前新增的群也已覆盖。
+
+预览全量范围后，再使用相同事件提交：
+
+```sh
+# 预览会读取服务器并保存快照；不读签名密钥，不 POST。
+aicrm-cli group-ops webhook push \
+  --plan-id 12 --text '这里填写要推送的话术。' \
+  --miniprogram-id 1195 --all-bound-groups \
+  --event-id groupops-your-logical-event-001 --dry-run
+
+# 使用原快照和事件正式提交。
+aicrm-cli group-ops webhook push \
+  --plan-id 12 --text '这里填写要推送的话术。' \
+  --miniprogram-id 1195 --all-bound-groups \
+  --event-id groupops-your-logical-event-001
+```
+
+这里 `push --dry-run` 会发管理员 GET，与下面完全离线的 `send --dry-run` 不同。新快照需要现有管理员会话；签名 POST 仍只使用独立 HMAC，不转发管理员凭据。素材可用性和发送时绑定条件最终由服务器验证。
+
+若返回结果未知，保留输出中的事件和快照，先查询原计划执行记录。核对后需要恢复时，使用相同业务参数和 `--event-id`；不要省略事件重新运行，否则那是一次新推送。快照不自动重试，也不自动删除；确认无需恢复后可删除对应快照文件，未对账记录应保留。
+
+HTTP 202 表示已受理；企微运营成员仍需确认后才能群内发送。下面的完整 JSON 命令用于指定绑定群子集或更多消息形状。
 
 ## 3. 读取计划及目标群引用
 
@@ -204,8 +250,10 @@ aicrm-cli schema webhook
 
 `forget` 只删当前 Origin 的本机 Webhook 密钥，不退出人类账号，不撤销服务器签名密钥；环境注入由注入方清除。服务器换密钥后按原部署治理同步各客户端。
 
-`capabilities list/live` 继续表示服务端的 564 项登记目录（群运营 54 项管理接口）。新增的 configure/status/forget/send 是本地协议客户端命令，通过 `webhook --help` 和 `schema webhook` 查看；不把 HMAC 身份转换为人类或机器授权。
+`capabilities list/live` 继续表示服务端的 564 项登记目录（群运营 54 项管理接口）。新增的 configure/status/forget/send/push 是本地协议客户端命令，通过 `webhook --help` 和 `schema webhook` 查看；不把 HMAC 身份转换为人类或机器授权。
 
 ## 验证边界
 
-发行验证覆盖签名、原始字节、重放冲突、凭据隔离、拒绝重定向、超时/响应丢失不重试、材料结构检查及五个平台构建。生产真实群发、运营成员确认和最终投递需要单独执行并记录；发布 CLI 或 dry-run 不提供这些业务证据。
+发行验证覆盖签名、原始字节、完整绑定分页、固定快照重放与输入冲突、凭据隔离、拒绝重定向、超时/响应丢失不重试、材料结构检查及五个平台构建。
+
+2026-10-14 使用 v0.1.3 向计划 12 的全部 11 个绑定群真实提交话术和已有小程序素材 1195，返回 HTTP 202、run 1、执行 1–11；独立查询 11 条全部 `provider_accepted=true` 且有 Provider 回执，全部 `delivery_proven=false`。已验证全量受理及企微群发任务创建；运营成员确认与最终群内送达未执行。发布 CLI 或 dry-run 本身不提供这些业务证据。

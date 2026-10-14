@@ -1,12 +1,13 @@
-# 群运营全部 CLI 能力（54 项管理接口及 4 项 Webhook 客户端命令）
+# 群运营全部 CLI 能力（54 项管理接口及 5 项 Webhook 客户端命令）
 
-本清单保留 `v0.1.1` 的编译目录，源契约为 AI-CRM-v4 应用提交 `c52c738e0c68de928a48d87bfaceb39f354c0290`。54 项均为已登记的人类管理接口绑定，执行身份为 human。机器身份不能继承这些管理接口权限。`v0.1.2` 另增加以下专用 Webhook 客户端命令，使用独立 HMAC 身份。
+本清单保留 `v0.1.1` 的编译目录，源契约为 AI-CRM-v4 应用提交 `c52c738e0c68de928a48d87bfaceb39f354c0290`。54 项均为已登记的人类管理接口绑定，执行身份为 human。机器身份不能继承这些管理接口权限。`v0.1.3` 提供以下专用 Webhook 客户端命令，使用独立 HMAC 身份。
 
 | 完整命令 | 能力 |
 |---|---|
 | `aicrm-cli group-ops webhook configure` | 隐藏输入或 protected stdin 配置 Origin 绑定签名密钥 |
 | `aicrm-cli group-ops webhook status` | 检查本机 Webhook 配置，不查询服务器 |
 | `aicrm-cli group-ops webhook forget` | 删除当前 Origin 的本机 Webhook 密钥，保留人类登录 |
+| `aicrm-cli group-ops webhook push` | 计划 ID＋话术＋已有小程序，自动分页推送全部绑定群，保存固定快照 |
 | `aicrm-cli group-ops webhook send` | 签名提交动态群运营消息，支持 `--dry-run`，不自动重试 |
 
 完整示例、参数、素材准备、事件重放和投递查询见 [Webhook 使用说明书](groupops-webhook.md)。协议发现使用 `aicrm-cli schema webhook`。

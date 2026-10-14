@@ -135,7 +135,7 @@ func groupOpsWebhookCommands(o *Options) *cobra.Command {
 	send.Flags().StringVar(&input, "input", "", "complete signed request JSON file, or - for stdin")
 	send.Flags().StringVar(&event, "event-id", "", "stable 16-256 character event ID; retain it with the identical input for recovery")
 	send.Flags().BoolVar(&dryRun, "dry-run", false, "validate locally without reading a secret or making a network request")
-	root.AddCommand(send)
+	root.AddCommand(send, groupOpsWebhookPushCommand(o))
 	return root
 }
 
@@ -283,7 +283,7 @@ func (o *Options) sendGroupOpsWebhook(cmd *cobra.Command, input, event string, d
 	if err != nil {
 		return err
 	}
-	reference, targets, messages, err := validateWebhookBody(body)
+	_, targets, messages, err := validateWebhookBody(body)
 	if err != nil {
 		return err
 	}
@@ -294,16 +294,30 @@ func (o *Options) sendGroupOpsWebhook(cmd *cobra.Command, input, event string, d
 		result["authorization_and_bound_targets_verified"] = false
 		return o.print(result)
 	}
-	secret, _, err := loadWebhookSecret(origin)
+	result, err = o.submitGroupOpsWebhook(cmd, origin, body, event)
 	if err != nil {
 		return err
 	}
+	return o.print(result)
+}
+
+// Both complete-JSON send and plan push share this exact single-write protocol.
+func (o *Options) submitGroupOpsWebhook(cmd *cobra.Command, origin string, body []byte, event string) (map[string]any, error) {
+	reference, targets, messages, err := validateWebhookBody(body)
+	if err != nil {
+		return nil, err
+	}
+	result := map[string]any{"operation_id": "client.groupops.webhook.send", "origin": origin, "event_digest": webhookDigest([]byte(event)), "request_digest": webhookDigest(body), "target_count": targets, "message_count": messages, "delivery_proven": false}
+	secret, _, err := loadWebhookSecret(origin)
+	if err != nil {
+		return nil, err
+	}
 	if secret == "" {
-		return fail("authentication", "configure this origin's webhook secret or provide origin-bound webhook environment credentials", 3)
+		return nil, fail("authentication", "configure this origin's webhook secret or provide origin-bound webhook environment credentials", 3)
 	}
 	client, err := NewClient(origin, Credential{}, o.Timeout)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	timestamp := strconv.FormatInt(time.Now().UTC().Unix(), 10)
 	mac := hmac.New(sha256.New, []byte(secret))
@@ -312,7 +326,7 @@ func (o *Options) sendGroupOpsWebhook(cmd *cobra.Command, input, event string, d
 	signature := "sha256=" + hex.EncodeToString(mac.Sum(nil))
 	request, err := http.NewRequestWithContext(ctx(cmd), http.MethodPost, origin+"/api/automation/group-ops/webhooks/"+reference, bytes.NewReader(body))
 	if err != nil {
-		return fail("validation", "could not construct registered webhook request", 2)
+		return nil, fail("validation", "could not construct registered webhook request", 2)
 	}
 	request.GetBody = nil
 	request.Close = true
@@ -328,20 +342,20 @@ func (o *Options) sendGroupOpsWebhook(cmd *cobra.Command, input, event string, d
 	}
 	response, err := client.HTTP.Do(request)
 	if err != nil {
-		return unknown(0)
+		return nil, unknown(0)
 	}
 	defer response.Body.Close()
 	result["http_status"] = response.StatusCode
 	if response.StatusCode >= 300 && response.StatusCode < 400 {
-		return &Failure{Code: "redirect_refused", Message: "webhook redirect refused; signed credentials were not forwarded", Status: response.StatusCode, Exit: 4, Result: result}
+		return nil, &Failure{Code: "redirect_refused", Message: "webhook redirect refused; signed credentials were not forwarded", Status: response.StatusCode, Exit: 4, Result: result}
 	}
 	raw, err := io.ReadAll(response.Body)
 	if err != nil {
-		return unknown(response.StatusCode)
+		return nil, unknown(response.StatusCode)
 	}
 	var value map[string]any
 	if !strings.Contains(response.Header.Get("Content-Type"), "json") || StrictJSON(raw, &value) != nil {
-		return unknown(response.StatusCode)
+		return nil, unknown(response.StatusCode)
 	}
 	if response.StatusCode != http.StatusAccepted {
 		// Only the published owner error envelope is treated as a proven rejection.
@@ -350,21 +364,21 @@ func (o *Options) sendGroupOpsWebhook(cmd *cobra.Command, input, event string, d
 		code, _ := errorValue["code"].(string)
 		exit, expectedStatus := webhookError(code)
 		if value["ok"] != false || value["real_external_call_executed"] != false || value["provider_execution_eligible"] != false || expectedStatus != response.StatusCode {
-			return unknown(response.StatusCode)
+			return nil, unknown(response.StatusCode)
 		}
 		result["acceptance"] = "rejected"
-		return &Failure{Code: code, Message: "webhook owner rejected the request; consult schema webhook and the usage manual", Status: response.StatusCode, Exit: exit, Result: result}
+		return nil, &Failure{Code: code, Message: "webhook owner rejected the request; consult schema webhook and the usage manual", Status: response.StatusCode, Exit: exit, Result: result}
 	}
 	run, _ := value["run"].(map[string]any)
 	runID, _ := run["run_id"].(string)
 	id, parseErr := strconv.ParseInt(runID, 10, 64)
 	if value["ok"] == false || parseErr != nil || id < 1 {
-		return unknown(response.StatusCode)
+		return nil, unknown(response.StatusCode)
 	}
 	result["acceptance"] = "accepted"
 	result["business_success"] = "accepted_await_employee_and_delivery_readback"
 	result["data"] = redactWebhookResult(value, secret, signature)
-	return o.print(result)
+	return result, nil
 }
 
 func webhookError(code string) (int, int) {
@@ -414,5 +428,5 @@ func groupOpsWebhookSchema() map[string]any {
 			definitions[name] = value
 		}
 	}
-	return map[string]any{"command": "aicrm-cli group-ops webhook send", "method": "POST", "path": "/api/automation/group-ops/webhooks/{webhook_reference}", "authentication": "HMAC-SHA256", "client_id": webhookClientID, "headers": []string{"X-AICRM-Client-Id", "X-AICRM-Timestamp", "X-AICRM-Event-Id", "X-AICRM-Signature"}, "signed_bytes": "timestamp + newline + event_id + newline + original JSON bytes", "request_schema": map[string]any{"$ref": "#/components/schemas/GroupOpsWebhookInboundRequest"}, "definitions": definitions, "body_limit_bytes": webhookBodyLimit, "rules": []string{"targets must belong to the active webhook plan; server validates", "optional text first; at most nine attachments and one miniprogram", "retain original event ID and exact request bytes for recovery", "no automatic write retries; 202 is acceptance, not delivery", "employee confirmation is required by the current WeCom provider"}}
+	return map[string]any{"command": "aicrm-cli group-ops webhook send", "plan_command": "aicrm-cli group-ops webhook push --plan-id ID --text TEXT --miniprogram-id ID --all-bound-groups", "method": "POST", "path": "/api/automation/group-ops/webhooks/{webhook_reference}", "authentication": "HMAC-SHA256", "client_id": webhookClientID, "headers": []string{"X-AICRM-Client-Id", "X-AICRM-Timestamp", "X-AICRM-Event-Id", "X-AICRM-Signature"}, "signed_bytes": "timestamp + newline + event_id + newline + original JSON bytes", "request_schema": map[string]any{"$ref": "#/components/schemas/GroupOpsWebhookInboundRequest"}, "definitions": definitions, "body_limit_bytes": webhookBodyLimit, "rules": []string{"targets must belong to the active webhook plan; server validates", "optional text first; at most nine attachments and one miniprogram", "retain original event ID and exact request bytes for recovery", "no automatic write retries; 202 is acceptance, not delivery", "employee confirmation is required by the current WeCom provider"}}
 }

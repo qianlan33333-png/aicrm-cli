@@ -6,11 +6,12 @@
 
 完整逐项目录见 [能力索引](docs/capability-index.md)，群运营的 54 项命令见 [群运营能力](docs/group-ops-capabilities.md)，机器可读目录是 `internal/clicatalog/port/catalog.json`。
 
-**v0.1.2 新增带 HMAC 签名的群运营 Webhook 客户端**：独立密钥配置、状态检查、删除与动态消息提交，支持本地 dry-run、原事件安全重放及结果未知处理。完整安装、发送和投递查询见 [Webhook 使用说明书](docs/groupops-webhook.md)。这些本地命令不改写服务端 564 项目录，也不继承人类或机器身份。
+**v0.1.3 支持按计划推送全部绑定群**：只填计划 ID、话术、小程序素材 ID，显式选择 `--all-bound-groups`；自动读完全部绑定页并保存固定请求快照。已有带 HMAC 签名的群运营 Webhook 客户端：独立密钥配置、状态检查、删除与动态消息提交，支持本地 dry-run、原事件安全重放及结果未知处理。完整安装、发送和投递查询见 [Webhook 使用说明书](docs/groupops-webhook.md)。这些本地命令不改写服务端 564 项目录，也不继承人类或机器身份。
 
 ```sh
 aicrm-cli group-ops webhook configure
 aicrm-cli group-ops webhook status
+aicrm-cli group-ops webhook push --plan-id 12 --text '你要推送的话术' --miniprogram-id 1195 --all-bound-groups
 aicrm-cli schema webhook
 aicrm-cli group-ops webhook send --input groupops-request.json --event-id YOUR_STABLE_EVENT_ID --dry-run
 ```
@@ -20,7 +21,7 @@ aicrm-cli group-ops webhook send --input groupops-request.json --event-id YOUR_S
 从 [GitHub Release](https://github.com/qianlan33333-png/aicrm-cli/releases/latest) 下载适合系统的压缩包，解压后将 `aicrm-cli` 放入 PATH。也可以从源码安装（Go 1.26.6 或更高）：
 
 ```sh
-go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.1.2
+go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.1.3
 aicrm-cli profile add staging https://your-staging-origin.example
 aicrm-cli profile use staging
 ```
@@ -73,7 +74,7 @@ aicrm-cli owners customer-owner-handoff-batch get --param batch_id=YOUR_BATCH_ID
 - `--input FILE` 或 `--input -`：JSON/二进制文件或 stdin；重复 JSON 成员及重复参数拒绝。
 - `--upload field=FILE`：登记的 multipart 上传，文件流式传输；分片文件继续使用原分片业务合同。
 - `--idempotency-key KEY`：原合同要求的 HTTP 头。**JSON 内的 `idempotency_key` 仍须写在输入文件里**，不会隐式转换或覆盖。
-- `--dry-run`：本地结构检查，不请求服务器、不确认授权或 Provider 条件；不是完整 JSON Schema/业务校验。
+- 原接口及 `webhook send` 的 `--dry-run`：本地结构检查，不请求服务器、不确认授权或 Provider 条件；不是完整 JSON Schema/业务校验。
 - `--output NEW_FILE`：下载到新的受保护文件，拒绝覆盖或符号链接；输出 JSON 说明文件位置。
 - `--secret-output NEW_FILE`：客户端创建/轮换的一次性密钥响应必须保存到此文件，权限 0600，不打印密钥。
 - `--unrestricted-owner-scope`：仅在需要明确全面机器范围时使用；创建仍需输入 `owner_scope:{}`，不能靠漏填。PATCH 省略范围保留原值，`null`/空对象扩大范围需要此明确声明；空数组拒绝。
