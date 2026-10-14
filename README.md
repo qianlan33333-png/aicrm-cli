@@ -6,7 +6,7 @@
 
 完整逐项目录见 [能力索引](docs/capability-index.md)，群运营的 54 项命令见 [群运营能力](docs/group-ops-capabilities.md)，机器可读目录是 `internal/clicatalog/port/catalog.json`。
 
-**v0.1.3 支持按计划推送全部绑定群**：只填计划 ID、话术、小程序素材 ID，显式选择 `--all-bound-groups`；自动读完全部绑定页并保存固定请求快照。已有带 HMAC 签名的群运营 Webhook 客户端：独立密钥配置、状态检查、删除与动态消息提交，支持本地 dry-run、原事件安全重放及结果未知处理。完整安装、发送和投递查询见 [Webhook 使用说明书](docs/groupops-webhook.md)。这些本地命令不改写服务端 564 项目录，也不继承人类或机器身份。
+**v0.1.4 支持按计划推送全部绑定群**：只填计划 ID、话术、小程序素材 ID，显式选择 `--all-bound-groups`；自动读完全部绑定页并保存固定请求快照。新版服务器将这一批的所有群放进一个企微群发任务，逐群状态独立读取。已有带 HMAC 签名的群运营 Webhook 客户端：独立密钥配置、状态检查、删除与动态消息提交，支持本地 dry-run、原事件安全重放及结果未知处理。完整安装、发送和投递查询见 [Webhook 使用说明书](docs/groupops-webhook.md)。这些本地命令不改写服务端 564 项目录，也不继承人类或机器身份。
 
 ```sh
 aicrm-cli group-ops webhook configure
@@ -21,12 +21,12 @@ aicrm-cli group-ops webhook send --input groupops-request.json --event-id YOUR_S
 从 [GitHub Release](https://github.com/qianlan33333-png/aicrm-cli/releases/latest) 下载适合系统的压缩包，解压后将 `aicrm-cli` 放入 PATH。也可以从源码安装（Go 1.26.6 或更高）：
 
 ```sh
-go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.1.3
+go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.1.4
 aicrm-cli profile add staging https://your-staging-origin.example
 aicrm-cli profile use staging
 ```
 
-服务端须提供相应认证和业务路由；当前客户端目录与 AI-CRM-v4 已安装的 `c52c738` 契约同步。既有接口的执行仍由其原角色、CSRF、资源与业务规则授权。
+服务端须提供相应认证和业务路由；当前客户端目录与 AI-CRM-v4 的单任务多群契约同步。既有接口的执行仍由其原角色、CSRF、资源与业务规则授权。
 
 `profile` 只保存 HTTPS Origin，不产生权限。凭证保存在系统密钥环，精确绑定 Origin；不接受跨 Origin 凭证或转发重定向。密钥环不可用时不降级为明文文件。一个 Origin 当前保存一种身份，切换人类或机器需要重新登录。
 

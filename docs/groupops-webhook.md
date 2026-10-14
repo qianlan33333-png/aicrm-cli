@@ -1,13 +1,13 @@
-# 群运营 Webhook CLI 使用说明书（v0.1.3）
+# 群运营 Webhook CLI 使用说明书（v0.1.4）
 
 此功能向已启用的 Webhook 群运营计划提交一次动态发送任务。每次请求指定话术和已绑定群的子集，无需标准编排节点。当前企微发送方式是企业群发任务，运营成员确认后才会发送；指定群需企微终端 4.1.10 或以上。
 
 ## 1. 安装并选择环境
 
-下载 [v0.1.3](https://github.com/qianlan33333-png/aicrm-cli/releases/tag/v0.1.3) 中对应系统的包；对照 `checksums.txt` 校验 SHA-256，解压并将可执行文件放入 PATH。源码安装需要 Go 1.26.6 或以上：
+下载 [v0.1.4](https://github.com/qianlan33333-png/aicrm-cli/releases/tag/v0.1.4) 中对应系统的包；对照 `checksums.txt` 校验 SHA-256，解压并将可执行文件放入 PATH。源码安装需要 Go 1.26.6 或以上：
 
 ```sh
-go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.1.3
+go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.1.4
 aicrm-cli --version
 aicrm-cli profile add crm https://www.youcangogogo.com
 aicrm-cli profile use crm
@@ -51,6 +51,8 @@ aicrm-cli group-ops webhook push \
   --miniprogram-id 1195 \
   --all-bound-groups
 ```
+
+同一批次只创建一个企微群发任务：目标 11 个群时，一次 `chat_id_list` 包含全部 11 个群，对应一个执行和一个 msgid。执行响应的 `target_references` 是完整群范围，`group_deliveries` 是逐群状态。此行为由安装了单任务多群修复的 V4 服务器提供；升级 CLI 本身不会改变旧服务器拆分任务的行为。旧事件仍读回原任务，不会自动重新发送。
 
 `--plan-id` 是后台运营计划的数字 ID；`--miniprogram-id` 是素材库中已启用小程序卡片的数字 ID，不是微信 AppID。`--all-bound-groups` 明确选择该计划的全部绑定群，必须显式填写。CLI 自动读取计划描述符、按 `limit/offset` 分页读完群绑定，并检查计划版本和完整群集合，无需手写群 ID 数组。只读取这个计划的群；超过 100 群也会继续读到末页。绑定为空、分页不完整或读取期间计划变化时不提交，避免漏群。
 
@@ -138,7 +140,7 @@ aicrm-cli materials legacy-media-attachment upload \
 ]
 ```
 
-`image_id` 和 `attachment_id` 必须是正整数 JSON 数字，不能是字符串。最多九个附件，保持数组顺序。Webhook 不接收原始图片/文件、任意 URL 或 Provider `media_id`；上传仍使用管理员 Cookie/CSRF 的原素材接口。素材可用性由服务端检查。
+`image_id` 和 `attachment_id` 必须是正整数 JSON 数字，不能是字符串。最多九个附件，保持数组顺序。同一发送成员的全部冻结目标最多 2000 个；服务器超限拒绝，不自动拆成多任务。Webhook 不接收原始图片/文件、任意 URL 或 Provider `media_id`；上传仍使用管理员 Cookie/CSRF 的原素材接口。素材可用性由服务端检查。
 
 小程序优先引用已启用的本地小程序素材：
 
@@ -256,4 +258,6 @@ aicrm-cli schema webhook
 
 发行验证覆盖签名、原始字节、完整绑定分页、固定快照重放与输入冲突、凭据隔离、拒绝重定向、超时/响应丢失不重试、材料结构检查及五个平台构建。
 
-2026-10-14 使用 v0.1.3 向计划 12 的全部 11 个绑定群真实提交话术和已有小程序素材 1195，返回 HTTP 202、run 1、执行 1–11；独立查询 11 条全部 `provider_accepted=true` 且有 Provider 回执，全部 `delivery_proven=false`。已验证全量受理及企微群发任务创建；运营成员确认与最终群内送达未执行。发布 CLI 或 dry-run 本身不提供这些业务证据。
+2026-10-15 00:39（北京时间），生产已安装 V4 修复 `46c4bf9537a84188dc78f28f8d157947a6409dde`。使用 v0.1.4 向计划 12 的全部 11 个绑定群提交一段话术和已有小程序素材 1195，事件 `groupops-plan12-single-task-20261015-001` 返回 HTTP 202、run 2，只有执行 12 和一个外部效果。独立查询显示创建尝试次数 1、`provider_accepted=true`、有 Provider 回执，完整 `target_references` 含 11 个群。读取该单一企微任务的真实逐群结果，11 个群均为 `status=0`（未发送），整体 `delivery_proven=false`。已验证一个任务覆盖 11 个群；运营成员确认与最终群内送达未执行。
+
+修复前 v0.1.3 的历史 run 1 生成执行 1–11，继续保留原事实，不删除、不合并、不自动重新发送。发布 CLI 或 dry-run 本身不提供真实任务或送达证据。
