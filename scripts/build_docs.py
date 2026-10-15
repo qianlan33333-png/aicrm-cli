@@ -21,7 +21,7 @@ for doc in bundle['documents']:
     if doc['status'] == 'official_body_retrieved':
         coverage = f"[已取得参数表/示例](wecom/{doc['id']}.md)"
         body = [f"# {doc['title']}", '', f"[企微官方原文]({doc['source_url']})", '',
-                f"核对日期：{doc['retrieved_on']}；官方 doc_id：{doc['doc_id']}；正文 SHA-256：`{doc['content_sha256']}`。", '',
+                f"核对日期：{doc['retrieved_on']}；官方 doc_id：{doc['doc_id']}；原始页面 SHA-256：`{doc['content_sha256']}`。", '',
                 '本页仅整理官方参数表、示例及接口地址。机械提取不等于逐字段人工核验；未提取的叙述、权限前提、适用版本和调用限制仍以官方原文为准。示例身份和凭据是资料占位，不用于实际调用。', '',
                 '适用导航：', '']
         body += ['- ' + ' → '.join(a['hierarchy']) + f"（{a['id']}）" for a in doc['aliases']]
