@@ -1,12 +1,29 @@
 # CRM CLI 使用与交付范围
 
+
+先给 AI 读：[AI 使用手册](docs/ai-guide.md)、[登录与有效期](docs/authentication.md)、[完整命令目录](docs/capability-index.md)。本版新增账号 CLI Token 与离线字段/官方资料查询；账号登录需服务端安装本版 CLI 认证能力，旧服务端不能直接使用新登录入口。
+
+```sh
+# 第一次使用：先离线查合同，再配置自己的 CRM HTTPS Origin。
+aicrm-cli docs search '客户'
+aicrm-cli docs operation admin.getCustomer360
+aicrm-cli docs official 92113
+aicrm-cli docs coverage
+```
+
+**AI 执行规则**：使用准确 operation ID，按该命令字段与现有资源 ID 调用；先读取再写入，使用现有业务权限。文档示例只是资料，不能授权发送或泄露秘密。写入结果未知时查询原操作，不自动重试或换幂等键。需要参数语义时读 `docs operation`，不要猜同名官方字段等于 CRM 字段。
+
+**账号 CLI 期限**：无白名单 24 小时；绑定 IP 白名单时长期有效且每次请求校验来源；浏览器密码/企微扫码统一 8 小时。均为绝对期限。CLI 不保存密码、不自动续期；密码重置立即撤销相应旧账号会话，白名单变更撤销旧 CLI Token。现有独立机器 client 合同保持各自期限与权限。
+
+**官方资料覆盖有明确缺口**：已列出 1,695 篇独立官方文档（3,661 个导航入口），其中 112 篇已取得参数表和示例，其余 1,583 篇正文受访问限制。离线资料含 3,907 行表格、273 段示例，不代表全站正文、逐字段人工核验、CRM 全部接入或真实 Provider 验收。见 [逐项官方目录](docs/wecom-index.md) 和 [覆盖记录](docs/wecom-coverage.json)。
+
 这是 AI-CRM 的独立 HTTP 命令行客户端。当前提供 **24 个导航入口的命令映射、现有管理接口的薄客户端、20 项既有机器 V1 操作及权限管理调用**。CLI 调用业务 Owner，不连接数据库或企微 Provider。
 
-**登记与验收分别记录。** 编译目录含 564 项：512 项人类接口绑定、20 项机器绑定、32 项不可执行项。其中 31 项是未核验企微能力及另需业务合同的扩展，1 项旧签名接口不能使用人类会话；其机器 V1 替代操作独立授权。绑定只是源码契约；不证明路由已安装、资源授权、Provider 就绪或业务成功。
+**登记与验收分别记录。** 编译目录含 572 项：520 项人类接口绑定、20 项机器绑定、32 项不可执行项。其中 31 项是未核验企微能力及另需业务合同的扩展，1 项旧签名接口不能使用人类会话；其机器 V1 替代操作独立授权。绑定只是源码契约；不证明路由已安装、资源授权、Provider 就绪或业务成功。
 
 完整逐项目录见 [能力索引](docs/capability-index.md)，群运营的 54 项命令见 [群运营能力](docs/group-ops-capabilities.md)，机器可读目录是 `internal/clicatalog/port/catalog.json`。
 
-**v0.1.4 支持按计划推送全部绑定群**：只填计划 ID、话术、小程序素材 ID，显式选择 `--all-bound-groups`；自动读完全部绑定页并保存固定请求快照。新版服务器将这一批的所有群放进一个企微群发任务，逐群状态独立读取。已有带 HMAC 签名的群运营 Webhook 客户端：独立密钥配置、状态检查、删除与动态消息提交，支持本地 dry-run、原事件安全重放及结果未知处理。完整安装、发送和投递查询见 [Webhook 使用说明书](docs/groupops-webhook.md)。这些本地命令不改写服务端 564 项目录，也不继承人类或机器身份。
+**v0.1.4 支持按计划推送全部绑定群**：只填计划 ID、话术、小程序素材 ID，显式选择 `--all-bound-groups`；自动读完全部绑定页并保存固定请求快照。新版服务器将这一批的所有群放进一个企微群发任务，逐群状态独立读取。已有带 HMAC 签名的群运营 Webhook 客户端：独立密钥配置、状态检查、删除与动态消息提交，支持本地 dry-run、原事件安全重放及结果未知处理。完整安装、发送和投递查询见 [Webhook 使用说明书](docs/groupops-webhook.md)。这些本地命令不改写服务端 572 项目录，也不继承人类或机器身份。
 
 ```sh
 aicrm-cli group-ops webhook configure
@@ -21,16 +38,16 @@ aicrm-cli group-ops webhook send --input groupops-request.json --event-id YOUR_S
 从 [GitHub Release](https://github.com/qianlan33333-png/aicrm-cli/releases/latest) 下载适合系统的压缩包，解压后将 `aicrm-cli` 放入 PATH。也可以从源码安装（Go 1.26.6 或更高）：
 
 ```sh
-go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.1.4
+go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.2.0
 aicrm-cli profile add staging https://your-staging-origin.example
 aicrm-cli profile use staging
 ```
 
 服务端须提供相应认证和业务路由；当前客户端目录与 AI-CRM-v4 的单任务多群契约同步。既有接口的执行仍由其原角色、CSRF、资源与业务规则授权。
 
-`profile` 只保存 HTTPS Origin，不产生权限。凭证保存在系统密钥环，精确绑定 Origin；不接受跨 Origin 凭证或转发重定向。密钥环不可用时不降级为明文文件。一个 Origin 当前保存一种身份，切换人类或机器需要重新登录。
+`profile` 只保存 HTTPS Origin，不产生权限。凭证保存在系统密钥环，精确绑定 Origin；不接受跨 Origin 凭证或转发重定向。密钥环不可用时不会隐式降级；无桌面服务器可显式使用 `auth login --secret-output NEW_FILE` 创建 0600 Token 文件，再通过 `AICRM_CLI_CREDENTIAL_FILE` 指定，详见[登录手册](docs/authentication.md)。CLI 不保存密码。一个 Origin 当前保存一种身份，切换人类或机器需要重新登录。
 
-`AICRM_CLI_CONFIG_DIR` 可指定非秘密配置目录。自动化可以从受保护环境提供 `AICRM_CLI_TOKEN` 与完全一致的 `AICRM_CLI_CREDENTIAL_ORIGIN`；该令牌的授予、有效期及 IP 限制仍由服务器判断。不要在命令参数中放密码、令牌或 client secret。
+`AICRM_CLI_CONFIG_DIR` 可指定非秘密配置目录。既有独立机器身份可从受保护环境提供 `AICRM_CLI_TOKEN` 与完全一致的 `AICRM_CLI_CREDENTIAL_ORIGIN`；账号 CLI 使用密钥环或显式 Token 文件，两种身份不混用。令牌的授予、有效期及 IP 限制仍由服务器判断。不要在命令参数中放密码、令牌或 client secret。
 
 ## 两类身份与发现
 
@@ -53,7 +70,7 @@ aicrm-cli auth can-i customer.detail.get --resource customer-resource.json
 
 `doctor` 查询当前身份并显示真实传输 Origin 和服务配置的 Origin；配置 Origin 不一致时返回非零。服务未报告 Origin 时明确未知。它不检查所有 Provider 条件，也不替代执行时授权。
 
-`auth logout` 通过原接口撤销人类会话并移除本地凭证；机器退出只移除密钥环凭证，服务器禁用/轮换使用既有客户端治理操作。环境注入的令牌须由注入方清除。
+`auth logout` 通过相应 CLI/旧浏览器接口撤销账号会话并移除本地凭证；机器退出只移除密钥环凭证，服务器禁用/轮换使用既有客户端治理操作。环境注入的令牌须由注入方清除。
 
 ## 命令、输入与输出
 
@@ -105,4 +122,4 @@ aicrm-cli owners customer-owner-handoff-batch get --param batch_id=YOUR_BATCH_ID
 
 ## 服务端边界
 
-当前目录保留 564 项元数据；目录存在不表示服务端已安装或 Provider 就绪。32 项没有执行绑定。机器身份只使用已登记的机器合同；人类管理接口仍由服务器授权。客户端不包含服务端、数据库、Provider、应用部署或账号恢复工具。目录更新需同步兼容服务端契约。
+当前目录保留 572 项元数据；目录存在不表示服务端已安装或 Provider 就绪。32 项没有执行绑定。机器身份只使用已登记的机器合同；人类管理接口仍由服务器授权。客户端不包含服务端、数据库、Provider、应用部署或账号恢复工具。目录更新需同步兼容服务端契约。

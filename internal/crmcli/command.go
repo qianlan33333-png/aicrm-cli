@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/http/cookiejar"
 	"net/url"
 	"os"
 	"sort"
@@ -23,7 +22,7 @@ import (
 )
 
 // Version is replaced for release builds.
-var Version = "0.1.4"
+var Version = "0.2.0"
 
 type Options struct {
 	Profile, Format string
@@ -124,7 +123,7 @@ func NewCommand(o *Options) *cobra.Command {
 	root.PersistentFlags().StringVar(&o.Profile, "profile", "", "configured server profile")
 	root.PersistentFlags().StringVar(&o.Format, "format", "json", "json, ndjson or table")
 	root.PersistentFlags().DurationVar(&o.Timeout, "timeout", 30*time.Second, "client request timeout")
-	root.AddCommand(profileCommands(o), authCommands(o))
+	root.AddCommand(profileCommands(o), authCommands(o), docsCommands(o))
 	caps := &cobra.Command{Use: "capabilities", Short: "compiled inventory and source evidence"}
 	caps.AddCommand(&cobra.Command{Use: "list", RunE: func(*cobra.Command, []string) error { return o.print(catalog.Load()) }})
 	caps.AddCommand(&cobra.Command{Use: "live", Short: "current server grants; resource conditions still checked at execution", RunE: func(cmd *cobra.Command, _ []string) error {
@@ -646,9 +645,12 @@ func secretInput(o *Options, stdin bool, env string) (string, error) {
 }
 func authCommands(o *Options) *cobra.Command {
 	root := &cobra.Command{Use: "auth"}
-	var username, clientID, scope string
+	var username, clientID, scope, credentialOutput string
 	var stdin bool
 	login := &cobra.Command{Use: "login", Args: cobra.NoArgs, RunE: func(cmd *cobra.Command, _ []string) error {
+		if credentialOutput != "" && clientID != "" {
+			return fail("validation", "headless credential export requires an account CLI login", 2)
+		}
 		if username != "" && clientID != "" {
 			return fail("validation", "select either a human username or a machine client ID", 2)
 		}
@@ -668,8 +670,6 @@ func authCommands(o *Options) *cobra.Command {
 		if e != nil {
 			return e
 		}
-		jar, _ := cookiejar.New(nil)
-		c.HTTP.Jar = jar
 		credential := Credential{Origin: c.Origin}
 		var resp *http.Response
 		if clientID != "" {
@@ -695,47 +695,40 @@ func authCommands(o *Options) *cobra.Command {
 			if username == "" {
 				return fail("validation", "human login requires --username", 2)
 			}
-			resp, e = c.request(ctx(cmd), "GET", "/api/admin/access/cli/login-challenge", "", nil, "")
-			if e != nil {
-				return e
-			}
-			var v struct {
-				Token string `json:"login_csrf_token"`
-			}
-			e = json.NewDecoder(resp.Body).Decode(&v)
-			resp.Body.Close()
-			if e != nil || v.Token == "" {
-				return fail("protocol", "login challenge unavailable", 1)
-			}
 			password, e := secretInput(o, stdin, "AICRM_CLI_PASSWORD")
 			if e != nil {
 				return e
 			}
-			b, _ := json.Marshal(map[string]string{"username": username, "password": password, "login_csrf_token": v.Token})
-			resp, e = c.request(ctx(cmd), "POST", "/login", "application/json", bytes.NewReader(b), "")
+			b, _ := json.Marshal(map[string]string{"username": username, "password": password})
+			resp, e = c.request(ctx(cmd), "POST", "/api/admin/access/cli/login", "application/json", bytes.NewReader(b), "")
 			if e != nil {
 				return e
 			}
+			var issued struct {
+				Token string `json:"access_token"`
+				CSRF  string `json:"csrf_token"`
+			}
+			e = json.NewDecoder(resp.Body).Decode(&issued)
 			resp.Body.Close()
-			u, _ := url.Parse(c.Origin)
-			for _, cookie := range jar.Cookies(u) {
-				switch cookie.Name {
-				case "aicrm_admin_session":
-					credential.Session = cookie.Value
-				case "aicrm_admin_csrf":
-					credential.CSRF = cookie.Value
-				}
+			if e != nil || !strings.HasPrefix(issued.Token, "acl_") || issued.CSRF == "" {
+				return fail("protocol", "CLI login did not issue a terminal credential", 1)
 			}
-			if credential.Session == "" || credential.CSRF == "" {
-				return fail("protocol", "login did not issue required session and CSRF", 1)
-			}
+			credential.Token, credential.CSRF = issued.Token, issued.CSRF
 			credential.Kind = "human"
+		}
+		if credentialOutput != "" {
+			b, _ := json.Marshal(credential)
+			if e = privateFile(credentialOutput, b, false); e != nil {
+				return e
+			}
+			return o.print(map[string]any{"authenticated": true, "origin": c.Origin, "kind": credential.Kind, "credential_file": credentialOutput, "automatic_renewal": false})
 		}
 		if e = StoreCredential(credential); e != nil {
 			return fail("credential_storage", "system keyring unavailable; no plaintext credential was saved", 1)
 		}
 		return o.print(map[string]any{"authenticated": true, "origin": c.Origin, "kind": credential.Kind, "credential_storage": "system_keyring"})
 	}}
+	login.Flags().StringVar(&credentialOutput, "secret-output", "", "explicit private token file for a headless server; never stores password")
 	login.Flags().StringVar(&username, "username", "", "existing human username")
 	login.Flags().StringVar(&clientID, "client-id", "", "independent machine client ID")
 	login.Flags().StringVar(&scope, "scope", "read", "requested narrowed token scope")
@@ -764,14 +757,23 @@ func authCommands(o *Options) *cobra.Command {
 		}
 		var revokeErr error
 		if c.Credential.Kind == "human" {
-			resp, e := c.request(ctx(cmd), "POST", "/logout", "application/json", strings.NewReader("{}"), "")
+			path := "/logout"
+			if c.Credential.Token != "" {
+				path = "/api/admin/access/cli/logout"
+			}
+			resp, e := c.request(ctx(cmd), "POST", path, "application/json", strings.NewReader("{}"), "")
 			if e != nil {
 				revokeErr = e
 			} else {
 				resp.Body.Close()
 			}
 		}
-		if e = DeleteCredential(c.Origin); e != nil {
+		if file := platformconfig.LoadCLIEnvironment().CredentialFile; file != "" {
+			e = os.Remove(file)
+		} else {
+			e = DeleteCredential(c.Origin)
+		}
+		if e != nil {
 			return e
 		}
 		if revokeErr != nil {

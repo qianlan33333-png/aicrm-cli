@@ -297,6 +297,93 @@
   ],
   "operations": [
     {
+      "id": "access.cli-policy.get",
+      "group": "access",
+      "module": "config",
+      "command": "cli-policy get invoke",
+      "summary": "get CLI IP whitelist policy (super_admin only)",
+      "owner": "access",
+      "execution": "read",
+      "implementation": "owner_handler",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "prerequisites": [
+        "current account authorization",
+        "super_admin role"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/access/users/{id}/cli-policy",
+        "auth": "human",
+        "parameters": [
+          {
+            "description": "CRM后台账号ID，不是客户customer_id或企微userid",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
+      "id": "access.cli-policy.set",
+      "group": "access",
+      "module": "config",
+      "command": "cli-policy set invoke",
+      "summary": "set CLI IP whitelist policy (super_admin only)",
+      "owner": "access",
+      "execution": "local_transaction",
+      "implementation": "owner_handler",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "prerequisites": [
+        "current account authorization",
+        "super_admin role"
+      ],
+      "binding": {
+        "method": "PUT",
+        "path": "/api/admin/access/users/{id}/cli-policy",
+        "auth": "human",
+        "parameters": [
+          {
+            "description": "CRM后台账号ID，不是客户customer_id或企微userid",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "allowed_cidrs": {
+              "description": "该账号CLI的IP/CIDR白名单；空数组使用24小时Token；变更撤销既有CLI Token",
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "allowed_cidrs"
+          ],
+          "type": "object"
+        },
+        "content_type": "application/json",
+        "idempotency_required": false,
+        "body_required": true
+      }
+    },
+    {
       "id": "admin.abandonInvalidLegacyCheckout",
       "group": "payments",
       "module": "orders",
@@ -5113,6 +5200,144 @@
         },
         "content_type": "application/json",
         "idempotency_required": true,
+        "body_required": true
+      }
+    },
+    {
+      "id": "admin.createOrdinaryProductSalesSource",
+      "group": "products",
+      "module": "products",
+      "command": "ordinary-product-sales-source create",
+      "summary": "",
+      "owner": "product",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "201": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductSalesSource"
+              }
+            }
+          },
+          "description": "Created source"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/admin/wechat-pay/products/{product_id}/sales-sources",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PositiveID"
+            }
+          },
+          {
+            "description": "Explicit keys replay or reject payload drift. Frozen v2 Media controls omit this header; the compatibility adapter mints and audits a fresh per-request key.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "$ref": "#/components/schemas/ProductSalesSourceRequest"
+        },
+        "content_type": "application/json",
+        "idempotency_required": false,
+        "body_required": true
+      }
+    },
+    {
+      "id": "admin.createPeriodicProductSalesSource",
+      "group": "period-products",
+      "module": "period-products",
+      "command": "periodic-product-sales-source create",
+      "summary": "",
+      "owner": "serviceperiod",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "201": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductSalesSource"
+              }
+            }
+          },
+          "description": "Created source"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/admin/service-period-products/{product_id}/sales-sources",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PositiveID"
+            }
+          },
+          {
+            "description": "Explicit keys replay or reject payload drift. Frozen v2 Media controls omit this header; the compatibility adapter mints and audits a fresh per-request key.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "$ref": "#/components/schemas/ProductSalesSourceRequest"
+        },
+        "content_type": "application/json",
+        "idempotency_required": false,
         "body_required": true
       }
     },
@@ -17877,6 +18102,21 @@
           },
           {
             "in": "query",
+            "name": "product_id",
+            "schema": {
+              "$ref": "#/components/schemas/PositiveID"
+            }
+          },
+          {
+            "description": "Positive source ID, standard, or unrecorded.",
+            "in": "query",
+            "name": "sales_source",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
             "name": "product",
             "schema": {
               "maxLength": 200,
@@ -19361,6 +19601,108 @@
               "maximum": 2147483647,
               "minimum": 0,
               "type": "integer"
+            }
+          }
+        ],
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
+      "id": "admin.listOrdinaryProductSalesSources",
+      "group": "products",
+      "module": "products",
+      "command": "ordinary-product-sales-sources list",
+      "summary": "",
+      "owner": "product",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductSalesSourcePage"
+              }
+            }
+          },
+          "description": "Product sale source links"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/wechat-pay/products/{product_id}/sales-sources",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PositiveID"
+            }
+          }
+        ],
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
+      "id": "admin.listPeriodicProductSalesSources",
+      "group": "period-products",
+      "module": "period-products",
+      "command": "periodic-product-sales-sources list",
+      "summary": "",
+      "owner": "serviceperiod",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductSalesSourcePage"
+              }
+            }
+          },
+          "description": "Product sale source links"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/service-period-products/{product_id}/sales-sources",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PositiveID"
             }
           }
         ],
@@ -26667,6 +27009,160 @@
         },
         "content_type": "application/json",
         "idempotency_required": true,
+        "body_required": true
+      }
+    },
+    {
+      "id": "admin.renameOrdinaryProductSalesSource",
+      "group": "products",
+      "module": "products",
+      "command": "rename-ordinary-product-sales-source invoke",
+      "summary": "",
+      "owner": "product",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductSalesSource"
+              }
+            }
+          },
+          "description": "Renamed source; existing order snapshots remain unchanged"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "PUT",
+        "path": "/api/admin/wechat-pay/products/{product_id}/sales-sources/{source_id}",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PositiveID"
+            }
+          },
+          {
+            "in": "path",
+            "name": "source_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PositiveID"
+            }
+          },
+          {
+            "description": "Explicit keys replay or reject payload drift. Frozen v2 Media controls omit this header; the compatibility adapter mints and audits a fresh per-request key.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "$ref": "#/components/schemas/ProductSalesSourceRequest"
+        },
+        "content_type": "application/json",
+        "idempotency_required": false,
+        "body_required": true
+      }
+    },
+    {
+      "id": "admin.renamePeriodicProductSalesSource",
+      "group": "period-products",
+      "module": "period-products",
+      "command": "rename-periodic-product-sales-source invoke",
+      "summary": "",
+      "owner": "serviceperiod",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductSalesSource"
+              }
+            }
+          },
+          "description": "Renamed source; existing order snapshots remain unchanged"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "PUT",
+        "path": "/api/admin/service-period-products/{product_id}/sales-sources/{source_id}",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PositiveID"
+            }
+          },
+          {
+            "in": "path",
+            "name": "source_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PositiveID"
+            }
+          },
+          {
+            "description": "Explicit keys replay or reject payload drift. Frozen v2 Media controls omit this header; the compatibility adapter mints and audits a fresh per-request key.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "$ref": "#/components/schemas/ProductSalesSourceRequest"
+        },
+        "content_type": "application/json",
+        "idempotency_required": false,
         "body_required": true
       }
     },
@@ -54853,6 +55349,68 @@
       ],
       "type": "object"
     },
+    "ProductSalesSource": {
+      "properties": {
+        "id": {
+          "$ref": "#/components/schemas/PositiveID"
+        },
+        "name": {
+          "type": "string"
+        },
+        "product_id": {
+          "$ref": "#/components/schemas/PositiveID"
+        },
+        "public_path": {
+          "type": "string"
+        },
+        "version": {
+          "$ref": "#/components/schemas/PositiveID"
+        }
+      },
+      "required": [
+        "id",
+        "product_id",
+        "name",
+        "version",
+        "public_path"
+      ],
+      "type": "object"
+    },
+    "ProductSalesSourcePage": {
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/components/schemas/ProductSalesSource"
+          },
+          "type": "array"
+        },
+        "standard_path": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "items",
+        "standard_path"
+      ],
+      "type": "object"
+    },
+    "ProductSalesSourceRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "expected_version": {
+          "$ref": "#/components/schemas/PositiveID"
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
     "PublicPaymentCheckoutRequest": {
       "additionalProperties": false,
       "description": "The server freezes price, contact requirements and attribution from the product and trusted session. Browser contact fields are encrypted Order snapshots and never identity claims. Optional provider defaults to the path provider; the path constrains its accepted channels.",
@@ -54941,6 +55499,9 @@
         },
         "recipient_name": {
           "type": "string"
+        },
+        "sales_source": {
+          "$ref": "#/components/schemas/SalesSourceSelection"
         }
       },
       "required": [
@@ -56741,6 +57302,50 @@
       ],
       "type": "object"
     },
+    "SalesSourceSelection": {
+      "additionalProperties": false,
+      "description": "Attribution only. Invalid or cross-product source becomes unrecorded; absence preserves legacy unknown attribution.",
+      "properties": {
+        "id": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "kind": {
+          "enum": [
+            "standard",
+            "channel",
+            "unrecorded"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "type": "object"
+    },
+    "SalesSourceSnapshot": {
+      "properties": {
+        "id": {
+          "$ref": "#/components/schemas/PositiveID"
+        },
+        "kind": {
+          "enum": [
+            "standard",
+            "channel",
+            "unrecorded"
+          ],
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "type": "object"
+    },
     "ServicePeriodMemberAllianceMutation": {
       "additionalProperties": false,
       "properties": {
@@ -57573,6 +58178,97 @@
           "type": "object"
         }
       ]
+    },
+    "SidebarGroupBindingContext": {
+      "additionalProperties": false,
+      "properties": {
+        "bindings": {
+          "items": {
+            "$ref": "#/components/schemas/SidebarGroupBindingPlan"
+          },
+          "type": "array"
+        },
+        "candidates": {
+          "items": {
+            "$ref": "#/components/schemas/SidebarGroupBindingPlan"
+          },
+          "type": "array"
+        },
+        "chat_id": {
+          "type": "string"
+        },
+        "checked_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "limit": {
+          "maximum": 100,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "offset": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "owner_name": {
+          "type": "string"
+        },
+        "provider_read_executed": {
+          "const": true,
+          "type": "boolean"
+        },
+        "total": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "chat_id",
+        "name",
+        "owner_name",
+        "checked_at",
+        "bindings",
+        "candidates",
+        "total",
+        "limit",
+        "offset",
+        "provider_read_executed"
+      ],
+      "type": "object"
+    },
+    "SidebarGroupBindingPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "plan_id": {
+          "pattern": "^[1-9][0-9]*$",
+          "type": "string"
+        },
+        "revision": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "status": {
+          "enum": [
+            "draft",
+            "paused",
+            "active"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "plan_id",
+        "name",
+        "status",
+        "revision"
+      ],
+      "type": "object"
     },
     "SidebarManualSuggestionRequest": {
       "additionalProperties": false,
@@ -59289,6 +59985,9 @@
           "minimum": 0,
           "type": "integer"
         },
+        "sales_source": {
+          "$ref": "#/components/schemas/SalesSourceSnapshot"
+        },
         "source_after_sales": {
           "type": "string"
         },
@@ -60374,6 +61073,49 @@
     },
     "openapi": "3.1.0",
     "paths": {
+      "/api/admin/access/cli/login": {
+        "post": {
+          "operationId": "loginCLIAccountToken",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "password": {
+                      "description": "对应账号密码，仅用于本次登录",
+                      "type": "string"
+                    },
+                    "username": {
+                      "description": "现有CRM登录账号",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "username",
+                    "password"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "No-store access_token、csrf_token、expires_at；长期Token的expires_at为null，无Set-Cookie"
+            },
+            "401": {
+              "$ref": "#/components/responses/Error"
+            },
+            "403": {
+              "$ref": "#/components/responses/Error"
+            }
+          },
+          "security": [],
+          "summary": "CLI账号密码登录，白名单长期、无白名单24小时，不自动续期"
+        }
+      },
       "/api/admin/access/cli/login-challenge": {
         "get": {
           "operationId": "getCLILoginChallenge",
@@ -60404,6 +61146,20 @@
           },
           "security": [],
           "summary": "Existing Access login nonce for terminal login"
+        }
+      },
+      "/api/admin/access/cli/logout": {
+        "post": {
+          "operationId": "logoutCLIAccountToken",
+          "responses": {
+            "200": {
+              "description": "当前Token已撤销"
+            },
+            "401": {
+              "$ref": "#/components/responses/Error"
+            }
+          },
+          "summary": "撤销当前CLI账号Token"
         }
       },
       "/api/admin/access/cli/session": {

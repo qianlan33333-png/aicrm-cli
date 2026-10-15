@@ -201,6 +201,21 @@ func LoadCredential(origin string) (Credential, error) {
 		}
 		return Credential{Origin: origin, Kind: "machine", Token: token}, nil
 	}
+	if file := environment.CredentialFile; file != "" {
+		info, e := os.Lstat(file)
+		if e != nil || !info.Mode().IsRegular() || info.Mode().Perm()&0077 != 0 {
+			return Credential{}, fail("credential_storage", "credential file must be a private regular file", 3)
+		}
+		b, e := os.ReadFile(file)
+		if e != nil {
+			return Credential{}, fail("credential_storage", "credential file unavailable", 3)
+		}
+		var c Credential
+		if StrictJSON(b, &c) != nil || c.Origin != origin || c.Kind != "human" || !strings.HasPrefix(c.Token, "acl_") || c.CSRF == "" {
+			return Credential{}, fail("authentication", "invalid or mismatched CLI credential file", 3)
+		}
+		return c, nil
+	}
 	b, e := keyring.Get("aicrm-cli", key(origin))
 	if e != nil {
 		return Credential{}, fail("authentication", "no credential for this origin; run auth login or supply an origin-bound token", 3)
@@ -235,10 +250,13 @@ func (c *Client) request(ctx context.Context, method, path, content string, body
 	if idempotency != "" {
 		r.Header.Set("Idempotency-Key", idempotency)
 	}
-	if c.Credential.Kind == "machine" {
+	if c.Credential.Kind == "machine" || (c.Credential.Kind == "human" && c.Credential.Token != "") {
 		r.Header.Set("Authorization", "Bearer "+c.Credential.Token)
 	}
-	if c.Credential.Kind == "human" {
+	if c.Credential.Kind == "human" && c.Credential.Token != "" && method != "GET" {
+		r.Header.Set("X-CSRF-Token", c.Credential.CSRF)
+	}
+	if c.Credential.Kind == "human" && c.Credential.Token == "" {
 		r.AddCookie(&http.Cookie{Name: "aicrm_admin_session", Value: c.Credential.Session})
 		if method != "GET" {
 			r.AddCookie(&http.Cookie{Name: "aicrm_admin_csrf", Value: c.Credential.CSRF})

@@ -1,0 +1,35 @@
+{
+  "retrieved_on": "2026-10-15",
+  "navigation_source": "https://developer.work.weixin.qq.com/document/path/92113",
+  "navigation_sha256": "6af324296312c451c45985f724141598a0c8bd7cecc056ce0a8b50414850e5f4",
+  "navigation_entries": 3661,
+  "unique_documents": 1695,
+  "body_retrieved": 112,
+  "body_unavailable": 1583,
+  "parameter_table_rows": 3907,
+  "code_examples": 273,
+  "coverage_meaning": "navigation enumerated; retrieved bodies mechanically extracted, not every field manually reviewed; not CRM implementation or live API proof",
+  "blocker": "official CAPTCHA and browser site safety denial; collection stopped; no bypass",
+  "roots": [
+    {
+      "id": 90000,
+      "title": "企业自建应用开发"
+    },
+    {
+      "id": 90001,
+      "title": "第三方应用开发"
+    },
+    {
+      "id": 90002,
+      "title": "智能硬件开发"
+    },
+    {
+      "id": 96151,
+      "title": "服务商代开发"
+    },
+    {
+      "id": 101705,
+      "title": "智能机器人开发"
+    }
+  ]
+}

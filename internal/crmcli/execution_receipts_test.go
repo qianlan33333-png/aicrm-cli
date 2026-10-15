@@ -20,10 +20,10 @@ func TestCLIExecutionReceiptsReadJourney(t *testing.T) {
 			io.WriteString(w, `{"login_csrf_token":"nonce"}`)
 			return
 		}
-		if r.URL.Path == "/login" {
+		if r.URL.Path == "/api/admin/access/cli/login" {
 			http.SetCookie(w, &http.Cookie{Name: "aicrm_admin_session", Value: "PRIVATE_SESSION", Secure: true, Path: "/"})
 			http.SetCookie(w, &http.Cookie{Name: "aicrm_admin_csrf", Value: "PRIVATE_CSRF", Secure: true, Path: "/"})
-			io.WriteString(w, `{"ok":true}`)
+			io.WriteString(w, `{"access_token":"acl_PRIVATE_SESSION","csrf_token":"PRIVATE_CSRF"}`)
 			return
 		}
 		if r.Method != "GET" || r.URL.Path != "/api/admin/ai-assistant/plans/5/execution-receipts" || r.URL.Query().Get("live") != "true" {
@@ -31,8 +31,7 @@ func TestCLIExecutionReceiptsReadJourney(t *testing.T) {
 			http.NotFound(w, r)
 			return
 		}
-		cookie, e := r.Cookie("aicrm_admin_session")
-		if e != nil || cookie.Value != "PRIVATE_SESSION" {
+		if r.Header.Get("Authorization") != "Bearer acl_PRIVATE_SESSION" {
 			w.WriteHeader(401)
 			return
 		}

@@ -407,14 +407,17 @@
 | 操作 ID | CLI 命令 | 身份 / 执行状态 | Owner | 源码证据 |
 |---|---|---|---|---|
 | admin.copyLocalWechatPayProduct | aicrm-cli products local-wechat-pay-product copy | human | product | source_contract_only |
+| admin.createOrdinaryProductSalesSource | aicrm-cli products ordinary-product-sales-source create | human | product | source_contract_only |
 | admin.deleteLocalWechatPayProduct | aicrm-cli products local-wechat-pay-product delete | human | product | source_contract_only |
 | admin.disableLocalWechatPayProduct | aicrm-cli products local-wechat-pay-product disable | human | product | source_contract_only |
 | admin.enableLocalWechatPayProduct | aicrm-cli products local-wechat-pay-product enable | human | product | source_contract_only |
 | admin.getWeChatShopProductRefreshStatus | aicrm-cli products we-chat-shop-product-refresh-status get | human | product | source_contract_only |
 | admin.getWechatPayProductExternalPush | aicrm-cli products wechat-pay-product-external-push get | human | product | source_contract_only |
+| admin.listOrdinaryProductSalesSources | aicrm-cli products ordinary-product-sales-sources list | human | product | source_contract_only |
 | admin.previewWechatPayProductExternalPush | aicrm-cli products wechat-pay-product-external-push preview | human | product | source_contract_only |
 | admin.queueWechatPayProductExternalPushTest | aicrm-cli products queue-wechat-pay-product-external-push-test invoke | human | product | source_contract_only |
 | admin.refreshWeChatShopProducts | aicrm-cli products we-chat-shop-products refresh | human | product | source_contract_only |
+| admin.renameOrdinaryProductSalesSource | aicrm-cli products rename-ordinary-product-sales-source invoke | human | product | source_contract_only |
 | admin.saveWechatPayProductExternalPush | aicrm-cli products wechat-pay-product-external-push save | human | product | source_contract_only |
 | admin.shareLocalWechatPayProduct | aicrm-cli products share-local-wechat-pay-product invoke | human | product | source_contract_only |
 
@@ -426,6 +429,7 @@
 |---|---|---|---|---|
 | admin.archiveServicePeriodProduct | aicrm-cli period-products service-period-product archive | human | serviceperiod | source_contract_only |
 | admin.copyServicePeriodProduct | aicrm-cli period-products service-period-product copy | human | serviceperiod | source_contract_only |
+| admin.createPeriodicProductSalesSource | aicrm-cli period-products periodic-product-sales-source create | human | serviceperiod | source_contract_only |
 | admin.createServicePeriodProduct | aicrm-cli period-products service-period-product create | human | serviceperiod | source_contract_only |
 | admin.deleteProductWorkspaceShares | aicrm-cli period-products product-workspace-shares delete | human | serviceperiod | source_contract_only |
 | admin.disableServicePeriodProduct | aicrm-cli period-products service-period-product disable | human | serviceperiod | source_contract_only |
@@ -436,12 +440,14 @@
 | admin.getServicePeriodMemberGridShareSettingsCompatibility | aicrm-cli period-products service-period-member-grid-share-settings-compatibility get | human | serviceperiod | source_contract_only |
 | admin.getServicePeriodProduct | aicrm-cli period-products service-period-product get | human | serviceperiod | source_contract_only |
 | admin.getServicePeriodProductExternalPush | aicrm-cli period-products service-period-product-external-push get | human | serviceperiod | source_contract_only |
+| admin.listPeriodicProductSalesSources | aicrm-cli period-products periodic-product-sales-sources list | human | serviceperiod | source_contract_only |
 | admin.listServicePeriodMemberViewsCompatibility | aicrm-cli period-products service-period-member-views-compatibility list | human | serviceperiod | source_contract_only |
 | admin.listServicePeriodMembersCompatibility | aicrm-cli period-products service-period-members-compatibility list | human | serviceperiod | source_contract_only |
 | admin.listServicePeriodProducts | aicrm-cli period-products service-period-products list | human | serviceperiod | source_contract_only |
 | admin.postProductWorkspaceShares | aicrm-cli period-products post-product-workspace-shares invoke | human | serviceperiod | source_contract_only |
 | admin.previewServicePeriodProductExternalPush | aicrm-cli period-products service-period-product-external-push preview | human | serviceperiod | source_contract_only |
 | admin.queueServicePeriodProductExternalPushTest | aicrm-cli period-products queue-service-period-product-external-push-test invoke | human | serviceperiod | source_contract_only |
+| admin.renamePeriodicProductSalesSource | aicrm-cli period-products rename-periodic-product-sales-source invoke | human | serviceperiod | source_contract_only |
 | admin.saveServicePeriodProductExternalPush | aicrm-cli period-products service-period-product-external-push save | human | serviceperiod | source_contract_only |
 | admin.shareServicePeriodProduct | aicrm-cli period-products share-service-period-product invoke | human | serviceperiod | source_contract_only |
 | admin.updateServicePeriodMemberAlliance | aicrm-cli period-products service-period-member-alliance update | human | serviceperiod | source_contract_only |
@@ -673,6 +679,8 @@
 
 | 操作 ID | CLI 命令 | 身份 / 执行状态 | Owner | 源码证据 |
 |---|---|---|---|---|
+| access.cli-policy.get | aicrm-cli access cli-policy get invoke | human | access | source_contract_only |
+| access.cli-policy.set | aicrm-cli access cli-policy set invoke | human | access | source_contract_only |
 | admin.activateOpenPlatformClient | aicrm-cli access open-platform-client activate | human | access | source_contract_only |
 | admin.bindAccessUserWeComID | aicrm-cli access access-user-we-com-id bind | human | access | source_contract_only |
 | admin.bindAccessUserWeComIDCompatibility | aicrm-cli access access-user-we-com-idcompatibility bind | human | access | source_contract_only |

@@ -21,23 +21,16 @@ func TestCLIHumanLoginReadAndGovernanceJourney(t *testing.T) {
 	server := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		switch r.URL.Path {
-		case "/api/admin/access/cli/login-challenge":
-			http.SetCookie(w, &http.Cookie{Name: "aicrm_login_csrf", Value: "nonce", Secure: true, HttpOnly: true, Path: "/"})
-			io.WriteString(w, `{"login_csrf_token":"nonce"}`)
-		case "/login":
+		case "/api/admin/access/cli/login":
 			var v map[string]string
 			json.NewDecoder(r.Body).Decode(&v)
-			cookie, e := r.Cookie("aicrm_login_csrf")
-			if e != nil || cookie.Value != "nonce" || v["password"] != "PASSWORD" || v["login_csrf_token"] != "nonce" {
-				w.WriteHeader(403)
+			if v["password"] != "PASSWORD" {
+				w.WriteHeader(401)
 				return
 			}
-			http.SetCookie(w, &http.Cookie{Name: "aicrm_admin_session", Value: "SESSION", Secure: true, Path: "/"})
-			http.SetCookie(w, &http.Cookie{Name: "aicrm_admin_csrf", Value: "CSRF", Secure: true, Path: "/"})
-			io.WriteString(w, `{"ok":true}`)
+			io.WriteString(w, `{"access_token":"acl_SESSION","csrf_token":"CSRF"}`)
 		case "/api/admin/access/users":
-			cookie, e := r.Cookie("aicrm_admin_session")
-			if e != nil || cookie.Value != "SESSION" || r.Header.Get("Authorization") != "" {
+			if r.Header.Get("Authorization") != "Bearer acl_SESSION" || r.Header.Get("Cookie") != "" {
 				w.WriteHeader(401)
 				return
 			}
