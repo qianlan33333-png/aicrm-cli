@@ -11,7 +11,7 @@ import (
 
 func TestOfflineDocumentationWorksWithoutProfileAndPreservesCoverageGaps(t *testing.T) {
 	t.Setenv("AICRM_CLI_CONFIG_DIR", t.TempDir())
-	for _, args := range [][]string{{"docs", "coverage"}, {"docs", "search", "userid"}, {"docs", "official", "92113"}, {"docs", "official", "92264"}, {"docs", "operation", "access.cli-policy.set"}} {
+	for _, args := range [][]string{{"docs", "coverage"}, {"docs", "search", "userid"}, {"docs", "official", "92113"}, {"docs", "official", "92264"}, {"docs", "operation", "admin.setAccessCLIPolicy"}} {
 		var out, stderr bytes.Buffer
 		if code := Run(args, strings.NewReader(""), &out, &stderr); code != 0 {
 			t.Fatalf("%v: code=%d %s", args, code, &out)
@@ -47,7 +47,7 @@ func TestOperationDocsResolveReferencesAndDoNotInventFieldMeaning(t *testing.T) 
 	if len(doc["referenced_definitions"].(map[string]any)) == 0 || len(doc["fields"].([]map[string]any)) == 0 {
 		t.Fatal("referenced response contract missing")
 	}
-	op, _ = catalog.Find("access.cli-policy.set")
+	op, _ = catalog.Find("admin.setAccessCLIPolicy")
 	doc = operationDocumentation(op)
 	found := false
 	for _, row := range doc["fields"].([]map[string]any) {

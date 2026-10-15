@@ -679,8 +679,6 @@
 
 | 操作 ID | CLI 命令 | 身份 / 执行状态 | Owner | 源码证据 |
 |---|---|---|---|---|
-| access.cli-policy.get | aicrm-cli access cli-policy get invoke | human | access | source_contract_only |
-| access.cli-policy.set | aicrm-cli access cli-policy set invoke | human | access | source_contract_only |
 | admin.activateOpenPlatformClient | aicrm-cli access open-platform-client activate | human | access | source_contract_only |
 | admin.bindAccessUserWeComID | aicrm-cli access access-user-we-com-id bind | human | access | source_contract_only |
 | admin.bindAccessUserWeComIDCompatibility | aicrm-cli access access-user-we-com-idcompatibility bind | human | access | source_contract_only |
@@ -691,6 +689,7 @@
 | admin.disableOpenPlatformClient | aicrm-cli access open-platform-client disable | human | access | source_contract_only |
 | admin.downloadCurrentOpenAPI | aicrm-cli config current-open-api download | human | config | source_contract_only |
 | admin.enableOpenPlatformClient | aicrm-cli access open-platform-client enable | human | access | source_contract_only |
+| admin.getAccessCLIPolicy | aicrm-cli access access-clipolicy get | human | access | source_contract_only |
 | admin.getConfigCategory | aicrm-cli config config-category get | human | config | source_contract_only |
 | admin.getConfiguredAIModel | aicrm-cli config configured-aimodel get | human | config | source_contract_only |
 | admin.getInvoiceCardConfiguration | aicrm-cli config invoice-card-configuration get | human | config | source_contract_only |
@@ -725,6 +724,7 @@
 | admin.saveConfiguredAIModel | aicrm-cli config configured-aimodel save | human | config | source_contract_only |
 | admin.saveLegacyAppSettings | aicrm-cli config legacy-app-settings save | human | config | source_contract_only |
 | admin.saveSetupWizard | aicrm-cli config setup-wizard save | human | config | source_contract_only |
+| admin.setAccessCLIPolicy | aicrm-cli access access-clipolicy set | human | access | source_contract_only |
 | admin.setAccessUserLoginEnabled | aicrm-cli access access-user-login-enabled set | human | access | source_contract_only |
 | admin.setAccessUserRole | aicrm-cli access access-user-role set | human | access | source_contract_only |
 | admin.setAccessUserRoleCompatibility | aicrm-cli access access-user-role-compatibility set | human | access | source_contract_only |

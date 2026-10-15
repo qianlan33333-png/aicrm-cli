@@ -297,93 +297,6 @@
   ],
   "operations": [
     {
-      "id": "access.cli-policy.get",
-      "group": "access",
-      "module": "config",
-      "command": "cli-policy get invoke",
-      "summary": "get CLI IP whitelist policy (super_admin only)",
-      "owner": "access",
-      "execution": "read",
-      "implementation": "owner_handler",
-      "evidence": "source_contract_only",
-      "version": 1,
-      "prerequisites": [
-        "current account authorization",
-        "super_admin role"
-      ],
-      "binding": {
-        "method": "GET",
-        "path": "/api/admin/access/users/{id}/cli-policy",
-        "auth": "human",
-        "parameters": [
-          {
-            "description": "CRM后台账号ID，不是客户customer_id或企微userid",
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "minimum": 1,
-              "type": "integer"
-            }
-          }
-        ],
-        "idempotency_required": false,
-        "body_required": false
-      }
-    },
-    {
-      "id": "access.cli-policy.set",
-      "group": "access",
-      "module": "config",
-      "command": "cli-policy set invoke",
-      "summary": "set CLI IP whitelist policy (super_admin only)",
-      "owner": "access",
-      "execution": "local_transaction",
-      "implementation": "owner_handler",
-      "evidence": "source_contract_only",
-      "version": 1,
-      "prerequisites": [
-        "current account authorization",
-        "super_admin role"
-      ],
-      "binding": {
-        "method": "PUT",
-        "path": "/api/admin/access/users/{id}/cli-policy",
-        "auth": "human",
-        "parameters": [
-          {
-            "description": "CRM后台账号ID，不是客户customer_id或企微userid",
-            "in": "path",
-            "name": "id",
-            "required": true,
-            "schema": {
-              "minimum": 1,
-              "type": "integer"
-            }
-          }
-        ],
-        "body": {
-          "additionalProperties": false,
-          "properties": {
-            "allowed_cidrs": {
-              "description": "该账号CLI的IP/CIDR白名单；空数组使用24小时Token；变更撤销既有CLI Token",
-              "items": {
-                "type": "string"
-              },
-              "type": "array"
-            }
-          },
-          "required": [
-            "allowed_cidrs"
-          ],
-          "type": "object"
-        },
-        "content_type": "application/json",
-        "idempotency_required": false,
-        "body_required": true
-      }
-    },
-    {
       "id": "admin.abandonInvalidLegacyCheckout",
       "group": "payments",
       "module": "orders",
@@ -8975,6 +8888,63 @@
             "required": true,
             "schema": {
               "$ref": "#/components/schemas/PositiveID"
+            }
+          }
+        ],
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
+      "id": "admin.getAccessCLIPolicy",
+      "group": "access",
+      "module": "config",
+      "command": "access-clipolicy get",
+      "summary": "读取账号CLI的IP白名单策略",
+      "owner": "access",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccessCLIPolicyResponse"
+              }
+            }
+          },
+          "description": "当前CLI策略，不含凭据"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "404": {
+          "$ref": "#/components/responses/Error"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/access/users/{id}/cli-policy",
+        "auth": "human",
+        "parameters": [
+          {
+            "description": "CRM后台账号ID，不是客户customer_id或企微员工userid",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
             }
           }
         ],
@@ -29524,6 +29494,70 @@
       }
     },
     {
+      "id": "admin.setAccessCLIPolicy",
+      "group": "access",
+      "module": "config",
+      "command": "access-clipolicy set",
+      "summary": "设置账号CLI的IP白名单并撤销旧CLI Token",
+      "owner": "access",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccessCLIPolicyResponse"
+              }
+            }
+          },
+          "description": "已提交的新CLI策略版本"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "404": {
+          "$ref": "#/components/responses/Error"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "PUT",
+        "path": "/api/admin/access/users/{id}/cli-policy",
+        "auth": "human",
+        "parameters": [
+          {
+            "description": "CRM后台账号ID，不是客户customer_id或企微员工userid",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "body": {
+          "$ref": "#/components/schemas/AccessCLIPolicyUpdateRequest"
+        },
+        "content_type": "application/json",
+        "idempotency_required": false,
+        "body_required": true
+      }
+    },
+    {
       "id": "admin.setAccessUserLoginEnabled",
       "group": "access",
       "module": "config",
@@ -37348,6 +37382,48 @@
         "viewer"
       ],
       "type": "string"
+    },
+    "AccessCLIPolicyResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed_cidrs": {
+          "description": "当前生效的规范化CIDR白名单；空数组表示新Token有效24小时",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "version": {
+          "description": "服务端CLI策略版本；每次提交策略递增，用于撤销该账号既有CLI Token，不是由调用方填写的expected_version",
+          "format": "int64",
+          "minimum": 1,
+          "readOnly": true,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "allowed_cidrs",
+        "version"
+      ],
+      "type": "object"
+    },
+    "AccessCLIPolicyUpdateRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed_cidrs": {
+          "description": "该后台账号CLI白名单，使用IPv4/IPv6 CIDR；单IP使用/32或/128。复用现有20项规范。空数组使新Token有效24小时；省略或null拒绝。提交后撤销旧CLI Token。",
+          "items": {
+            "description": "服务端规范化的CIDR，例如203.0.113.20/32",
+            "type": "string"
+          },
+          "maxItems": 20,
+          "type": "array"
+        }
+      },
+      "required": [
+        "allowed_cidrs"
+      ],
+      "type": "object"
     },
     "AccessEnterpriseEmployeeBindingRequest": {
       "additionalProperties": false,
@@ -60857,6 +60933,44 @@
         }
       },
       "schemas": {
+        "CLIAccountTokenResponse": {
+          "additionalProperties": false,
+          "properties": {
+            "access_token": {
+              "description": "秘密账号CLI凭据，acl_用途前缀；不能当作浏览器Cookie或企微access_token",
+              "type": "string"
+            },
+            "automatic_renewal": {
+              "const": false,
+              "description": "服务端和CLI不自动续期，调用方到期后显式重新登录",
+              "type": "boolean"
+            },
+            "csrf_token": {
+              "description": "秘密CSRF凭据；CLI写操作随X-CSRF-Token发送，仍由原Access授权校验",
+              "type": "string"
+            },
+            "expires_at": {
+              "description": "无白名单为登录起24小时的绝对期限；绑定白名单的长期Token为null，每次请求仍校验来源和撤销版本",
+              "format": "date-time",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "token_type": {
+              "const": "Bearer",
+              "type": "string"
+            }
+          },
+          "required": [
+            "access_token",
+            "token_type",
+            "csrf_token",
+            "expires_at",
+            "automatic_renewal"
+          ],
+          "type": "object"
+        },
         "HumanCatalog": {
           "properties": {
             "actor_id": {
@@ -61054,6 +61168,12 @@
           "name": "aicrm_admin_session",
           "type": "apiKey"
         },
+        "cliAccountBearer": {
+          "bearerFormat": "opaque",
+          "description": "账号CLI Token，保留原账号角色和逐次来源/版本检查；不是独立机器令牌",
+          "scheme": "bearer",
+          "type": "http"
+        },
         "csrfHeader": {
           "in": "header",
           "name": "X-CSRF-Token",
@@ -61103,12 +61223,25 @@
           },
           "responses": {
             "200": {
-              "description": "No-store access_token、csrf_token、expires_at；长期Token的expires_at为null，无Set-Cookie"
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CLIAccountTokenResponse"
+                  }
+                }
+              },
+              "description": "No-store账号CLI凭据，无Set-Cookie"
+            },
+            "400": {
+              "$ref": "#/components/responses/Error"
             },
             "401": {
               "$ref": "#/components/responses/Error"
             },
             "403": {
+              "$ref": "#/components/responses/Error"
+            },
+            "429": {
               "$ref": "#/components/responses/Error"
             }
           },
@@ -61153,12 +61286,38 @@
           "operationId": "logoutCLIAccountToken",
           "responses": {
             "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "ok": {
+                        "const": true,
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "ok"
+                    ],
+                    "type": "object"
+                  }
+                }
+              },
               "description": "当前Token已撤销"
             },
             "401": {
               "$ref": "#/components/responses/Error"
+            },
+            "403": {
+              "$ref": "#/components/responses/Error"
             }
           },
+          "security": [
+            {
+              "cliAccountBearer": [],
+              "csrfHeader": []
+            }
+          ],
           "summary": "撤销当前CLI账号Token"
         }
       },

@@ -65,8 +65,8 @@ aicrm-cli auth whoami
 只有现有 `super_admin` 可以读取/配置。目标 `id` 是 CRM **后台账号 ID**，不是客户 `customer_id`，也不是企微员工 `userid`。先用既有账号目录核对目标，不要照抄示例 ID。
 
 ```sh
-aicrm-cli docs operation access.cli-policy.get
-aicrm-cli invoke access.cli-policy.get --param id=YOUR_ADMIN_ACCOUNT_ID
+aicrm-cli docs operation admin.getAccessCLIPolicy
+aicrm-cli invoke admin.getAccessCLIPolicy --param id=YOUR_ADMIN_ACCOUNT_ID
 ```
 
 白名单文件 `cli-policy.json` 示例（文档专用地址，换成实际服务器出口 IP）：
@@ -76,11 +76,13 @@ aicrm-cli invoke access.cli-policy.get --param id=YOUR_ADMIN_ACCOUNT_ID
 ```
 
 ```sh
-aicrm-cli invoke access.cli-policy.set --param id=YOUR_ADMIN_ACCOUNT_ID \
+aicrm-cli invoke admin.setAccessCLIPolicy --param id=YOUR_ADMIN_ACCOUNT_ID \
   --input cli-policy.json --dry-run
-aicrm-cli invoke access.cli-policy.set --param id=YOUR_ADMIN_ACCOUNT_ID \
+aicrm-cli invoke admin.setAccessCLIPolicy --param id=YOUR_ADMIN_ACCOUNT_ID \
   --input cli-policy.json
 ```
+
+响应包含规范化后的 `allowed_cidrs` 与只读 `version`。`version` 是撤销旧 CLI Token 用的服务端策略版本，不作为 PUT 的输入。
 
 `allowed_cidrs` 必须明确提供数组；`[]` 表示新 Token 使用 24 小时，省略或 `null` 拒绝。使用 IPv4/IPv6 的 CIDR 写法；单个 IPv4 地址加 `/32`，单个 IPv6 地址加 `/128`，不传裸 IP 字符串。沿用现有规范，每次最多提交 20 项。可信代理解析由服务端配置控制，不接受调用方自行填写一个“允许的IP”。修改自己的策略也会撤销自己的旧 CLI Token，之后须从允许来源重新登录。
 
