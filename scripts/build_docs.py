@@ -36,7 +36,9 @@ for doc in bundle['documents']:
         for i, example in enumerate(doc.get('examples', []), 1):
             fence = '`' * max(3, max([len(part) for part in __import__('re').findall(r'`+', example)] or [0]) + 1)
             body += ['', f'## 官方代码示例 {i}（仅供阅读）', '', fence, example, fence]
-        (destination / (doc['id'] + '.md')).write_text('\n'.join(body) + '\n')
+        # Cosmetic Markdown normalization; the JSON bundle retains the extracted
+        # source example bytes for inspection, not execution or request signing.
+        (destination / (doc['id'] + '.md')).write_text('\n'.join(line.expandtabs(4).rstrip() for line in '\n'.join(body).splitlines()) + '\n')
     else:
         coverage = '正文未取得；禁止推测字段'
     lines.append(f"| {doc['id']} | {link} | {coverage} |")
