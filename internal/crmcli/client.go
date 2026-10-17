@@ -32,6 +32,8 @@ type Credential struct {
 	CSRF    string `json:"csrf,omitempty"`
 }
 
+type machineOperationKey struct{}
+
 type Profile struct {
 	Origin string `json:"origin"`
 }
@@ -240,6 +242,9 @@ func (c *Client) request(ctx context.Context, method, path, content string, body
 		return nil, e
 	}
 	r.Header.Set("Accept", "application/json")
+	if id, ok := ctx.Value(machineOperationKey{}).(string); ok {
+		r.Header.Set("X-AICRM-CLI-Operation", id)
+	}
 	if method != "GET" {
 		r.GetBody = nil
 		r.Close = true
@@ -479,7 +484,35 @@ func (c *Client) Call(ctx context.Context, op catalog.Operation, input CallInput
 	if op.Binding == nil {
 		return nil, fail("unavailable", op.BlockedReason, 4)
 	}
-	if c.Credential.Kind != op.Binding.Auth {
+	if c.Credential.Kind == "machine" && op.Binding.Auth == "human" {
+		needed, applicable := catalog.ManagedMachineScope(op)
+		if !applicable {
+			return nil, fail("permission", "operation has no managed machine CLI binding", 4)
+		}
+		resp, e := c.request(ctx, "GET", "/open/v2/cli/context", "", nil, "")
+		if e != nil {
+			return nil, e
+		}
+		var current struct {
+			Capabilities []string `json:"capabilities"`
+			Scopes       []string `json:"scopes"`
+			AdminCLI     bool     `json:"admin_cli_authorized"`
+		}
+		e = json.NewDecoder(resp.Body).Decode(&current)
+		resp.Body.Close()
+		if e != nil {
+			return nil, fail("protocol", "invalid machine context", 1)
+		}
+		granted := false
+		for _, s := range current.Scopes {
+			if s == needed {
+				granted = true
+			}
+		}
+		if !current.AdminCLI || !granted {
+			return nil, fail("permission", "machine CLI delegation or required scope is absent", 4)
+		}
+	} else if c.Credential.Kind != op.Binding.Auth {
 		return nil, fail("permission", "operation is registered for a different identity kind", 4)
 	}
 	path, content, body, e := BuildRequest(op, input)
@@ -488,6 +521,9 @@ func (c *Client) Call(ctx context.Context, op catalog.Operation, input CallInput
 	}
 	if closer, ok := body.(io.Closer); ok {
 		defer closer.Close()
+	}
+	if op.Binding.Auth == "human" {
+		ctx = context.WithValue(ctx, machineOperationKey{}, op.ID)
 	}
 	return c.request(ctx, op.Binding.Method, path, content, body, input.IdempotencyKey)
 }

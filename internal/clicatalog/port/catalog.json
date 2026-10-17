@@ -8900,7 +8900,7 @@
       "group": "access",
       "module": "config",
       "command": "access-clipolicy get",
-      "summary": "读取账号CLI的IP白名单策略",
+      "summary": "读取全局CLI白名单的兼容入口",
       "owner": "access",
       "execution": "read",
       "implementation": "admin_contract",
@@ -10668,6 +10668,50 @@
       "binding": {
         "method": "GET",
         "path": "/api/admin/external-effects/diagnostics",
+        "auth": "human",
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
+      "id": "admin.getGlobalAccessCLIPolicy",
+      "group": "access",
+      "module": "config",
+      "command": "global-access-clipolicy get",
+      "summary": "读取全局CLI的IP白名单策略",
+      "owner": "access",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccessCLIPolicyResponse"
+              }
+            }
+          },
+          "description": "当前CLI策略，不含凭据"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "404": {
+          "$ref": "#/components/responses/Error"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/access/cli-policy",
         "auth": "human",
         "idempotency_required": false,
         "body_required": false
@@ -12784,6 +12828,56 @@
             "required": true,
             "schema": {
               "$ref": "#/components/schemas/PositiveID"
+            }
+          }
+        ],
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
+      "id": "admin.getRpaPackage",
+      "group": "group-ops",
+      "module": "group-ops",
+      "command": "rpa-package get",
+      "summary": "Read saved immutable Markdown task package and current execution receipts",
+      "owner": "groupops",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Latest package or null"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/automation-conversion/group-ops/rpa-package",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "plan_id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
             }
           }
         ],
@@ -29086,6 +29180,72 @@
       }
     },
     {
+      "id": "admin.saveRpaPackage",
+      "group": "group-ops",
+      "module": "group-ops",
+      "command": "rpa-package save",
+      "summary": "CLI only - atomically save a Markdown package and its frozen local execution",
+      "owner": "groupops",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Immutable package and paused frozen execution"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/admin/automation-conversion/group-ops/rpa-package",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 160,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "markdown": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "markdown"
+          ],
+          "type": "object"
+        },
+        "content_type": "application/json",
+        "idempotency_required": true,
+        "body_required": true
+      }
+    },
+    {
       "id": "admin.saveServicePeriodProductExternalPush",
       "group": "period-products",
       "module": "period-products",
@@ -29494,11 +29654,72 @@
       }
     },
     {
+      "id": "admin.setAccessAccountCLIDelegation",
+      "group": "access",
+      "module": "config",
+      "command": "access-account-clidelegation set",
+      "summary": "Explicit full CLI delegation for an existing administrator account",
+      "owner": "access",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "description": "CLI delegation updated; existing subject sessions revoked; browser role unchanged"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "PUT",
+        "path": "/api/admin/access/users/{id}/cli-delegation",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "enabled"
+          ],
+          "type": "object"
+        },
+        "content_type": "application/json",
+        "idempotency_required": false,
+        "body_required": true
+      }
+    },
+    {
       "id": "admin.setAccessCLIPolicy",
       "group": "access",
       "module": "config",
       "command": "access-clipolicy set",
-      "summary": "设置账号CLI的IP白名单并撤销旧CLI Token",
+      "summary": "设置全局CLI白名单的兼容入口",
       "owner": "access",
       "execution": "owner_contract",
       "implementation": "admin_contract",
@@ -29960,6 +30181,57 @@
             "admin_action_token"
           ],
           "type": "object"
+        },
+        "content_type": "application/json",
+        "idempotency_required": false,
+        "body_required": true
+      }
+    },
+    {
+      "id": "admin.setGlobalAccessCLIPolicy",
+      "group": "access",
+      "module": "config",
+      "command": "global-access-clipolicy set",
+      "summary": "设置全局CLI的IP白名单并撤销旧CLI Token",
+      "owner": "access",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccessCLIPolicyResponse"
+              }
+            }
+          },
+          "description": "已提交的新CLI策略版本"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "404": {
+          "$ref": "#/components/responses/Error"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "PUT",
+        "path": "/api/admin/access/cli-policy",
+        "auth": "human",
+        "body": {
+          "$ref": "#/components/schemas/AccessCLIPolicyUpdateRequest"
         },
         "content_type": "application/json",
         "idempotency_required": false,
@@ -33251,6 +33523,63 @@
         },
         "content_type": "application/json",
         "idempotency_required": true,
+        "body_required": true
+      }
+    },
+    {
+      "id": "archive.facts.export",
+      "group": "customers",
+      "module": "customers",
+      "command": "archive-facts export",
+      "summary": "export_archive_facts",
+      "owner": "customers",
+      "execution": "read",
+      "implementation": "machine_v1",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpenPlatformArchiveFactsResponse"
+              }
+            }
+          },
+          "description": "Complete deterministic owner facts with per-collection SHA-256 manifest"
+        },
+        "400": {
+          "$ref": "#/components/responses/OpenPlatformV1Failure"
+        },
+        "401": {
+          "$ref": "#/components/responses/OpenPlatformV1Failure"
+        },
+        "403": {
+          "$ref": "#/components/responses/OpenPlatformV1Failure"
+        },
+        "429": {
+          "$ref": "#/components/responses/OpenPlatformV1Failure"
+        },
+        "503": {
+          "$ref": "#/components/responses/OpenPlatformV1Failure"
+        }
+      },
+      "prerequisites": [
+        "current client grant",
+        "composed Owner Port",
+        "server resource and field authorization"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/open/v1/archive-facts",
+        "auth": "machine",
+        "capability": "archive.facts.read",
+        "scope": "read",
+        "body": {
+          "$ref": "#/components/schemas/OpenPlatformArchiveFactsRequest"
+        },
+        "content_type": "application/json",
+        "idempotency_required": false,
         "body_required": true
       }
     },
@@ -37394,7 +37723,7 @@
           "type": "array"
         },
         "version": {
-          "description": "服务端CLI策略版本；每次提交策略递增，用于撤销该账号既有CLI Token，不是由调用方填写的expected_version",
+          "description": "服务端CLI策略版本；每次提交策略递增，用于撤销所有账号既有CLI Token，不是由调用方填写的expected_version",
           "format": "int64",
           "minimum": 1,
           "readOnly": true,
@@ -37411,12 +37740,11 @@
       "additionalProperties": false,
       "properties": {
         "allowed_cidrs": {
-          "description": "该后台账号CLI白名单，使用IPv4/IPv6 CIDR；单IP使用/32或/128。复用现有20项规范。空数组使新Token有效24小时；省略或null拒绝。提交后撤销旧CLI Token。",
+          "description": "所有后台账号共用的CLI白名单，支持直接填写IPv4/IPv6地址，服务端自动补充单IP主机掩码；也支持CIDR网段。全局配置保留历史账号来源的并集。空数组使新Token有效24小时；省略或null拒绝。提交后撤销所有账号旧CLI Token。",
           "items": {
-            "description": "服务端规范化的CIDR，例如203.0.113.20/32",
+            "description": "IP地址或CIDR网段，例如203.0.113.20；响应始终为服务端规范化的CIDR",
             "type": "string"
           },
-          "maxItems": 20,
           "type": "array"
         }
       },
@@ -37742,7 +38070,7 @@
       "properties": {
         "password": {
           "maxLength": 1024,
-          "minLength": 12,
+          "minLength": 8,
           "type": "string",
           "writeOnly": true
         }
@@ -42100,7 +42428,7 @@
         },
         "password": {
           "maxLength": 1024,
-          "minLength": 12,
+          "minLength": 8,
           "type": "string",
           "writeOnly": true
         },
@@ -48560,7 +48888,7 @@
         },
         "password": {
           "maxLength": 1024,
-          "minLength": 12,
+          "minLength": 8,
           "type": "string",
           "writeOnly": true
         },
@@ -50966,6 +51294,205 @@
       ],
       "type": "object"
     },
+    "OpenPlatformArchiveFactsManifest": {
+      "additionalProperties": false,
+      "properties": {
+        "canonicalization": {
+          "const": "go-json-number-preserving-v1"
+        },
+        "collections": {
+          "additionalProperties": {
+            "additionalProperties": false,
+            "properties": {
+              "row_count": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "sha256": {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              }
+            },
+            "required": [
+              "row_count",
+              "sha256"
+            ],
+            "type": "object"
+          },
+          "minProperties": 12,
+          "type": "object"
+        },
+        "complete": {
+          "const": true
+        },
+        "hash_algorithm": {
+          "const": "sha256"
+        },
+        "source_as_of": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "source_snapshot_id": {
+          "pattern": "^crm-production-",
+          "type": "string"
+        },
+        "version": {
+          "const": "crm-read-facts-manifest.v1"
+        }
+      },
+      "required": [
+        "version",
+        "complete",
+        "hash_algorithm",
+        "canonicalization",
+        "source_as_of",
+        "source_snapshot_id",
+        "collections"
+      ],
+      "type": "object"
+    },
+    "OpenPlatformArchiveFactsRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "hxc_account_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "maxItems": 10000,
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "hxc_account_ids"
+      ],
+      "type": "object"
+    },
+    "OpenPlatformArchiveFactsResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "data": {
+          "properties": {
+            "activation_receipts": {
+              "items": {
+                "properties": {
+                  "channel_code": {
+                    "type": "string"
+                  },
+                  "channel_name": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "customer_id": {
+                    "type": "integer"
+                  },
+                  "occurred_at": {
+                    "format": "date-time",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "customer_id",
+                  "occurred_at",
+                  "channel_code",
+                  "channel_name"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "answers": {
+              "type": "array"
+            },
+            "complete": {
+              "const": true
+            },
+            "contract": {
+              "const": "crm-production-read-facts.v1"
+            },
+            "customers": {
+              "type": "array"
+            },
+            "directory_names": {
+              "type": "object"
+            },
+            "hxc_identity_resolution": {
+              "type": "object"
+            },
+            "identities": {
+              "type": "array"
+            },
+            "manifest": {
+              "$ref": "#/components/schemas/OpenPlatformArchiveFactsManifest"
+            },
+            "messages": {
+              "type": "array"
+            },
+            "orders": {
+              "type": "array"
+            },
+            "read_only": {
+              "const": true
+            },
+            "source_as_of": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "source_snapshot_id": {
+              "pattern": "^crm-production-",
+              "type": "string"
+            },
+            "surveys": {
+              "type": "array"
+            },
+            "users": {
+              "type": "array"
+            },
+            "wecom_first_followed": {
+              "type": "object"
+            },
+            "wecom_names": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "contract",
+            "complete",
+            "read_only",
+            "source_as_of",
+            "source_snapshot_id",
+            "customers",
+            "users",
+            "identities",
+            "directory_names",
+            "wecom_names",
+            "wecom_first_followed",
+            "orders",
+            "messages",
+            "surveys",
+            "answers",
+            "activation_receipts",
+            "hxc_identity_resolution",
+            "manifest"
+          ],
+          "type": "object"
+        },
+        "error": {
+          "type": "null"
+        },
+        "request_id": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "error",
+        "request_id"
+      ],
+      "type": "object"
+    },
     "OpenPlatformBusinessDetailAvailability": {
       "additionalProperties": false,
       "properties": {
@@ -50991,6 +51518,15 @@
     "OpenPlatformCapabilitiesData": {
       "additionalProperties": false,
       "properties": {
+        "admin_cli_authorized": {
+          "description": "Explicit machine delegation; does not replace Owner resource validation",
+          "type": "boolean"
+        },
+        "cli_context_path": {
+          "const": "/open/v2/cli/context",
+          "description": "Full managed CLI discovery including delegated admin operations",
+          "type": "string"
+        },
         "operations": {
           "items": {
             "$ref": "#/components/schemas/OpenPlatformOperationDescriptor"
@@ -51932,6 +52468,9 @@
         "arguments": {
           "oneOf": [
             {
+              "$ref": "#/components/schemas/OpenPlatformArchiveFactsRequest"
+            },
+            {
               "$ref": "#/components/schemas/OpenPlatformCustomerResolveRequest"
             },
             {
@@ -51988,6 +52527,7 @@
         "name": {
           "enum": [
             "list_capabilities",
+            "export_archive_facts",
             "resolve_customer",
             "get_customer_context",
             "list_customer_activities",
@@ -52078,19 +52618,28 @@
         "capabilities": {
           "items": {
             "enum": [
-              "platform.capabilities.read",
-              "customer.resolve",
-              "customer.read",
+              "ai.review_plan.create",
+              "ai.workbench.package.create",
+              "archive.facts.read",
+              "audience.member.history.read",
+              "audience.member.operations.read",
+              "audience.member.read",
+              "audience.product.read",
+              "audience.push.write",
+              "chat.read",
+              "cli.admin.execute",
               "customer.activity.read",
               "customer.detail.read",
+              "customer.list.read",
+              "customer.read",
+              "customer.resolve",
               "identity.read",
+              "operation.read",
               "order.read",
+              "platform.capabilities.read",
               "questionnaire.read",
               "radar.click.read",
-              "radar.link.read",
-              "chat.read",
-              "ai.review_plan.create",
-              "operation.read"
+              "radar.link.read"
             ],
             "type": "string"
           },
@@ -52099,6 +52648,14 @@
           "x-aicrm-additional-capabilities": [
             "customer.list.read",
             "ai.workbench.package.create"
+          ]
+        },
+        "cli_admin_user_id": {
+          "description": "Explicit machine CLI administrator delegation",
+          "minimum": 1,
+          "type": [
+            "integer",
+            "null"
           ]
         },
         "client_id": {
@@ -52211,6 +52768,7 @@
             "enum": [
               "ai.review_plan.create",
               "ai.workbench.package.create",
+              "archive.facts.read",
               "audience.member.history.read",
               "audience.member.operations.read",
               "audience.member.read",
@@ -52338,12 +52896,14 @@
             "enum": [
               "ai.review_plan.create",
               "ai.workbench.package.create",
+              "archive.facts.read",
               "audience.member.history.read",
               "audience.member.operations.read",
               "audience.member.read",
               "audience.product.read",
               "audience.push.write",
               "chat.read",
+              "cli.admin.execute",
               "customer.activity.read",
               "customer.detail.read",
               "customer.list.read",
@@ -52364,6 +52924,14 @@
           "x-aicrm-additional-capabilities": [
             "customer.list.read",
             "ai.workbench.package.create"
+          ]
+        },
+        "cli_admin_user_id": {
+          "description": "Explicit machine CLI administrator delegation",
+          "minimum": 1,
+          "type": [
+            "integer",
+            "null"
           ]
         },
         "display_name": {
@@ -52463,6 +53031,7 @@
         "operation_id": {
           "enum": [
             "platform.capabilities.list",
+            "archive.facts.export",
             "customer.resolve",
             "customer.context.get",
             "customer.activities.list",
@@ -52977,6 +53546,9 @@
         "identity_status": {
           "const": "resolved"
         },
+        "matched_by": {
+          "type": "string"
+        },
         "questionnaire_id": {
           "pattern": "^[1-9][0-9]*$",
           "type": "string"
@@ -53010,6 +53582,7 @@
         "assessment_result_snapshot",
         "source_system",
         "source_record_id",
+        "matched_by",
         "customer_id",
         "identity_status"
       ],
@@ -58079,8 +58652,26 @@
     "SidebarAIOperationsPublicSnapshot": {
       "additionalProperties": false,
       "properties": {
+        "background_fields": {
+          "items": {
+            "$ref": "#/components/schemas/SidebarAIProfileField"
+          },
+          "type": "array"
+        },
+        "basic_fields": {
+          "items": {
+            "$ref": "#/components/schemas/SidebarAIProfileField"
+          },
+          "type": "array"
+        },
         "customer_id": {
           "$ref": "#/components/schemas/PositiveID"
+        },
+        "diagnosis_fields": {
+          "items": {
+            "$ref": "#/components/schemas/SidebarAIProfileField"
+          },
+          "type": "array"
         },
         "last_customer_message": {
           "oneOf": [
@@ -58091,6 +58682,13 @@
               "type": "null"
             }
           ]
+        },
+        "profile_mode": {
+          "description": "Field-only profile, including an empty profile.",
+          "enum": [
+            "fields"
+          ],
+          "type": "string"
         },
         "source_version": {
           "type": "string"
@@ -58143,6 +58741,10 @@
             "read_at": {
               "format": "date-time",
               "type": "string"
+            },
+            "sales_assist_ready": {
+              "description": "Independent native two-mode sales integration is configured. Does not enable the legacy confirmed-snapshot generator.",
+              "type": "boolean"
             },
             "snapshot_token": {
               "description": "Opaque signed snapshot bound to customer, employee and all private input; do not log.",
@@ -58201,6 +58803,27 @@
           "type": "object"
         }
       ]
+    },
+    "SidebarAIProfileField": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "value": {
+          "description": "Full field detail without source metadata or truncation.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "label",
+        "value"
+      ],
+      "type": "object"
     },
     "SidebarBootstrapResponse": {
       "oneOf": [
@@ -58408,6 +59031,179 @@
         "local_only",
         "provider_execution_eligible",
         "real_external_call_executed"
+      ],
+      "type": "object"
+    },
+    "SidebarSalesAssistContextResponse": {
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "data": {
+              "additionalProperties": false,
+              "properties": {
+                "customer_message_ref": {
+                  "maxLength": 128,
+                  "type": "string"
+                },
+                "last_message": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/SidebarSalesAssistMessage"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "last_message_ref": {
+                  "maxLength": 128,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "last_message_ref",
+                "customer_message_ref",
+                "last_message"
+              ],
+              "type": "object"
+            },
+            "request_scope": {
+              "description": "Opaque employee/customer scope for recovering an original request.",
+              "pattern": "^[a-f0-9]{64}$",
+              "type": "string"
+            },
+            "state": {
+              "const": "ready",
+              "type": "string"
+            }
+          },
+          "required": [
+            "state",
+            "request_scope",
+            "data"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "state": {
+              "const": "unconfigured",
+              "type": "string"
+            }
+          },
+          "required": [
+            "state"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "SidebarSalesAssistMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Archive-owned local row reference.",
+          "type": "string"
+        },
+        "occurred_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "customer",
+            "sales",
+            "unknown"
+          ],
+          "type": "string"
+        },
+        "text": {
+          "description": "Source text; non-text messages are not given invented transcription.",
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "role",
+        "type",
+        "text",
+        "occurred_at"
+      ],
+      "type": "object"
+    },
+    "SidebarSalesAssistRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "customer_message_ref": {
+          "description": "Frozen customer-authored record reference from the preview or empty. Text and identity are resolved by the server.",
+          "maxLength": 128,
+          "type": "string"
+        },
+        "last_message_ref": {
+          "description": "Frozen archive reference from the preview or empty.",
+          "maxLength": 128,
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "recommend",
+            "objection"
+          ],
+          "type": "string"
+        },
+        "request_id": {
+          "pattern": "^[a-zA-Z0-9_-]{16,80}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id",
+        "mode"
+      ],
+      "type": "object"
+    },
+    "SidebarSalesAssistResult": {
+      "additionalProperties": false,
+      "properties": {
+        "message": {
+          "description": "Short reason for a non-copyable result.",
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "recommend",
+            "objection"
+          ],
+          "type": "string"
+        },
+        "request_id": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "completed",
+            "running",
+            "blocked",
+            "failed",
+            "outcome_unknown"
+          ],
+          "type": "string"
+        },
+        "text": {
+          "description": "Exact native copy only when completed; otherwise empty. At most 256 KiB UTF-8.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id",
+        "mode",
+        "status",
+        "text"
       ],
       "type": "object"
     },
@@ -60971,6 +61767,46 @@
           ],
           "type": "object"
         },
+        "DelegatedOperation": {
+          "properties": {
+            "capability": {
+              "const": "cli.admin.execute",
+              "type": "string"
+            },
+            "command": {
+              "type": "string"
+            },
+            "idempotency_required": {
+              "type": "boolean"
+            },
+            "operation_id": {
+              "type": "string"
+            },
+            "required_scope": {
+              "enum": [
+                "read",
+                "write"
+              ],
+              "type": "string"
+            },
+            "rest_method": {
+              "type": "string"
+            },
+            "rest_path": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "operation_id",
+            "command",
+            "rest_method",
+            "rest_path",
+            "required_scope",
+            "capability",
+            "idempotency_required"
+          ],
+          "type": "object"
+        },
         "HumanCatalog": {
           "properties": {
             "actor_id": {
@@ -61007,6 +61843,10 @@
         },
         "MachineContext": {
           "properties": {
+            "admin_cli_authorized": {
+              "description": "Explicit cli.admin.execute and administrator delegation; each Owner revalidates at execution",
+              "type": "boolean"
+            },
             "authorization_at_execution": {
               "const": true,
               "type": "boolean"
@@ -61025,6 +61865,13 @@
             },
             "corp_id": {
               "type": "string"
+            },
+            "delegated_operations": {
+              "description": "Existing admin Owner routes callable through explicit cli.admin.execute delegation with this token's scopes. These supplement native operations; can-i may still require resource validation.",
+              "items": {
+                "$ref": "#/components/schemas/DelegatedOperation"
+              },
+              "type": "array"
             },
             "kind": {
               "const": "machine",
@@ -61333,6 +62180,12 @@
                       "actor_id": {
                         "type": "integer"
                       },
+                      "cli_full_admin": {
+                        "type": "boolean"
+                      },
+                      "delegated_authority_role": {
+                        "type": "string"
+                      },
                       "kind": {
                         "const": "human",
                         "type": "string"
@@ -61546,6 +62399,16 @@
           "summary": "Current independent machine grants and available V1 operations"
         }
       }
+    },
+    "x-aicrm-machine-admin-cli": {
+      "allowed_routes": "Exact registered human CLI method and API path only",
+      "binding": "cli_admin_user_id",
+      "capability": "cli.admin.execute",
+      "cookies_and_browser_origin": "rejected",
+      "credential": "OAuth client_credentials bearer; never a human session",
+      "operation_header": "X-AICRM-CLI-Operation",
+      "provider_behavior": "Original Owner and Provider conditions remain authoritative",
+      "write_authorization": "Token write scope and live grant fenced in every business Unit of Work"
     }
   }
 }

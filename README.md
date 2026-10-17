@@ -1,6 +1,8 @@
 # CRM CLI 使用与交付范围
 
 
+**v0.3.0：受管机器可调用明确委托的管理命令。** 同步已上线 V4 的机器 Bearer 适配与 578 项目录；完整流程见[受管机器审核交接指南](docs/managed-cli-handoff.md)。旧 v0.2.0 会在本地拒绝机器调用管理绑定，外部调用方应更新客户端。服务端仍须启用对应明确委托；更新客户端不会授予权限。
+
 先给 AI 读：[AI 使用手册](docs/ai-guide.md)、[登录与有效期](docs/authentication.md)、[完整命令目录](docs/capability-index.md)。本版新增账号 CLI Token 与离线字段/官方资料查询；账号登录需服务端安装本版 CLI 认证能力，旧服务端不能直接使用新登录入口。
 
 ```sh
@@ -17,13 +19,13 @@ aicrm-cli docs coverage
 
 **官方资料覆盖有明确缺口**：已列出 1,695 篇独立官方文档（3,661 个导航入口），其中 112 篇已取得参数表和示例，其余 1,583 篇正文受访问限制。离线资料含 3,907 行表格、273 段示例，不代表全站正文、逐字段人工核验、CRM 全部接入或真实 Provider 验收。见 [逐项官方目录](docs/wecom-index.md) 和 [覆盖记录](docs/wecom-coverage.json)。
 
-这是 AI-CRM 的独立 HTTP 命令行客户端。当前提供 **24 个导航入口的命令映射、现有管理接口的薄客户端、20 项既有机器 V1 操作及权限管理调用**。CLI 调用业务 Owner，不连接数据库或企微 Provider。
+这是 AI-CRM 的独立 HTTP 命令行客户端。当前提供 **24 个导航入口的命令映射、现有管理接口的薄客户端、21 项既有机器 V1 操作及权限管理调用**。CLI 调用业务 Owner，不连接数据库或企微 Provider。
 
-**登记与验收分别记录。** 编译目录含 572 项：520 项人类接口绑定、20 项机器绑定、32 项不可执行项。其中 31 项是未核验企微能力及另需业务合同的扩展，1 项旧签名接口不能使用人类会话；其机器 V1 替代操作独立授权。绑定只是源码契约；不证明路由已安装、资源授权、Provider 就绪或业务成功。
+**登记与验收分别记录。** 编译目录含 578 项：525 项管理接口绑定、21 项机器绑定、32 项不可执行项。其中 31 项是未核验企微能力及另需业务合同的扩展，1 项旧签名接口不能使用人类会话；其机器 V1 替代操作独立授权。绑定只是源码契约；不证明路由已安装、资源授权、Provider 就绪或业务成功。
 
 完整逐项目录见 [能力索引](docs/capability-index.md)，群运营的 54 项命令见 [群运营能力](docs/group-ops-capabilities.md)，机器可读目录是 `internal/clicatalog/port/catalog.json`。
 
-**v0.1.4 支持按计划推送全部绑定群**：只填计划 ID、话术、小程序素材 ID，显式选择 `--all-bound-groups`；自动读完全部绑定页并保存固定请求快照。新版服务器将这一批的所有群放进一个企微群发任务，逐群状态独立读取。已有带 HMAC 签名的群运营 Webhook 客户端：独立密钥配置、状态检查、删除与动态消息提交，支持本地 dry-run、原事件安全重放及结果未知处理。完整安装、发送和投递查询见 [Webhook 使用说明书](docs/groupops-webhook.md)。这些本地命令不改写服务端 572 项目录，也不继承人类或机器身份。
+**v0.1.4 支持按计划推送全部绑定群**：只填计划 ID、话术、小程序素材 ID，显式选择 `--all-bound-groups`；自动读完全部绑定页并保存固定请求快照。新版服务器将这一批的所有群放进一个企微群发任务，逐群状态独立读取。已有带 HMAC 签名的群运营 Webhook 客户端：独立密钥配置、状态检查、删除与动态消息提交，支持本地 dry-run、原事件安全重放及结果未知处理。完整安装、发送和投递查询见 [Webhook 使用说明书](docs/groupops-webhook.md)。这些本地命令不改写服务端 578 项目录，也不继承人类或机器身份。
 
 ```sh
 aicrm-cli group-ops webhook configure
@@ -38,7 +40,7 @@ aicrm-cli group-ops webhook send --input groupops-request.json --event-id YOUR_S
 从 [GitHub Release](https://github.com/qianlan33333-png/aicrm-cli/releases/latest) 下载适合系统的压缩包，解压后将 `aicrm-cli` 放入 PATH。也可以从源码安装（Go 1.26.6 或更高）：
 
 ```sh
-go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.2.0
+go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.3.0
 aicrm-cli profile add staging https://your-staging-origin.example
 aicrm-cli profile use staging
 ```
@@ -65,6 +67,8 @@ aicrm-cli schema get customer.detail.get
 aicrm-cli schema cli
 aicrm-cli auth can-i customer.detail.get --resource customer-resource.json
 ```
+
+在线机器发现需要同时读取 `operations`（原生）与 `delegated_operations`（已明确委托的管理入口）。编译目录中的 `auth=human` 表示原 Owner 路由，并不排除具备明确管理委托的机器调用；不能只看 21 个原生入口就判定后续审核或批准不存在。
 
 `customer-resource.json` 示例：`{"customer_id":7}`。`can-i` 有三个结果：`allowed`、`denied`、`requires_resource_check`。最后一种也返回退出码 4，表示对象权限尚未证明；不会通过查询运行写操作。执行始终重新授权。人类 can-i 对无法从角色安全判定的动作保留 Owner 校验，不能把它当对象或字段权限的肯定证明。
 
@@ -122,4 +126,4 @@ aicrm-cli owners customer-owner-handoff-batch get --param batch_id=YOUR_BATCH_ID
 
 ## 服务端边界
 
-当前目录保留 572 项元数据；目录存在不表示服务端已安装或 Provider 就绪。32 项没有执行绑定。机器身份只使用已登记的机器合同；人类管理接口仍由服务器授权。客户端不包含服务端、数据库、Provider、应用部署或账号恢复工具。目录更新需同步兼容服务端契约。
+当前目录保留 578 项元数据；目录存在不表示服务端已安装或 Provider 就绪。32 项没有执行绑定。机器身份可调用原生机器合同；明确获授 `cli.admin.execute` 且绑定有效管理授权时，也可调用已登记管理接口。每次均由服务器核对当前权限与资源，不能换用人类 Token。客户端不包含服务端、数据库、Provider、应用部署或账号恢复工具。目录更新需同步兼容服务端契约。

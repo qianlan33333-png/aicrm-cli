@@ -38,6 +38,7 @@
 | admin.revealCustomerContact | aicrm-cli customers reveal-customer-contact invoke | human | customer | source_contract_only |
 | admin.revealCustomerPhone | aicrm-cli customers reveal-customer-phone invoke | human | customer | source_contract_only |
 | admin.reverseOneIDMerge | aicrm-cli identity reverse-one-idmerge invoke | human | identity | source_contract_only |
+| archive.facts.export | aicrm-cli customers archive-facts export | machine | customers | source_contract_only |
 | customer.activities.list | aicrm-cli customers customer-activities list | machine | customers | source_contract_only |
 | customer.context.get | aicrm-cli customers customer-context get | machine | customers | source_contract_only |
 | customer.detail.get | aicrm-cli customers customer-detail get | machine | customers | source_contract_only |
@@ -269,6 +270,7 @@
 | admin.getGroupOpsPlan | aicrm-cli group-ops group-ops-plan get | human | groupops | source_contract_only |
 | admin.getGroupOpsWebhook | aicrm-cli group-ops group-ops-webhook get | human | groupops | source_contract_only |
 | admin.getGroupOpsWebhookDescriptor | aicrm-cli group-ops group-ops-webhook-descriptor get | human | groupops | source_contract_only |
+| admin.getRpaPackage | aicrm-cli group-ops rpa-package get | human | groupops | source_contract_only |
 | admin.listGroupOpsDirectoryGroups | aicrm-cli group-ops group-ops-directory-groups list | human | groupops | source_contract_only |
 | admin.listGroupOpsExecutions | aicrm-cli group-ops group-ops-executions list | human | groupops | source_contract_only |
 | admin.listGroupOpsGroupPicker | aicrm-cli group-ops group-ops-group-picker list | human | groupops | source_contract_only |
@@ -298,6 +300,7 @@
 | admin.removeGroupOpsPlanGroupAsset | aicrm-cli group-ops group-ops-plan-group-asset remove | human | groupops | source_contract_only |
 | admin.removeGroupOpsPlanMember | aicrm-cli group-ops group-ops-plan-member remove | human | groupops | source_contract_only |
 | admin.removeGroupOpsPlanNode | aicrm-cli group-ops group-ops-plan-node remove | human | groupops | source_contract_only |
+| admin.saveRpaPackage | aicrm-cli group-ops rpa-package save | human | groupops | source_contract_only |
 | admin.syncGroupOpsDirectoryGroups | aicrm-cli group-ops sync-group-ops-directory-groups invoke | human | groupops | source_contract_only |
 | admin.syncGroupOpsDirectoryGroupsAlias | aicrm-cli group-ops sync-group-ops-directory-groups-alias invoke | human | groupops | source_contract_only |
 | admin.syncGroupOpsGroupPicker | aicrm-cli group-ops sync-group-ops-group-picker invoke | human | groupops | source_contract_only |
@@ -692,6 +695,7 @@
 | admin.getAccessCLIPolicy | aicrm-cli access access-clipolicy get | human | access | source_contract_only |
 | admin.getConfigCategory | aicrm-cli config config-category get | human | config | source_contract_only |
 | admin.getConfiguredAIModel | aicrm-cli config configured-aimodel get | human | config | source_contract_only |
+| admin.getGlobalAccessCLIPolicy | aicrm-cli access global-access-clipolicy get | human | access | source_contract_only |
 | admin.getInvoiceCardConfiguration | aicrm-cli config invoice-card-configuration get | human | config | source_contract_only |
 | admin.getLegacyAppSettings | aicrm-cli config legacy-app-settings get | human | config | source_contract_only |
 | admin.getOpenPlatformClient | aicrm-cli access open-platform-client get | human | access | source_contract_only |
@@ -724,11 +728,13 @@
 | admin.saveConfiguredAIModel | aicrm-cli config configured-aimodel save | human | config | source_contract_only |
 | admin.saveLegacyAppSettings | aicrm-cli config legacy-app-settings save | human | config | source_contract_only |
 | admin.saveSetupWizard | aicrm-cli config setup-wizard save | human | config | source_contract_only |
+| admin.setAccessAccountCLIDelegation | aicrm-cli access access-account-clidelegation set | human | access | source_contract_only |
 | admin.setAccessCLIPolicy | aicrm-cli access access-clipolicy set | human | access | source_contract_only |
 | admin.setAccessUserLoginEnabled | aicrm-cli access access-user-login-enabled set | human | access | source_contract_only |
 | admin.setAccessUserRole | aicrm-cli access access-user-role set | human | access | source_contract_only |
 | admin.setAccessUserRoleCompatibility | aicrm-cli access access-user-role-compatibility set | human | access | source_contract_only |
 | admin.setConfigCategoryEnabled | aicrm-cli config config-category-enabled set | human | config | source_contract_only |
+| admin.setGlobalAccessCLIPolicy | aicrm-cli access global-access-clipolicy set | human | access | source_contract_only |
 | admin.stageInvoiceAPIv3Key | aicrm-cli config stage-invoice-apiv3-key invoke | human | config | source_contract_only |
 | admin.submitInvoiceCardConfiguration | aicrm-cli config submit-invoice-card-configuration invoke | human | config | source_contract_only |
 | admin.transferAccessSuperAdmin | aicrm-cli access transfer-access-super-admin invoke | human | access | source_contract_only |

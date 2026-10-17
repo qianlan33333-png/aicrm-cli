@@ -367,7 +367,7 @@ func TestCatalogRetainsV1AndCoversSidebarWithoutExecutableGaps(t *testing.T) {
 			t.Fatal("candidate became executable")
 		}
 	}
-	if machine != 20 {
+	if machine != 21 {
 		t.Fatalf("machine V1 count %d", machine)
 	}
 	for _, module := range c.Modules {

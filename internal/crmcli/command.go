@@ -22,7 +22,7 @@ import (
 )
 
 // Version is replaced for release builds.
-var Version = "0.2.0"
+var Version = "0.3.0"
 
 type Options struct {
 	Profile, Format string

@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "canonical_application_sha": "c11d58f13b29f092ca95d1f9b4eb28ce2e28de1e",
+  "canonical_source_sha": "7ad5e6fc5a44d658e4ff7e42f33f9ae916106c24",
+  "release": "v0.3.0",
+  "files": [
+    {
+      "path": "internal/crmcli/client.go",
+      "canonical_sha256": "6769448d0c92276bbb97348789307898b15315c88cc98a54b5c512b1acd13ed8",
+      "exported_sha256": "199125b33113cf869674c9543496a7b19005589a2bc63f58c2225351432a2482",
+      "adaptation": "Go module and client environment shim only"
+    },
+    {
+      "path": "internal/crmcli/machine_admin_test.go",
+      "canonical_sha256": "71b1e5ec37271c45dba9560907dd17757054b48f34eef8c675e5bbcdbb74c475",
+      "exported_sha256": "71b1e5ec37271c45dba9560907dd17757054b48f34eef8c675e5bbcdbb74c475",
+      "adaptation": "byte-identical"
+    },
+    {
+      "path": "internal/crmcli/archive_facts_cli_test.go",
+      "canonical_sha256": "a9932ca2e3b0b3712f12e662356940e843863e9b2e40ad993d448997fbfe7ab5",
+      "exported_sha256": "864b84919bed5e5fc3066a9ee7fa0d10adb84a1d3f6c9e41d0e3256960ce8445",
+      "adaptation": "Go module and client environment shim only"
+    },
+    {
+      "path": "internal/clicatalog/port/catalog.go",
+      "canonical_sha256": "096b2d3875c6af0a9971f6e5d7b4e7b7376b6866d5b970e30897c11e0fc1c922",
+      "exported_sha256": "096b2d3875c6af0a9971f6e5d7b4e7b7376b6866d5b970e30897c11e0fc1c922",
+      "adaptation": "byte-identical"
+    },
+    {
+      "path": "internal/clicatalog/port/machine.go",
+      "canonical_sha256": "387c380d8c31cd3c583cc261d53983283700a9c670ba45d0729145bac0c1b670",
+      "exported_sha256": "387c380d8c31cd3c583cc261d53983283700a9c670ba45d0729145bac0c1b670",
+      "adaptation": "byte-identical"
+    },
+    {
+      "path": "internal/clicatalog/port/catalog.json",
+      "canonical_sha256": "86a07d7001392bf38aa38858144ee295c7dfa81b0de95d345ceed5b81ef715fa",
+      "exported_sha256": "86a07d7001392bf38aa38858144ee295c7dfa81b0de95d345ceed5b81ef715fa",
+      "adaptation": "byte-identical"
+    }
+  ]
+}

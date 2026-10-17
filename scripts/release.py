@@ -1,7 +1,7 @@
 """Build download archives without credentials or local configuration."""
 import argparse,hashlib,os,pathlib,subprocess,tarfile,zipfile
 parser=argparse.ArgumentParser(description=__doc__)
-parser.add_argument('--version',default='0.2.0')
+parser.add_argument('--version',default='0.3.0')
 version=parser.parse_args().version.removeprefix('v')
 root=pathlib.Path(__file__).resolve().parents[1]
 dist=root/'dist';dist.mkdir(exist_ok=True)

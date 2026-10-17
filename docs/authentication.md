@@ -114,3 +114,9 @@ aicrm-cli invoke admin.setAccessCLIPolicy --param id=YOUR_ADMIN_ACCOUNT_ID \
 | 可被其他用户读取的文件或跨 Origin 文件 | 本地拒绝加载 |
 
 源码模块、真实 PostgreSQL/TLS 旅程、实际安装二进制合同和生产读回分别保存收据；局部通过不称全仓回归。浏览器真实企微扫码和真实群发结果另外记录。
+
+## 受管完整机器 CLI（v0.3.0）
+
+独立机器可在服务端明确授予 `cli.admin.execute`、绑定有效管理授权、配置来源及企业范围后，用自己的机器 Bearer 调用已登记管理接口。客户端先读取在线上下文，再携带准确 `X-AICRM-CLI-Operation`；不读取或伪装人类 Token，不传 Cookie/CSRF 混用。读取需 read，管理写操作需 write，Owner 仍重新核验当前资源和业务条件。新客户端不自动授予这些权限。
+
+已经获授读写的机器应请求 `--scope 'read write'`；请求 `read` 的 Token 仍只有读取权限，不会因为 IP 已加入白名单而自动增加写权限。机器 OAuth Token 保留服务端期限，自动化须由受管凭据注入方按既有合同重新签发；本次不引入自动重登或人类 Token 冒用。服务端未提供委托时明确拒绝。
