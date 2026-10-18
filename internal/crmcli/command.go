@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
 	"sort"
 	"strings"
 	"text/tabwriter"
@@ -20,9 +21,6 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
 )
-
-// Version is replaced for release builds.
-var Version = "0.3.0"
 
 type Options struct {
 	Profile, Format string
@@ -107,10 +105,11 @@ func Run(args []string, in io.Reader, out, stderr io.Writer) int {
 		_ = json.NewEncoder(out).Encode(value)
 		return f.Exit
 	}
+	maybeNotifyUpdate(args, in, out, stderr)
 	return 0
 }
 func NewCommand(o *Options) *cobra.Command {
-	root := &cobra.Command{Use: "aicrm-cli", Version: Version, Short: "CRM business operations; human and machine authorization remain independent", SilenceUsage: true, SilenceErrors: true}
+	root := &cobra.Command{Use: "aicrm-cli", Version: clientVersion(), Short: "CRM business operations; human and machine authorization remain independent", SilenceUsage: true, SilenceErrors: true}
 	root.PersistentPreRunE = func(*cobra.Command, []string) error {
 		if o.Format != "json" && o.Format != "table" && o.Format != "ndjson" {
 			return fail("validation", "format must be json, table or ndjson", 2)
@@ -123,7 +122,8 @@ func NewCommand(o *Options) *cobra.Command {
 	root.PersistentFlags().StringVar(&o.Profile, "profile", "", "configured server profile")
 	root.PersistentFlags().StringVar(&o.Format, "format", "json", "json, ndjson or table")
 	root.PersistentFlags().DurationVar(&o.Timeout, "timeout", 30*time.Second, "client request timeout")
-	root.AddCommand(profileCommands(o), authCommands(o), docsCommands(o))
+	root.AddCommand(profileCommands(o), authCommands(o))
+	addUpdateCommands(root, o)
 	caps := &cobra.Command{Use: "capabilities", Short: "compiled inventory and source evidence"}
 	caps.AddCommand(&cobra.Command{Use: "list", RunE: func(*cobra.Command, []string) error { return o.print(catalog.Load()) }})
 	caps.AddCommand(&cobra.Command{Use: "live", Short: "current server grants; resource conditions still checked at execution", RunE: func(cmd *cobra.Command, _ []string) error {
@@ -140,13 +140,16 @@ func NewCommand(o *Options) *cobra.Command {
 	root.AddCommand(caps)
 	schema := &cobra.Command{Use: "schema"}
 	schema.AddCommand(&cobra.Command{Use: "cli", Args: cobra.NoArgs, Short: "additive V2 authentication and discovery contracts", RunE: func(*cobra.Command, []string) error { return o.print(catalog.Load().CLIContract) }})
-	schema.AddCommand(&cobra.Command{Use: "webhook", Args: cobra.NoArgs, Short: "signed Group Ops webhook contract", RunE: func(*cobra.Command, []string) error { return o.print(groupOpsWebhookSchema()) }})
 	schema.AddCommand(&cobra.Command{Use: "get OPERATION_ID", Args: cobra.ExactArgs(1), RunE: func(_ *cobra.Command, args []string) error {
 		op, ok := catalog.Find(args[0])
 		if !ok {
 			return fail("not_found", "unknown operation ID", 2)
 		}
-		return o.print(map[string]any{"operation": op, "definitions": catalog.Load().Schemas})
+		definitions := catalog.Load().Schemas
+		if op.ID == "admin.saveRpaPackage" || op.ID == "admin.getRpaPackage" {
+			definitions = referencedDefinitions(op, definitions)
+		}
+		return o.print(map[string]any{"operation": op, "definitions": definitions})
 	}})
 	root.AddCommand(schema)
 	invoke := &cobra.Command{Use: "invoke OPERATION_ID", Args: cobra.ExactArgs(1)}
@@ -190,9 +193,24 @@ func NewCommand(o *Options) *cobra.Command {
 		use := parts[len(parts)-1]
 		cmd := &cobra.Command{Use: use, Short: op.Summary, Long: op.Summary + "\nOperation ID: " + op.ID + "\nEvidence: " + op.Evidence + "\nAuthorization is checked by the owning server route.", Args: cobra.NoArgs, RunE: func(cmd *cobra.Command, _ []string) error { return o.invoke(cmd, op) }}
 		addCallFlags(cmd)
+		if op.ID == "admin.saveRpaPackage" || op.ID == "admin.getRpaPackage" {
+			for _, name := range []string{"param", "upload", "output", "secret-output", "unrestricted-owner-scope", "all", "cursor-field", "cursor-query", "wait", "wait-timeout", "status-field"} {
+				_ = cmd.Flags().MarkHidden(name)
+			}
+			cmd.Long = "本地 Agent 群运营任务包。先读取现有计划及群清单，确认内容后 dry-run → save → get。\n一次启用只执行当前包，素材字节保留在本机。设备连接与 CLI 登录分别授权。"
+			if op.ID == "admin.saveRpaPackage" {
+				_ = cmd.Flags().MarkHidden("query")
+				cmd.Flags().Lookup("input").Usage = "任务 Markdown 文件；校验并补全相对素材的大小与 SHA-256"
+				cmd.Example = "  aicrm-cli group-ops rpa-package save --input task.md --idempotency-key 本次固定键 --dry-run\n  aicrm-cli group-ops rpa-package save --input task.md --idempotency-key 本次固定键"
+			} else {
+				for _, name := range []string{"input", "idempotency-key", "dry-run"} {
+					_ = cmd.Flags().MarkHidden(name)
+				}
+				cmd.Example = "  aicrm-cli group-ops rpa-package get --query plan_id=实际计划ID"
+			}
+		}
 		parent.AddCommand(cmd)
 	}
-	groups["group-ops"].AddCommand(groupOpsWebhookCommands(o))
 	root.AddCommand(&cobra.Command{Use: "doctor", RunE: func(cmd *cobra.Command, _ []string) error {
 		c, e := o.client()
 		if e != nil {
@@ -226,6 +244,9 @@ func NewCommand(o *Options) *cobra.Command {
 		}
 		return o.print(map[string]any{"origin": c.Origin, "server_origin": serverOrigin, "environment_binding": binding, "identity_kind": c.Credential.Kind, "authentication": "verified", "provider_readiness": "not_proven_by_authentication"})
 	}})
+	for _, extend := range distributionCommands {
+		extend(root, o)
+	}
 	return root
 }
 func ctx(cmd *cobra.Command) context.Context { return cmd.Context() }
@@ -299,6 +320,27 @@ func (o *Options) invoke(cmd *cobra.Command, op catalog.Operation) error {
 	}
 	if input.Body, e = readInput(o, file); e != nil {
 		return e
+	}
+	if op.ID == "admin.saveRpaPackage" {
+		directory, err := os.Getwd()
+		if err != nil {
+			return err
+		}
+		if file != "" && file != "-" {
+			directory = filepath.Dir(file)
+		}
+		body, canonical, err := PrepareTaskPackage(input.Body, directory)
+		if err != nil {
+			return err
+		}
+		input.Body = body
+		dry, _ := cmd.Flags().GetBool("dry-run")
+		if !dry && file != "" && file != "-" {
+			// Keep the user's one Markdown file as the canonical, hashed config.
+			if err = saveTaskMarkdown(file, canonical); err != nil {
+				return err
+			}
+		}
 	}
 	unrestricted, _ := cmd.Flags().GetBool("unrestricted-owner-scope")
 	if e = validateScopeIntent(op, input.Body, unrestricted); e != nil {

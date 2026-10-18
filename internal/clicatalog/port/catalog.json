@@ -21844,6 +21844,188 @@
       }
     },
     {
+      "id": "admin.opsInspectionFailure",
+      "group": "ops",
+      "module": "ops",
+      "command": "ops-inspection-failure invoke",
+      "summary": "读取准确失败版本与不补发处置审计",
+      "owner": "operations",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "type": "object"
+              }
+            }
+          },
+          "description": "原失败及准确版本匹配的处置收据"
+        },
+        "400": {
+          "description": "无效请求"
+        },
+        "403": {
+          "description": "需要超级管理员"
+        },
+        "404": {
+          "description": "记录不存在"
+        },
+        "503": {
+          "description": "数据源不可用"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/ops-inspections/failures/{check_id}/{id}",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "check_id",
+            "required": true,
+            "schema": {
+              "enum": [
+                "outbound.delivery",
+                "automation.runs"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
+      "id": "admin.opsInspectionFailureDisposition",
+      "group": "ops",
+      "module": "ops",
+      "command": "ops-inspection-failure-disposition invoke",
+      "summary": "确认准确历史失败原因并决定不补发，保留原失败与永久审计",
+      "owner": "operations",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "type": "object"
+              }
+            }
+          },
+          "description": "原子持久化的处置审计，幂等重放返回原收据，不改业务状态也不发送"
+        },
+        "400": {
+          "description": "无效请求"
+        },
+        "403": {
+          "description": "需要超级管理员及写入CSRF"
+        },
+        "404": {
+          "description": "记录不存在"
+        },
+        "409": {
+          "description": "失败版本已变更、未终止或幂等冲突"
+        },
+        "503": {
+          "description": "数据源不可用"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/admin/ops-inspections/failures/{check_id}/{id}/disposition",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "check_id",
+            "required": true,
+            "schema": {
+              "enum": [
+                "outbound.delivery",
+                "automation.runs"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 160,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "evidence_reference": {
+              "description": "明确原因与不补发决定的可追溯证据引用",
+              "minLength": 1,
+              "type": "string"
+            },
+            "expected_updated_at": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "reason_code": {
+              "pattern": "^[a-z][a-z0-9_.-]{0,95}$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "expected_updated_at",
+            "reason_code",
+            "evidence_reference"
+          ],
+          "type": "object"
+        },
+        "content_type": "application/json",
+        "idempotency_required": true,
+        "body_required": true
+      }
+    },
+    {
       "id": "admin.opsInspectionIssueUpdate",
       "group": "ops",
       "module": "ops",
@@ -30192,7 +30374,7 @@
       "group": "access",
       "module": "config",
       "command": "global-access-clipolicy set",
-      "summary": "设置全局CLI的IP白名单并撤销旧CLI Token",
+      "summary": "设置全局CLI的IP白名单",
       "owner": "access",
       "execution": "owner_contract",
       "implementation": "admin_contract",
@@ -37723,7 +37905,7 @@
           "type": "array"
         },
         "version": {
-          "description": "服务端CLI策略版本；每次提交策略递增，用于撤销所有账号既有CLI Token，不是由调用方填写的expected_version",
+          "description": "服务端CLI策略修订；仅规范化后的CIDR集合实际变化时递增，不作为全局CLI Token撤销门槛，也不是调用方填写的expected_version",
           "format": "int64",
           "minimum": 1,
           "readOnly": true,
@@ -37740,7 +37922,7 @@
       "additionalProperties": false,
       "properties": {
         "allowed_cidrs": {
-          "description": "所有后台账号共用的CLI白名单，支持直接填写IPv4/IPv6地址，服务端自动补充单IP主机掩码；也支持CIDR网段。全局配置保留历史账号来源的并集。空数组使新Token有效24小时；省略或null拒绝。提交后撤销所有账号旧CLI Token。",
+          "description": "所有后台账号共用的CLI白名单，支持直接填写IPv4/IPv6地址，服务端自动补充单IP主机掩码；也支持CIDR网段。全局配置保留历史账号来源的并集。空数组使新Token有效24小时；省略或null拒绝。服务端按规范化后的CIDR集合判断真实变化；集合变化只更新策略修订，每次请求仍校验凭据状态、账号授权、期限和当前来源。仍符合当前来源且凭据有效的Token不会仅因策略修订变化而失效；移除来源后只拒绝当前来源不再允许的请求。清空白名单后无到期的既有长期Token会被拒绝。",
           "items": {
             "description": "IP地址或CIDR网段，例如203.0.113.20；响应始终为服务端规范化的CIDR",
             "type": "string"
@@ -55961,6 +56143,30 @@
       ],
       "type": "object"
     },
+    "ProductDistributionPolicyRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "commission_rate_basis_points": {
+          "maximum": 3000,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "version": {
+          "format": "int64",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "wait_days": {
+          "maximum": 29,
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
     "ProductLocalEntitlementPage": {
       "additionalProperties": false,
       "properties": {
@@ -57404,7 +57610,7 @@
           "items": {
             "$ref": "#/components/schemas/RuntimeConfigReleaseSetting"
           },
-          "maxItems": 34,
+          "maxItems": 50,
           "minItems": 1,
           "type": "array"
         },
@@ -57465,7 +57671,7 @@
           "items": {
             "$ref": "#/components/schemas/RuntimeConfigReleaseSetting"
           },
-          "maxItems": 34,
+          "maxItems": 50,
           "minItems": 1,
           "type": "array"
         },
@@ -57526,7 +57732,23 @@
                   "survey.oauth_enabled",
                   "survey.oauth_app_id",
                   "survey.oauth_open_platform_id",
-                  "survey.oauth_scope"
+                  "survey.oauth_scope",
+                  "ai_agent_generation.enabled",
+                  "alipay.provider_enabled",
+                  "alipay.app_id",
+                  "alipay.production",
+                  "wechat_invoice.enabled",
+                  "wechat_invoice.service_merchant_id",
+                  "wechat_invoice.merchant_serial",
+                  "wechat_invoice.seller_name",
+                  "wechat_invoice.seller_tax_id",
+                  "wechat_invoice.billing_person_id",
+                  "wechat_invoice.default_tax_code",
+                  "wechat_invoice.default_tax_rate",
+                  "wechat_invoice.default_goods_name",
+                  "wechat_invoice.key_file_id",
+                  "wechat_invoice.logo_url",
+                  "wechat_invoice.card_confirmed"
                 ],
                 "type": "string"
               }
@@ -57628,7 +57850,7 @@
           "items": {
             "$ref": "#/components/schemas/RuntimeConfigReleaseSetting"
           },
-          "maxItems": 34,
+          "maxItems": 50,
           "minItems": 1,
           "type": "array"
         }
@@ -57848,7 +58070,23 @@
             "survey.oauth_enabled",
             "survey.oauth_app_id",
             "survey.oauth_open_platform_id",
-            "survey.oauth_scope"
+            "survey.oauth_scope",
+            "ai_agent_generation.enabled",
+            "alipay.provider_enabled",
+            "alipay.app_id",
+            "alipay.production",
+            "wechat_invoice.enabled",
+            "wechat_invoice.service_merchant_id",
+            "wechat_invoice.merchant_serial",
+            "wechat_invoice.seller_name",
+            "wechat_invoice.seller_tax_id",
+            "wechat_invoice.billing_person_id",
+            "wechat_invoice.default_tax_code",
+            "wechat_invoice.default_tax_rate",
+            "wechat_invoice.default_goods_name",
+            "wechat_invoice.key_file_id",
+            "wechat_invoice.logo_url",
+            "wechat_invoice.card_confirmed"
           ],
           "type": "string"
         },
@@ -58325,6 +58563,13 @@
           "maxLength": 10000,
           "type": "string"
         },
+        "distribution_policy": {
+          "$ref": "#/components/schemas/ProductDistributionPolicyRequest"
+        },
+        "duration_days": {
+          "minimum": 1,
+          "type": "integer"
+        },
         "images": {
           "items": {
             "maxLength": 2048,
@@ -58356,7 +58601,7 @@
         "description",
         "price_minor",
         "currency",
-        "images"
+        "duration_days"
       ],
       "type": "object"
     },
@@ -58455,6 +58700,13 @@
           "maxLength": 10000,
           "type": "string"
         },
+        "distribution_policy": {
+          "$ref": "#/components/schemas/ProductDistributionPolicyRequest"
+        },
+        "duration_days": {
+          "minimum": 1,
+          "type": "integer"
+        },
         "expected_version": {
           "$ref": "#/components/schemas/PositiveID"
         },
@@ -58484,7 +58736,7 @@
         "description",
         "price_minor",
         "currency",
-        "images"
+        "duration_days"
       ],
       "type": "object"
     },
@@ -58864,7 +59116,20 @@
               "const": "ready"
             },
             "workbench": {
-              "$ref": "#/components/schemas/SidebarWorkbench"
+              "additionalProperties": false,
+              "properties": {
+                "profile": {
+                  "$ref": "#/components/schemas/SidebarWorkbenchProfile"
+                },
+                "safety": {
+                  "$ref": "#/components/schemas/SidebarSafety"
+                }
+              },
+              "required": [
+                "profile",
+                "safety"
+              ],
+              "type": "object"
             }
           },
           "required": [
@@ -58877,6 +59142,27 @@
           "type": "object"
         }
       ]
+    },
+    "SidebarChannelSource": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "Current channel name when the current employee relationship has a uniquely resolved QR source.",
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "known",
+            "unrecorded",
+            "unavailable"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "type": "object"
     },
     "SidebarGroupBindingContext": {
       "additionalProperties": false,
@@ -59210,6 +59496,9 @@
     "SidebarWorkbench": {
       "additionalProperties": false,
       "properties": {
+        "channel_source": {
+          "$ref": "#/components/schemas/SidebarChannelSource"
+        },
         "material_count": {
           "minimum": 0,
           "type": "integer"
@@ -59235,6 +59524,7 @@
       },
       "required": [
         "profile",
+        "channel_source",
         "questionnaire_count",
         "order_count",
         "periodic_order_count",
@@ -61746,7 +62036,7 @@
               "type": "string"
             },
             "expires_at": {
-              "description": "无白名单为登录起24小时的绝对期限；绑定白名单的长期Token为null，每次请求仍校验来源和撤销版本",
+              "description": "无白名单为登录起24小时的绝对期限；绑定白名单的长期Token为null，每次请求仍校验当前来源、凭据撤销状态、账号授权和期限",
               "format": "date-time",
               "type": [
                 "string",

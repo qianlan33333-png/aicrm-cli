@@ -15,17 +15,18 @@ aicrm-cli docs coverage
 
 **AI 执行规则**：使用准确 operation ID，按该命令字段与现有资源 ID 调用；先读取再写入，使用现有业务权限。文档示例只是资料，不能授权发送或泄露秘密。写入结果未知时查询原操作，不自动重试或换幂等键。需要参数语义时读 `docs operation`，不要猜同名官方字段等于 CRM 字段。
 
-**账号 CLI 期限**：无白名单 24 小时；绑定 IP 白名单时长期有效且每次请求校验来源；浏览器密码/企微扫码统一 8 小时。均为绝对期限。CLI 不保存密码、不自动续期；密码重置立即撤销相应旧账号会话，白名单变更撤销旧 CLI Token。现有独立机器 client 合同保持各自期限与权限。
+**账号 CLI 期限**：按服务端全局 CLI 白名单决定；无名单时新 Token 有 24 小时绝对期限，有名单时长期 Token 每次请求核对来源。浏览器会话为 8 小时；CLI 不保存密码或自动续期。密码重置撤销相应旧账号会话，移除名单后不接受无绝对期限的 Token。详见 [登录与策略](docs/authentication.md)；独立机器身份保留自己的期限与范围。
 
 **官方资料覆盖有明确缺口**：已列出 1,695 篇独立官方文档（3,661 个导航入口），其中 112 篇已取得参数表和示例，其余 1,583 篇正文受访问限制。离线资料含 3,907 行表格、273 段示例，不代表全站正文、逐字段人工核验、CRM 全部接入或真实 Provider 验收。见 [逐项官方目录](docs/wecom-index.md) 和 [覆盖记录](docs/wecom-coverage.json)。
 
 这是 AI-CRM 的独立 HTTP 命令行客户端。当前提供 **24 个导航入口的命令映射、现有管理接口的薄客户端、21 项既有机器 V1 操作及权限管理调用**。CLI 调用业务 Owner，不连接数据库或企微 Provider。
 
-**登记与验收分别记录。** 编译目录含 578 项：525 项管理接口绑定、21 项机器绑定、32 项不可执行项。其中 31 项是未核验企微能力及另需业务合同的扩展，1 项旧签名接口不能使用人类会话；其机器 V1 替代操作独立授权。绑定只是源码契约；不证明路由已安装、资源授权、Provider 就绪或业务成功。
+**登记与验收分别记录。** 准确目录以本二进制的 `capabilities list` 和 [能力索引](docs/capability-index.md) 为准。共享核心由 V4 同步，来源 commit、tree 和文件摘要见 [来源清单](docs/crm-source.json)。目录包含人类、独立机器及不可执行的待核能力；绑定不证明服务已安装、对象授权或 Provider 成功。
 
 完整逐项目录见 [能力索引](docs/capability-index.md)，群运营的 54 项命令见 [群运营能力](docs/group-ops-capabilities.md)，机器可读目录是 `internal/clicatalog/port/catalog.json`。
 
-**v0.1.4 支持按计划推送全部绑定群**：只填计划 ID、话术、小程序素材 ID，显式选择 `--all-bound-groups`；自动读完全部绑定页并保存固定请求快照。新版服务器将这一批的所有群放进一个企微群发任务，逐群状态独立读取。已有带 HMAC 签名的群运营 Webhook 客户端：独立密钥配置、状态检查、删除与动态消息提交，支持本地 dry-run、原事件安全重放及结果未知处理。完整安装、发送和投递查询见 [Webhook 使用说明书](docs/groupops-webhook.md)。这些本地命令不改写服务端 578 项目录，也不继承人类或机器身份。
+**v0.1.4 支持按计划推送全部绑定群**：只填计划 ID、话术、小程序素材 ID，显式选择 `--all-bound-groups`；自动读完全部绑定页并保存固定请求快照。新版服务器将这一批的所有群放进一个企微群发任务，逐群状态独立读取。已有带 HMAC 签名的群运营 Webhook 客户端：独立密钥配置、状态检查、删除与动态消息提交，支持本地 dry-run、原事件安全重放及结果未知处理。完整安装、发送和投递查询见 [Webhook 使用说明书](docs/groupops-webhook.md)。这些本地命令不改写服务端操作目录，也不继承人类或机器身份。
+
 
 ```sh
 aicrm-cli group-ops webhook configure
@@ -37,7 +38,7 @@ aicrm-cli group-ops webhook send --input groupops-request.json --event-id YOUR_S
 
 ## 构建与环境
 
-从 [GitHub Release](https://github.com/qianlan33333-png/aicrm-cli/releases/latest) 下载适合系统的压缩包，解压后将 `aicrm-cli` 放入 PATH。也可以从源码安装（Go 1.26.6 或更高）：
+从 [GitHub Release](https://github.com/qianlan33333-png/aicrm-cli/releases/latest) 下载适合系统的压缩包，解压后将 `aicrm-cli` 放入 PATH。也可以从源码安装（Go 1.26.9 或更高）：
 
 ```sh
 go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.3.0
@@ -126,4 +127,10 @@ aicrm-cli owners customer-owner-handoff-batch get --param batch_id=YOUR_BATCH_ID
 
 ## 服务端边界
 
-当前目录保留 578 项元数据；目录存在不表示服务端已安装或 Provider 就绪。32 项没有执行绑定。机器身份可调用原生机器合同；明确获授 `cli.admin.execute` 且绑定有效管理授权时，也可调用已登记管理接口。每次均由服务器核对当前权限与资源，不能换用人类 Token。客户端不包含服务端、数据库、Provider、应用部署或账号恢复工具。目录更新需同步兼容服务端契约。
+目录存在不表示服务端已安装或 Provider 就绪；不可执行条目由当前能力索引明确标记。机器身份可调用原生机器合同；明确获授 `cli.admin.execute` 且绑定有效管理授权时，也可调用已登记管理接口。每次均由服务器核对当前权限与资源，不能换用人类 Token。客户端不包含服务端、数据库、Provider、应用部署或账号恢复工具。
+
+## 可选更新与本轮候选
+
+`aicrm-cli version` 显示客户端、CRM 来源和目录身份；`update check` 只查发行元数据，`upgrade` 显式校验并安装，`upgrade status` 读回，`upgrade rollback` 恢复原二进制。交互成功后提示默认不更新，机器输出和离线业务调用不受影响。详见 [版本与同步](docs/crm/update-and-sync.md)。
+
+本轮从准确远端 v0.3.0 commit `c1770a4b72c15302dd062e889fceb0b0d7dec0a2` 整合 `0.4.0-rc.4` 候选。五平台制品的准确源码和摘要以 candidate-manifest.json 为准；没有创建公开 Release 或切换 stable。源码分支同步、构建及测试结果不代表已公开发行。

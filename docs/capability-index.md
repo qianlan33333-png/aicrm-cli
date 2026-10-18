@@ -662,6 +662,8 @@
 | admin.opsGovernanceOutcomes | aicrm-cli ops ops-governance-outcomes invoke | human | operations | source_contract_only |
 | admin.opsInspectionCatalog | aicrm-cli ops ops-inspection-catalog invoke | human | operations | source_contract_only |
 | admin.opsInspectionCommandDetail | aicrm-cli ops ops-inspection-command-detail invoke | human | operations | source_contract_only |
+| admin.opsInspectionFailure | aicrm-cli ops ops-inspection-failure invoke | human | operations | source_contract_only |
+| admin.opsInspectionFailureDisposition | aicrm-cli ops ops-inspection-failure-disposition invoke | human | operations | source_contract_only |
 | admin.opsInspectionIssueUpdate | aicrm-cli ops ops-inspection-issue-update invoke | human | operations | source_contract_only |
 | admin.opsInspectionOverview | aicrm-cli ops ops-inspection-overview invoke | human | operations | source_contract_only |
 | admin.opsInspectionReports | aicrm-cli ops ops-inspection-reports invoke | human | operations | source_contract_only |

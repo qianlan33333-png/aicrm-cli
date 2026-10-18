@@ -186,6 +186,9 @@ func readPlanPushOperation(cmd *cobra.Command, client *Client, id string, input 
 }
 
 func (o *Options) preparePlanPush(cmd *cobra.Command, client *Client, input planPushInput) ([]byte, int64, error) {
+	// Each registered Owner read checks the current human or explicitly
+	// delegated machine identity. The later write retains its independent
+	// signed Webhook identity and the original frozen-snapshot contract.
 	parameters := map[string]string{"plan_id": strconv.FormatInt(input.PlanID, 10)}
 	var before planPushDetail
 	if err := readPlanPushOperation(cmd, client, "admin.getGroupOpsPlan", CallInput{Parameters: parameters}, &before); err != nil {

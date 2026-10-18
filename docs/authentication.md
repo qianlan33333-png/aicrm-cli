@@ -4,30 +4,11 @@
 
 | 入口 | 期限 | 每次请求的校验 |
 |---|---|---|
-| CLI 账号，无 IP 白名单 | 登录起 24 小时 | 账号状态、密码/会话版本、CLI 策略版本、期限、原业务权限 |
-| CLI 账号，有 IP 白名单 | 无自动到期时间 | 上述项目及真实来源 IP 必须匹配；不是任意地点长期可用 |
-| 浏览器密码登录 | 登录起 8 小时 | 既有浏览器会话与业务授权 |
-| 浏览器企微扫码登录 | 登录起 8 小时 | 同上；扫码身份仍由真实 Provider 验证 |
+| CLI 账号，全局无 IP 白名单 | 登录起 24 小时 | 账号状态、会话撤销、当前全局来源策略、期限、原业务权限 |
+| CLI 账号，全局有 IP 白名单 | 无自动到期时间 | 上述项目及来源 IP；清空名单后拒绝无绝对期限 Token |
+| 浏览器密码/企微扫码登录 | 登录起 8 小时 | 原浏览器授权；扫码仍需真实 Provider 验证 |
 
-```mermaid
-flowchart TD
- A[选择明确登录入口] --> B{浏览器还是CLI账号}
- B -->|密码或企微扫码浏览器| C[8小时]
- B -->|CLI账号密码| D{该账号CLI有IP白名单}
- D -->|无| E[24小时Token]
- D -->|有且来源匹配| F[长期Token]
- D -->|有但来源不匹配| G[拒绝登录]
- E --> H[每次校验状态、版本、期限、权限]
- F --> H
- H --> I[白名单Token再次核对来源IP]
- R[重置对应密码] --> S[该账号旧浏览器和CLI会话立即失效]
- P[修改CLI白名单] --> T[该账号旧CLI Token失效]
- E -->|到期| U[退出码3，由用户或Agent显式重新登录]
-```
-
-这里的“长期”仍可撤销。退出、账号禁用、密码重置、CLI 策略变更都受服务端实时校验。更新白名单会使旧 CLI Token 失效，须重新登录；浏览器会话不因 CLI 策略变更而失效。已有长期 Token 不会在删除白名单后继续有效。
-
-第一性原理只有四项：凭据属于谁、有没有过期、来源是否允许、当前有没有业务权限。期限不产生额外权限；白名单不是账号，也不识别 Agent。固定服务器和流动 Agent 若要使用不同白名单策略，应使用分别授权的账号。
+期限不产生业务权限。全局名单适用于所有账号 CLI 请求，不能通过创建不同账号获得独立白名单。策略变化逐次影响来源判断，不把普通显示名、等价策略保存或审计版本变化当作所有 Token 撤销。已有短期 Token 仍受其原绝对截止时间约束，CLI 不自动续期或重放原写请求。
 
 ## 交互登录
 
@@ -60,31 +41,18 @@ aicrm-cli auth whoami
 
 `auth logout` 撤销当前账号会话并移除本地凭据。撤销响应不明时会明确报告 `server_session_revocation:not_confirmed`；本地移除不能证明服务端撤销成功。
 
-## 配置账号 CLI 白名单
+## 配置全局 CLI 白名单
 
-只有现有 `super_admin` 可以读取/配置。目标 `id` 是 CRM **后台账号 ID**，不是客户 `customer_id`，也不是企微员工 `userid`。先用既有账号目录核对目标，不要照抄示例 ID。
-
-```sh
-aicrm-cli docs operation admin.getAccessCLIPolicy
-aicrm-cli invoke admin.getAccessCLIPolicy --param id=YOUR_ADMIN_ACCOUNT_ID
-```
-
-白名单文件 `cli-policy.json` 示例（文档专用地址，换成实际服务器出口 IP）：
-
-```json
-{"allowed_cidrs":["203.0.113.20/32"]}
-```
+全局策略使用 `admin.getGlobalAccessCLIPolicy` / `admin.setGlobalAccessCLIPolicy`。必须具有服务端当前管理授权；受管机器还需明确的 capability、scope 和管理员委托，普通账号不能自行提权。旧带账号 id 的兼容路由也不表示个人白名单。
 
 ```sh
-aicrm-cli invoke admin.setAccessCLIPolicy --param id=YOUR_ADMIN_ACCOUNT_ID \
-  --input cli-policy.json --dry-run
-aicrm-cli invoke admin.setAccessCLIPolicy --param id=YOUR_ADMIN_ACCOUNT_ID \
-  --input cli-policy.json
+aicrm-cli docs operation admin.getGlobalAccessCLIPolicy
+aicrm-cli invoke admin.getGlobalAccessCLIPolicy
+aicrm-cli docs operation admin.setGlobalAccessCLIPolicy
+aicrm-cli invoke admin.setGlobalAccessCLIPolicy --input cli-policy.json --dry-run
 ```
 
-响应包含规范化后的 `allowed_cidrs` 与只读 `version`。`version` 是撤销旧 CLI Token 用的服务端策略版本，不作为 PUT 的输入。
-
-`allowed_cidrs` 必须明确提供数组；`[]` 表示新 Token 使用 24 小时，省略或 `null` 拒绝。使用 IPv4/IPv6 的 CIDR 写法；单个 IPv4 地址加 `/32`，单个 IPv6 地址加 `/128`，不传裸 IP 字符串。沿用现有规范，每次最多提交 20 项。可信代理解析由服务端配置控制，不接受调用方自行填写一个“允许的IP”。修改自己的策略也会撤销自己的旧 CLI Token，之后须从允许来源重新登录。
+`cli-policy.json` 文档示例为 `{"allowed_cidrs":["203.0.113.20/32"]}`；仅在用户明确授权修改全局安全策略后执行真实写入。`allowed_cidrs` 必须明确为数组，省略或 null 拒绝。IPv4/IPv6 CIDR 及不带 zone 的裸 IP 由服务器规范化，实际输入预算以当前 schema 和服务器为准。响应 version 是策略审计版本，不作为 PUT 输入，也不证明所有 Token 已撤销。可信代理由服务器配置，调用方不能自报来源。每次请求按当前名单核对；空名单不接受无绝对期限 Token，已有短期 Token 继续受原截止时间和账号会话约束。
 
 直接 HTTP 登录的响应字段：
 
@@ -106,9 +74,9 @@ aicrm-cli invoke admin.setAccessCLIPolicy --param id=YOUR_ADMIN_ACCOUNT_ID \
 |---|---|
 | CLI Token 当作浏览器 Cookie，或把浏览器 Token 当作 CLI Bearer | 拒绝用途混用；旧浏览器 Cookie 的兼容调用仍按原 8 小时期限 |
 | 伪造代理头或换来源使用长期 Token | 使用既有可信代理链计算来源；非允许来源拒绝 |
-| 修改/清空白名单后重放旧长期 Token | 拒绝旧策略版本 |
+| 修改/清空白名单后重放长期 Token | 按当前来源策略判断；空名单拒绝无绝对期限 Token |
 | 密码重置后重放旧账号 Token 或会话 | 拒绝旧账号版本 |
-| 普通角色配置别人的 CLI 策略 | 拒绝，不提升权限 |
+| 未授权角色修改全局 CLI 策略 | 拒绝，不提升权限 |
 | 24 小时到期、8 小时边界 | 按绝对期限拒绝，不滑动延长 |
 | CLI 收到过期响应 | 返回退出码 3；不自动登录、不重发写操作 |
 | 可被其他用户读取的文件或跨 Origin 文件 | 本地拒绝加载 |
@@ -117,6 +85,6 @@ aicrm-cli invoke admin.setAccessCLIPolicy --param id=YOUR_ADMIN_ACCOUNT_ID \
 
 ## 受管完整机器 CLI（v0.3.0）
 
-独立机器可在服务端明确授予 `cli.admin.execute`、绑定有效管理授权、配置来源及企业范围后，用自己的机器 Bearer 调用已登记管理接口。客户端先读取在线上下文，再携带准确 `X-AICRM-CLI-Operation`；不读取或伪装人类 Token，不传 Cookie/CSRF 混用。读取需 read，管理写操作需 write，Owner 仍重新核验当前资源和业务条件。新客户端不自动授予这些权限。
+独立机器可在服务端明确授予 `cli.admin.execute`、绑定有效管理授权、配置来源及企业范围后，用自己的机器 Bearer 调用已登记管理接口。客户端携带准确 `X-AICRM-CLI-Operation` 调用原 Owner 路由，由服务端在同一请求校验当前委托、scope 和资源；需要发现能力时可显式读取在线上下文；不读取或伪装人类 Token，不传 Cookie/CSRF 混用。读取需 read，管理写操作需 write，Owner 仍重新核验当前资源和业务条件。新客户端不自动授予这些权限。
 
 已经获授读写的机器应请求 `--scope 'read write'`；请求 `read` 的 Token 仍只有读取权限，不会因为 IP 已加入白名单而自动增加写权限。机器 OAuth Token 保留服务端期限，自动化须由受管凭据注入方按既有合同重新签发；本次不引入自动重登或人类 Token 冒用。服务端未提供委托时明确拒绝。

@@ -16,17 +16,18 @@ func TestMachineAdminCLIUsesOnlyMachineBearerAndExplicitRemoteGrant(t *testing.T
 		want         int
 	}{{"full", `["read","write"]`, true, 1}, {"read_only", `["read"]`, true, 0}, {"ordinary_machine", `["read","write"]`, false, 0}} {
 		t.Run(tc.name, func(t *testing.T) {
-			business := 0
+			business, requests := 0, 0
 			server := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				requests++
 				if r.Header.Get("Authorization") != "Bearer machine-test" || r.Header.Get("Cookie") != "" || r.Header.Get("X-CSRF-Token") != "" {
 					t.Error("machine was changed to a human credential")
 				}
 				if r.URL.Path == "/open/v2/cli/context" {
-					grant := "false"
-					if tc.grant {
-						grant = "true"
-					}
-					io.WriteString(w, `{"admin_cli_authorized":`+grant+`,"scopes":`+tc.scopes+`}`)
+					t.Error("client made a separate authorization context request")
+					return
+				}
+				if !tc.grant || tc.scopes != `["read","write"]` {
+					http.Error(w, `{"error":"permission_denied"}`, http.StatusForbidden)
 					return
 				}
 				business++
@@ -42,8 +43,8 @@ func TestMachineAdminCLIUsesOnlyMachineBearerAndExplicitRemoteGrant(t *testing.T
 			if resp != nil {
 				resp.Body.Close()
 			}
-			if business != tc.want || (e == nil) != (tc.want == 1) {
-				t.Fatalf("business=%d error=%v", business, e)
+			if business != tc.want || requests != 1 || (e == nil) != (tc.want == 1) {
+				t.Fatalf("business=%d requests=%d error=%v", business, requests, e)
 			}
 		})
 	}

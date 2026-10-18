@@ -20,14 +20,15 @@ import (
 )
 
 type pushFixture struct {
-	groups        []planPushGroup
-	reads, posts  int
-	machineChecks int
-	bodies        [][]byte
-	events        []string
-	planReads     int
-	alter         func(*http.Request, map[string]any)
-	postStatus    int
+	groups         []planPushGroup
+	reads, posts   int
+	machineChecks  int
+	machineAllowed bool
+	bodies         [][]byte
+	events         []string
+	planReads      int
+	alter          func(*http.Request, map[string]any)
+	postStatus     int
 }
 
 func newPushFixture(t *testing.T, count int) (*pushFixture, *httptest.Server) {
@@ -39,18 +40,25 @@ func newPushFixture(t *testing.T, count int) (*pushFixture, *httptest.Server) {
 	server := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		if r.URL.Path == "/open/v2/cli/context" {
-			fixture.machineChecks++
-			if r.Header.Get("Authorization") != "Bearer synthetic-machine-token" || r.Header.Get("Cookie") != "" || r.Header.Get("X-AICRM-Signature") != "" {
-				t.Error("machine delegation probe mixed credentials")
-			}
-			io.WriteString(w, `{"admin_cli_authorized":false,"scopes":["read","write"]}`)
+			t.Error("plan preparation made a separate authorization prequery")
+			http.Error(w, "unexpected context prequery", http.StatusForbidden)
 			return
 		}
 		if r.Method == "GET" {
-			fixture.reads++
-			if !strings.Contains(r.Header.Get("Cookie"), "human-fixture") || r.Header.Get("X-AICRM-Signature") != "" {
+			machine := r.Header.Get("Authorization") == "Bearer synthetic-machine-token"
+			if machine {
+				fixture.machineChecks++
+				if r.Header.Get("Cookie") != "" || r.Header.Get("X-CSRF-Token") != "" || r.Header.Get("X-AICRM-Signature") != "" || r.Header.Get("X-AICRM-CLI-Operation") == "" {
+					t.Error("machine Owner read mixed credentials or lost its operation binding")
+				}
+				if !fixture.machineAllowed {
+					http.Error(w, `{"error":"permission_denied"}`, http.StatusForbidden)
+					return
+				}
+			} else if !strings.Contains(r.Header.Get("Cookie"), "human-fixture") || r.Header.Get("Authorization") != "" || r.Header.Get("X-AICRM-Signature") != "" {
 				t.Error("read credentials not isolated")
 			}
+			fixture.reads++
 			value := map[string]any{}
 			if r.URL.Path == "/api/admin/automation-conversion/group-ops/plans/12" {
 				fixture.planReads++
@@ -315,4 +323,33 @@ func TestPlanPushChangingLaterPageAndMissingHumanAuthorizationNeverPost(t *testi
 			t.Fatal(code, result, fixture)
 		}
 	})
+}
+
+func TestPlanPushExplicitManagedMachineUsesOwnerGrantAndSeparateWebhook(t *testing.T) {
+	fixture, server := newPushFixture(t, 11)
+	fixture.machineAllowed = true
+	if err := StoreCredential(Credential{Origin: server.URL, Kind: "machine", Token: "synthetic-machine-token"}); err != nil {
+		t.Fatal(err)
+	}
+	code, result, _ := runPush(t, webhookFixtureEvent)
+	if code != 0 || fixture.posts != 1 || fixture.reads != 3 || fixture.machineChecks != 3 {
+		t.Fatal(code, result, fixture)
+	}
+}
+
+func TestPlanPushMachineGrantRevokedBetweenPagesNeverPosts(t *testing.T) {
+	fixture, server := newPushFixture(t, 105)
+	fixture.machineAllowed = true
+	fixture.alter = func(r *http.Request, _ map[string]any) {
+		if strings.HasSuffix(r.URL.Path, "/groups") && r.URL.Query().Get("offset") == "0" {
+			fixture.machineAllowed = false
+		}
+	}
+	if err := StoreCredential(Credential{Origin: server.URL, Kind: "machine", Token: "synthetic-machine-token"}); err != nil {
+		t.Fatal(err)
+	}
+	code, result, _ := runPush(t, webhookFixtureEvent)
+	if code != 4 || fixture.posts != 0 || fixture.reads != 2 || fixture.machineChecks != 3 {
+		t.Fatal(code, result, fixture)
+	}
 }
