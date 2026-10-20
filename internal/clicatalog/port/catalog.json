@@ -37922,7 +37922,7 @@
       "additionalProperties": false,
       "properties": {
         "allowed_cidrs": {
-          "description": "所有后台账号共用的CLI白名单，支持直接填写IPv4/IPv6地址，服务端自动补充单IP主机掩码；也支持CIDR网段。全局配置保留历史账号来源的并集。空数组使新Token有效24小时；省略或null拒绝。服务端按规范化后的CIDR集合判断真实变化；集合变化只更新策略修订，每次请求仍校验凭据状态、账号授权、期限和当前来源。仍符合当前来源且凭据有效的Token不会仅因策略修订变化而失效；移除来源后只拒绝当前来源不再允许的请求。清空白名单后无到期的既有长期Token会被拒绝。",
+          "description": "所有后台账号共用的CLI白名单，支持直接填写IPv4/IPv6地址，服务端自动补充单IP主机掩码；也支持CIDR网段。全局配置保留历史账号来源的并集。来源匹配非空列表才签发长期Token，其他来源或空数组均签发固定24小时Token；省略或null拒绝。服务端按规范化后的CIDR集合判断真实变化。所有Token仍校验凭据状态、账号授权及期限；有限期限Token可跨IP使用，不因策略变化失效、升级或续期。长期Token每次校验当前来源；移除来源后该来源拒绝，加回可恢复资格；清空列表拒绝既有长期Token。",
           "items": {
             "description": "IP地址或CIDR网段，例如203.0.113.20；响应始终为服务端规范化的CIDR",
             "type": "string"
@@ -62036,7 +62036,7 @@
               "type": "string"
             },
             "expires_at": {
-              "description": "无白名单为登录起24小时的绝对期限；绑定白名单的长期Token为null，每次请求仍校验当前来源、凭据撤销状态、账号授权和期限",
+              "description": "来源未匹配或白名单为空时为登录起24小时的绝对期限，可跨IP使用且不自动升级或续期；来源匹配的长期Token为null，使用时仍须匹配当前白名单。所有Token仍检查凭据撤销和账号授权",
               "format": "date-time",
               "type": [
                 "string",
@@ -62383,7 +62383,7 @@
             }
           },
           "security": [],
-          "summary": "CLI账号密码登录，白名单长期、无白名单24小时，不自动续期"
+          "summary": "CLI账号密码登录，匹配白名单长期、其他来源24小时，不自动续期"
         }
       },
       "/api/admin/access/cli/login-challenge": {
