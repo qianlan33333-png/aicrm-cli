@@ -4,30 +4,44 @@
 
 | 入口 | 期限 | 每次请求的校验 |
 |---|---|---|
-| CLI 账号，无 IP 白名单 | 登录起 24 小时 | 账号状态、密码/会话版本、CLI 策略版本、期限、原业务权限 |
-| CLI 账号，有 IP 白名单 | 无自动到期时间 | 上述项目及真实来源 IP 必须匹配；不是任意地点长期可用 |
-| 浏览器密码登录 | 登录起 8 小时 | 既有浏览器会话与业务授权 |
-| 浏览器企微扫码登录 | 登录起 8 小时 | 同上；扫码身份仍由真实 Provider 验证 |
+| CLI 账号密码或企微扫码，当前全局白名单非空且来源匹配 | 无自动到期时间 | 账号、绑定/会话和 CLI 策略版本、原业务权限及当前来源 |
+| CLI 账号密码或企微扫码，白名单为空或来源不匹配 | 登录起固定 24 小时 | 账号状态、会话和 CLI 策略版本、绝对期限及原业务权限 |
+| 浏览器密码或企微扫码登录 | 登录起 8 小时 | 既有浏览器会话与业务授权 |
 
 ```mermaid
 flowchart TD
- A[选择明确登录入口] --> B{浏览器还是CLI账号}
- B -->|密码或企微扫码浏览器| C[8小时]
- B -->|CLI账号密码| D{该账号CLI有IP白名单}
- D -->|无| E[24小时Token]
- D -->|有且来源匹配| F[长期Token]
- D -->|有但来源不匹配| G[拒绝登录]
- E --> H[每次校验状态、版本、期限、权限]
- F --> H
- H --> I[白名单Token再次核对来源IP]
- R[重置对应密码] --> S[该账号旧浏览器和CLI会话立即失效]
- P[修改CLI白名单] --> T[该账号旧CLI Token失效]
- E -->|到期| U[退出码3，由用户或Agent显式重新登录]
+ A[CLI 明确发起登录] --> B{选择登录方式}
+ B -->|企微扫码| C[浏览器核对终端码和实际账号并确认]
+ B -->|账号密码| D[既有密码认证]
+ C --> E{CLI 来源匹配当前非空全局白名单?}
+ D --> E
+ E -->|是| F[长期 CLI 凭据]
+ E -->|否| G[固定24小时 CLI 凭据]
+ F --> H[保存并读回身份]
+ G --> H
+ H --> I[每次请求检查当前状态、版本和权限]
+ F --> J[长期凭据额外校验当前来源]
 ```
 
-这里的“长期”仍可撤销。退出、账号禁用、密码重置、CLI 策略变更都受服务端实时校验。更新白名单会使旧 CLI Token 失效，须重新登录；浏览器会话不因 CLI 策略变更而失效。已有长期 Token 不会在删除白名单后继续有效。
+这里的“长期”仍可撤销。退出、账号禁用、解绑、密码重置和策略变化沿用当前服务端规则。修改全局 CLI 白名单会使已有 CLI Token 的策略版本失效，影响全部账号，须显式重新登录；浏览器会话不因 CLI 策略变化而失效。白名单不是账号，也不识别 Agent；它决定本次登录是否具备长期凭据的来源条件，不扩大业务权限。
 
-第一性原理只有四项：凭据属于谁、有没有过期、来源是否允许、当前有没有业务权限。期限不产生额外权限；白名单不是账号，也不识别 Agent。固定服务器和流动 Agent 若要使用不同白名单策略，应使用分别授权的账号。
+## 企业微信扫码登录（v0.4.0）
+
+```sh
+aicrm-cli profile add production https://your-crm.example
+aicrm-cli profile use production
+aicrm-cli auth login --wecom
+# 远程终端复制链接，在你自己的浏览器中打开。
+aicrm-cli auth login --wecom --no-browser
+# 无钥匙串时，显式选择一个尚不存在的私有文件。
+aicrm-cli auth login --wecom --no-browser --secret-output /private/path/crm-token.json
+export AICRM_CLI_CREDENTIAL_FILE=/private/path/crm-token.json
+aicrm-cli auth whoami
+```
+
+需要已绑定企微且获准登录的 CRM 员工账号。浏览器完成本次新鲜企微认证后，核对终端码和实际账号，明确确认授权；不要批准别人发来的登录链接。网页确认后仍需等待终端领取、保存和身份读回成功。授权窗口为 10 分钟，浏览器只具有批准能力，不能获取最终 CLI 凭据；终端只打印链接和核对码，不打印领取密钥或 Token。
+
+新登录沿用上表期限、权限和撤销规则，没有自动续期或自动切换密码登录。失败时保留或恢复旧凭据，并关闭本次授权、撤销本次新会话。若撤销结果不明，明确报告 unknown，停止自动重试。CLI 凭据不能作为 RPA 账号验证所需的企微浏览器会话。
 
 ## 交互登录
 
@@ -60,13 +74,13 @@ aicrm-cli auth whoami
 
 `auth logout` 撤销当前账号会话并移除本地凭据。撤销响应不明时会明确报告 `server_session_revocation:not_confirmed`；本地移除不能证明服务端撤销成功。
 
-## 配置账号 CLI 白名单
+## 配置全局 CLI 白名单
 
-只有现有 `super_admin` 可以读取/配置。目标 `id` 是 CRM **后台账号 ID**，不是客户 `customer_id`，也不是企微员工 `userid`。先用既有账号目录核对目标，不要照抄示例 ID。
+只有现有 `super_admin` 可以读取/配置。使用全局入口；既有带账号 ID 的兼容入口也操作同一全局策略，不能作为单账号策略使用。
 
 ```sh
-aicrm-cli docs operation admin.getAccessCLIPolicy
-aicrm-cli invoke admin.getAccessCLIPolicy --param id=YOUR_ADMIN_ACCOUNT_ID
+aicrm-cli docs operation admin.getGlobalAccessCLIPolicy
+aicrm-cli invoke admin.getGlobalAccessCLIPolicy
 ```
 
 白名单文件 `cli-policy.json` 示例（文档专用地址，换成实际服务器出口 IP）：
@@ -76,15 +90,15 @@ aicrm-cli invoke admin.getAccessCLIPolicy --param id=YOUR_ADMIN_ACCOUNT_ID
 ```
 
 ```sh
-aicrm-cli invoke admin.setAccessCLIPolicy --param id=YOUR_ADMIN_ACCOUNT_ID \
+aicrm-cli invoke admin.setGlobalAccessCLIPolicy \
   --input cli-policy.json --dry-run
-aicrm-cli invoke admin.setAccessCLIPolicy --param id=YOUR_ADMIN_ACCOUNT_ID \
+aicrm-cli invoke admin.setGlobalAccessCLIPolicy \
   --input cli-policy.json
 ```
 
 响应包含规范化后的 `allowed_cidrs` 与只读 `version`。`version` 是撤销旧 CLI Token 用的服务端策略版本，不作为 PUT 的输入。
 
-`allowed_cidrs` 必须明确提供数组；`[]` 表示新 Token 使用 24 小时，省略或 `null` 拒绝。使用 IPv4/IPv6 的 CIDR 写法；单个 IPv4 地址加 `/32`，单个 IPv6 地址加 `/128`，不传裸 IP 字符串。沿用现有规范，每次最多提交 20 项。可信代理解析由服务端配置控制，不接受调用方自行填写一个“允许的IP”。修改自己的策略也会撤销自己的旧 CLI Token，之后须从允许来源重新登录。
+`allowed_cidrs` 必须明确提供数组；`[]` 表示新 Token 使用 24 小时，省略或 `null` 拒绝。支持 IPv4/IPv6 地址或 CIDR；单个地址由服务端规范化为 `/32` 或 `/128`。沿用现有规范，每次最多提交 20 项。可信代理解析由服务端配置控制，不接受调用方自行填写一个“允许的IP”。全局策略变化会使所有已有 CLI Token 失效；之后明确重新登录，命中白名单取得长期凭据，否则取得 24 小时凭据。
 
 直接 HTTP 登录的响应字段：
 
@@ -93,7 +107,7 @@ aicrm-cli invoke admin.setAccessCLIPolicy --param id=YOUR_ADMIN_ACCOUNT_ID \
 | `access_token` | 账号 CLI Bearer 凭据，秘密；`acl_` 前缀表示用途，不是权限 |
 | `token_type` | `Bearer` |
 | `csrf_token` | 写操作仍须随 `X-CSRF-Token` 发送的秘密；CLI 自动处理 |
-| `expires_at` | 无白名单时的绝对截止时间；长期 Token 为 `null` |
+| `expires_at` | 固定 24 小时凭据的绝对截止时间；长期 Token 为 `null` |
 | `automatic_renewal` | 固定 `false` |
 
 不要把这些响应字段复制成浏览器 Cookie；CLI Token 无法作为浏览器 Cookie 登录。HTTP 入口为 `POST /api/admin/access/cli/login`，仅接收 `username`、`password`。不要把 CRM Token 与企微 `access_token` 混用。
@@ -108,7 +122,7 @@ aicrm-cli invoke admin.setAccessCLIPolicy --param id=YOUR_ADMIN_ACCOUNT_ID \
 | 伪造代理头或换来源使用长期 Token | 使用既有可信代理链计算来源；非允许来源拒绝 |
 | 修改/清空白名单后重放旧长期 Token | 拒绝旧策略版本 |
 | 密码重置后重放旧账号 Token 或会话 | 拒绝旧账号版本 |
-| 普通角色配置别人的 CLI 策略 | 拒绝，不提升权限 |
+| 普通角色修改全局 CLI 策略 | 拒绝，不提升权限 |
 | 24 小时到期、8 小时边界 | 按绝对期限拒绝，不滑动延长 |
 | CLI 收到过期响应 | 返回退出码 3；不自动登录、不重发写操作 |
 | 可被其他用户读取的文件或跨 Origin 文件 | 本地拒绝加载 |

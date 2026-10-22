@@ -1,9 +1,11 @@
 """Build download archives without credentials or local configuration."""
-import argparse,hashlib,os,pathlib,subprocess,tarfile,zipfile
+import argparse,hashlib,json,os,pathlib,subprocess,tarfile,zipfile
 parser=argparse.ArgumentParser(description=__doc__)
-parser.add_argument('--version',default='0.3.0')
+parser.add_argument('--version',default='0.4.0')
 version=parser.parse_args().version.removeprefix('v')
 root=pathlib.Path(__file__).resolve().parents[1]
+client_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip()
+crm_source=json.loads((root/'docs/crm-source.json').read_text())['source_head']
 dist=root/'dist';dist.mkdir(exist_ok=True)
 archives=[]
 for system,arch in [('darwin','arm64'),('darwin','amd64'),('linux','arm64'),('linux','amd64'),('windows','amd64')]:
@@ -11,7 +13,8 @@ for system,arch in [('darwin','arm64'),('darwin','amd64'),('linux','arm64'),('li
  work=dist/name;work.mkdir(exist_ok=True)
  binary=work/('aicrm-cli.exe' if system=='windows' else 'aicrm-cli')
  env=dict(os.environ,GOOS=system,GOARCH=arch,CGO_ENABLED='0')
- flags=f'-s -w -X github.com/qianlan33333-png/aicrm-cli/internal/crmcli.Version={version}'
+ package='github.com/qianlan33333-png/aicrm-cli/internal/crmcli'
+ flags=f'-s -w -X {package}.Version={version} -X {package}.ClientCommit={client_commit} -X {package}.CRMSourceCommit={crm_source}'
  subprocess.run(['go','build','-trimpath','-ldflags='+flags,'-o',str(binary),'./cmd/aicrm-cli'],cwd=root,env=env,check=True)
  if system=='windows':
   archive_path=dist/(name+'.zip')
