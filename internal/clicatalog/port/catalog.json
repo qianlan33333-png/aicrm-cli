@@ -5512,6 +5512,16 @@
       "responses": {
         "200": {
           "description": "Survey definition created"
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SurveyDefinitionError"
+              }
+            }
+          },
+          "description": "Invalid definition or request format"
         }
       },
       "prerequisites": [
@@ -27497,6 +27507,16 @@
       "responses": {
         "200": {
           "description": "New mutable definition version"
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SurveyDefinitionError"
+              }
+            }
+          },
+          "description": "Invalid definition or request format"
         }
       },
       "prerequisites": [
@@ -59839,6 +59859,31 @@
           "type": "object"
         }
       ]
+    },
+    "SurveyDefinitionError": {
+      "properties": {
+        "code": {
+          "const": "invalid_request",
+          "type": "string"
+        },
+        "field_path": {
+          "description": "Optional JSON Pointer into the submitted definition; indices are zero-based",
+          "type": "string"
+        },
+        "message": {
+          "description": "Safe actionable Chinese message without rejected input",
+          "type": "string"
+        },
+        "ok": {
+          "const": false
+        }
+      },
+      "required": [
+        "ok",
+        "code",
+        "message"
+      ],
+      "type": "object"
     },
     "SurveyExternalPushCustomParameters": {
       "description": "Non-secret legacy custom parameters. The retained client writes an object; migration-compatible callers may send ordered name/key rows.",
