@@ -186,6 +186,9 @@ func readPlanPushOperation(cmd *cobra.Command, client *Client, id string, input 
 }
 
 func (o *Options) preparePlanPush(cmd *cobra.Command, client *Client, input planPushInput) ([]byte, int64, error) {
+	if err := client.authorizePlanPushReader(ctx(cmd)); err != nil {
+		return nil, 0, err
+	}
 	parameters := map[string]string{"plan_id": strconv.FormatInt(input.PlanID, 10)}
 	var before planPushDetail
 	if err := readPlanPushOperation(cmd, client, "admin.getGroupOpsPlan", CallInput{Parameters: parameters}, &before); err != nil {

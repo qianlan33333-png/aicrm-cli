@@ -8,6 +8,39 @@ import (
 	"strings"
 )
 
+// Focused discovery preserves every schema reachable from the operation while
+// avoiding hundreds of unrelated definitions in the Agent's RPA context.
+func referencedDefinitions(value any, definitions map[string]any) map[string]any {
+	raw, _ := json.Marshal(value)
+	var root any
+	_ = json.Unmarshal(raw, &root)
+	selected := map[string]any{}
+	var walk func(any)
+	walk = func(value any) {
+		switch node := value.(type) {
+		case map[string]any:
+			if ref, ok := node["$ref"].(string); ok && strings.HasPrefix(ref, "#/components/schemas/") {
+				name := strings.TrimPrefix(ref, "#/components/schemas/")
+				if _, exists := selected[name]; !exists {
+					if schema, found := definitions[name]; found {
+						selected[name] = schema
+						walk(schema)
+					}
+				}
+			}
+			for _, child := range node {
+				walk(child)
+			}
+		case []any:
+			for _, child := range node {
+				walk(child)
+			}
+		}
+	}
+	walk(root)
+	return selected
+}
+
 // StrictJSON rejects duplicate members recursively before ordinary unmarshalling.
 func StrictJSON(data []byte, out any) error {
 	d := json.NewDecoder(bytes.NewReader(data))
