@@ -41,7 +41,7 @@ aicrm-cli group-ops webhook send --input groupops-request.json --event-id YOUR_S
 
 ## 构建与环境
 
-从 [GitHub Release](https://github.com/qianlan33333-png/aicrm-cli/releases/latest) 下载适合系统的压缩包，解压后将 `aicrm-cli` 放入 PATH。也可以从源码安装（Go 1.26.6 或更高）：
+从 [GitHub Release](https://github.com/qianlan33333-png/aicrm-cli/releases/latest) 下载适合系统的压缩包，解压后将 `aicrm-cli` 放入 PATH。也可以从源码安装（Go 1.26.9 或更高）：
 
 ```sh
 go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.4.0
