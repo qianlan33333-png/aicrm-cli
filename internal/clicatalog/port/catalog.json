@@ -40767,6 +40767,9 @@
         "channel": {
           "$ref": "#/components/schemas/ChannelCatalogResource"
         },
+        "config_sync": {
+          "$ref": "#/components/schemas/ChannelConfigSyncSummary"
+        },
         "fallback_used": {
           "const": false
         },
@@ -40774,7 +40777,8 @@
           "const": true
         },
         "provider_execution_eligible": {
-          "const": false
+          "description": "May be true while the saved configuration awaits a Provider update; never proves execution.",
+          "type": "boolean"
         },
         "real_external_call_executed": {
           "const": false
@@ -40834,6 +40838,9 @@
             "channel_enter_count": {
               "minimum": 0,
               "type": "integer"
+            },
+            "config_sync": {
+              "$ref": "#/components/schemas/ChannelConfigSyncSummary"
             },
             "config_version": {
               "minimum": 1,
@@ -41084,6 +41091,48 @@
         "status",
         "assignment_mode",
         "assignment_strategy"
+      ],
+      "type": "object"
+    },
+    "ChannelConfigSyncSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "config_version": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "effect_ref": {
+          "type": "string"
+        },
+        "local_status": {
+          "enum": [
+            "saved"
+          ],
+          "type": "string"
+        },
+        "provider_config_version": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "provider_status": {
+          "enum": [
+            "not_generated",
+            "syncing",
+            "synced",
+            "failed",
+            "outcome_unknown",
+            "unavailable"
+          ],
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "local_status",
+        "provider_status"
       ],
       "type": "object"
     },

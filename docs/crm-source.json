@@ -2,7 +2,7 @@
   "schema_version": 1,
   "cli_repository": "https://github.com/qianlan33333-png/aicrm-cli.git",
   "source_repository": "https://github.com/qianlan33333-png/AI-CRM-v4.git",
-  "payload_sha256": "5721cb2a0c94776bf47b65a61b67c8ccc5765f87b9a029637c1e63853e53cd44",
+  "payload_sha256": "9356e3ee8825446a80681c28155fa927a80cccdc5d1415f5659fe3d75ab63107",
   "files": [
     {
       "source": "cmd/aicrm-cli/main.go",
@@ -52,7 +52,7 @@
     {
       "source": "internal/clicatalog/port/catalog.json",
       "destination": "internal/clicatalog/port/catalog.json",
-      "sha256": "b17df0d957b877d8a44b2e6613dc3e08a12d0b2942f9086030e84f55ac3e7be4"
+      "sha256": "700783212694588939d0fe7b59c6754b3ced8790bc15ec3c586137e8503d70dd"
     },
     {
       "source": "internal/clicatalog/port/machine.go",
@@ -265,6 +265,6 @@
       "sha256": "6021b275fd61655a7265ec75195b410db950aa9808bc54edcae857b6a020f693"
     }
   ],
-  "source_head": "96d5bb9d66bc1769350f0dbb46888623190fd1f8",
-  "source_tree": "80bdcb4bf5057fcc645132779340b25ae8662101"
+  "source_head": "c8eac6f131619ef360f799b1327b40796f58221a",
+  "source_tree": "a975fbda6fb5b14a757c9fb9bd0da6be90320e2b"
 }
