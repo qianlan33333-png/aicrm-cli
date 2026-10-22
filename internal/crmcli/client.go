@@ -485,32 +485,9 @@ func (c *Client) Call(ctx context.Context, op catalog.Operation, input CallInput
 		return nil, fail("unavailable", op.BlockedReason, 4)
 	}
 	if c.Credential.Kind == "machine" && op.Binding.Auth == "human" {
-		needed, applicable := catalog.ManagedMachineScope(op)
+		_, applicable := catalog.ManagedMachineScope(op)
 		if !applicable {
 			return nil, fail("permission", "operation has no managed machine CLI binding", 4)
-		}
-		resp, e := c.request(ctx, "GET", "/open/v2/cli/context", "", nil, "")
-		if e != nil {
-			return nil, e
-		}
-		var current struct {
-			Capabilities []string `json:"capabilities"`
-			Scopes       []string `json:"scopes"`
-			AdminCLI     bool     `json:"admin_cli_authorized"`
-		}
-		e = json.NewDecoder(resp.Body).Decode(&current)
-		resp.Body.Close()
-		if e != nil {
-			return nil, fail("protocol", "invalid machine context", 1)
-		}
-		granted := false
-		for _, s := range current.Scopes {
-			if s == needed {
-				granted = true
-			}
-		}
-		if !current.AdminCLI || !granted {
-			return nil, fail("permission", "machine CLI delegation or required scope is absent", 4)
 		}
 	} else if c.Credential.Kind != op.Binding.Auth {
 		return nil, fail("permission", "operation is registered for a different identity kind", 4)
@@ -519,6 +496,8 @@ func (c *Client) Call(ctx context.Context, op catalog.Operation, input CallInput
 	if e != nil {
 		return nil, e
 	}
+	// Local applicability and body/field validation must finish before sending
+	// the actual registered request. The Owner route performs current auth.
 	if closer, ok := body.(io.Closer); ok {
 		defer closer.Close()
 	}

@@ -96,6 +96,100 @@ func TestDuplicateJSONAndUnknownFieldsFailBeforeDispatch(t *testing.T) {
 	}
 }
 
+func TestServicePeriodCLIContractMatchesCreateUpdateSemantics(t *testing.T) {
+	create, ok := catalog.Find("admin.createServicePeriodProduct")
+	if !ok {
+		t.Fatal("missing service-period create operation")
+	}
+	update, ok := catalog.Find("admin.updateServicePeriodProduct")
+	if !ok {
+		t.Fatal("missing service-period update operation")
+	}
+	createBody := []byte(`{"product_code":"period-cli","name":"服务期","description":"","price_minor":100,"currency":"CNY","duration_days":7,"distribution_policy":{"enabled":false,"commission_rate_basis_points":0,"wait_days":7,"version":0}}`)
+	if _, _, _, err := BuildRequest(create, CallInput{Body: createBody}); err != nil {
+		t.Fatalf("create with omitted images and existing policy fields rejected: %v", err)
+	}
+	updateBody := []byte(`{"expected_version":1,"name":"服务期更新","description":"","price_minor":100,"currency":"CNY","duration_days":7,"distribution_policy":{"enabled":false,"commission_rate_basis_points":0,"wait_days":7,"version":1}}`)
+	if _, _, _, err := BuildRequest(update, CallInput{Parameters: map[string]string{"service_product_id": "7"}, Body: updateBody}); err != nil {
+		t.Fatalf("update with omitted images and existing policy fields rejected: %v", err)
+	}
+	updateWithClear := []byte(`{"expected_version":1,"name":"服务期更新","description":"","price_minor":100,"currency":"CNY","duration_days":7,"images":[]}`)
+	if _, _, _, err := BuildRequest(update, CallInput{Parameters: map[string]string{"service_product_id": "7"}, Body: updateWithClear}); err != nil {
+		t.Fatalf("explicit image clear rejected: %v", err)
+	}
+	definitions := catalog.Load().Schemas
+	for _, schemaName := range []string{"ServicePeriodProductCreateRequest", "ServicePeriodProductUpdateRequest"} {
+		schema, ok := definitions[schemaName].(map[string]any)
+		if !ok {
+			t.Fatalf("missing %s schema", schemaName)
+		}
+		properties := schema["properties"].(map[string]any)
+		duration := properties["duration_days"].(map[string]any)
+		if duration["minimum"] != float64(1) {
+			t.Fatalf("%s duration_days minimum=%v", schemaName, duration["minimum"])
+		}
+		for _, required := range schema["required"].([]any) {
+			if required == "images" {
+				t.Fatalf("%s still requires images", schemaName)
+			}
+		}
+	}
+	distributionSchema := definitions["ProductDistributionPolicyRequest"].(map[string]any)
+	if distributionSchema["additionalProperties"] != false {
+		t.Fatal("distribution policy schema accepts unknown fields")
+	}
+	for _, body := range [][]byte{
+		[]byte(`{"product_code":"period-cli","name":"服务期","description":"","price_minor":100,"currency":"CNY"}`),
+		[]byte(`{"product_code":"period-cli","name":"服务期","description":"","price_minor":100,"currency":"CNY","duration_days":7,"unknown":true}`),
+		[]byte(`{"product_code":"period-cli","name":"服务期","description":"","price_minor":100,"currency":"CNY","duration_days":7,"distribution_policy":{"unknown":true}}`),
+	} {
+		if _, _, _, err := BuildRequest(create, CallInput{Body: body}); err == nil {
+			t.Fatalf("invalid service-period create body accepted: %s", body)
+		}
+	}
+	for _, body := range [][]byte{
+		[]byte(`{"expected_version":1,"name":"服务期更新","description":"","price_minor":100,"currency":"CNY"}`),
+	} {
+		if _, _, _, err := BuildRequest(update, CallInput{Parameters: map[string]string{"service_product_id": "7"}, Body: body}); err == nil {
+			t.Fatalf("invalid service-period update body accepted: %s", body)
+		}
+	}
+}
+
+func TestRuntimeConfigCLIContractIncludesCurrentManagedKeys(t *testing.T) {
+	op, ok := catalog.Find("admin.createRuntimeConfigReleaseDraft")
+	if !ok {
+		t.Fatal("missing runtime release draft operation")
+	}
+	keys := []string{
+		"automation.operations.max_recipients_per_run", "automation.operations.provider_mode", "ai_assistant.ui_enabled", "ai_assistant.intake_enabled", "ai_assistant.dispatch_enabled", "wecom.enabled", "wecom.corp_id", "wecom.agent_id", "wecom.callback_enabled", "wecom.customer_sync_enabled", "message_archive.enabled", "message_archive.page_limit", "message_archive.page_budget", "sidebar.context_token_ttl_seconds", "groupops.directory_read_enabled", "groupops.dispatch_enabled", "effects.provider_enabled", "survey.completion_provider_enabled", "commerce.push.provider_enabled", "stability.worker_limit", "wechat_pay.provider_enabled", "wechat_pay.app_id", "wechat_pay.app_scope", "wechat_pay.h5_oauth_enabled", "wechat_pay.h5_app_id", "wechat_pay.h5_app_scope", "wechat_pay.merchant_id", "wechat_pay.merchant_serial", "wechat_shop.provider_enabled", "wechat_shop.app_id", "survey.oauth_enabled", "survey.oauth_app_id", "survey.oauth_open_platform_id", "survey.oauth_scope",
+		"ai_agent_generation.enabled", "alipay.provider_enabled", "alipay.app_id", "alipay.production", "wechat_invoice.enabled", "wechat_invoice.service_merchant_id", "wechat_invoice.merchant_serial", "wechat_invoice.seller_name", "wechat_invoice.seller_tax_id", "wechat_invoice.billing_person_id", "wechat_invoice.default_tax_code", "wechat_invoice.default_tax_rate", "wechat_invoice.default_goods_name", "wechat_invoice.key_file_id", "wechat_invoice.logo_url", "wechat_invoice.card_confirmed",
+	}
+	settings := make([]map[string]any, 0, len(keys))
+	for _, key := range keys {
+		settings = append(settings, map[string]any{"key": key, "value": false})
+	}
+	body := func(items []map[string]any) []byte {
+		raw, err := json.Marshal(map[string]any{"expected_base_revision": 0, "settings": items, "admin_action_token": strings.Repeat("A", 43)})
+		if err != nil {
+			t.Fatal(err)
+		}
+		return raw
+	}
+	if _, _, _, err := BuildRequest(op, CallInput{Body: body(settings), IdempotencyKey: "runtime-catalog-50-settings"}); err != nil {
+		t.Fatalf("all 50 current managed keys rejected: %v", err)
+	}
+	runtimeSchema := catalog.Load().Schemas["RuntimeConfigReleaseDraftRequest"].(map[string]any)
+	settingsSchema := runtimeSchema["properties"].(map[string]any)["settings"].(map[string]any)
+	if settingsSchema["maxItems"] != float64(50) {
+		t.Fatalf("runtime settings maxItems=%v", settingsSchema["maxItems"])
+	}
+	unknown := []map[string]any{{"key": "custom.unmanaged", "value": false}}
+	if _, _, _, err := BuildRequest(op, CallInput{Body: body(unknown), IdempotencyKey: "runtime-catalog-unknown-key"}); err == nil {
+		t.Fatal("unknown runtime key accepted")
+	}
+}
+
 func TestDeclaredQueryArraysFollowTheirSerializationAndRejectAmbiguity(t *testing.T) {
 	op, ok := catalog.Find("customer.activities.list")
 	if !ok {
@@ -165,6 +259,37 @@ func TestRedirectNeverLeaksCredentialAndWrongIdentityNeverDispatches(t *testing.
 		t.Fatal("machine entered human transport")
 	}
 }
+
+func TestManagedHumanRouteValidatesLocallyThenSendsOnlyTheRealRequest(t *testing.T) {
+	calls := 0
+	server := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		calls++
+		if r.URL.Path != "/api/admin/managed" || r.Method != http.MethodPost || r.Header.Get("X-AICRM-CLI-Operation") != "test" {
+			t.Errorf("unexpected request: %s %s operation=%q", r.Method, r.URL.Path, r.Header.Get("X-AICRM-CLI-Operation"))
+		}
+		_, _ = io.WriteString(w, `{"ok":true}`)
+	}))
+	defer server.Close()
+	c, err := NewClient(server.URL, Credential{Origin: server.URL, Kind: "machine", Token: "machine-token"}, time.Second)
+	if err != nil {
+		t.Fatal(err)
+	}
+	c.HTTP.Transport = server.Client().Transport
+	op := testOperation(http.MethodPost, "/api/admin/managed", "human")
+	op.Binding.IdempotencyRequired = true
+	if _, err = c.Call(context.Background(), op, CallInput{Body: []byte(`{}`)}); err == nil || calls != 0 {
+		t.Fatalf("missing local idempotency validation dispatched request: calls=%d err=%v", calls, err)
+	}
+	response, err := c.Call(context.Background(), op, CallInput{Body: []byte(`{}`), IdempotencyKey: "managed-write-1"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	response.Body.Close()
+	if calls != 1 {
+		t.Fatalf("managed operation used a context preflight: requests=%d", calls)
+	}
+}
+
 func TestAmbiguousWriteIsNotRetriedAndServerErrorIsRedacted(t *testing.T) {
 	calls := 0
 	s := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
