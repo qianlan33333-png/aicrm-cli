@@ -28,7 +28,8 @@ func TestCLICodexRealDesktopKeyringAndLegacyBinaries(t *testing.T) {
 	if len(binaries) != 2 {
 		t.Fatal("supply the verified v0.3.0 and v0.4.0 release binary paths")
 	}
-	isolateContextHome(t)
+	configRoot := t.TempDir()
+	t.Setenv("AICRM_CLI_CONFIG_DIR", filepath.Join(configRoot, "legacy"))
 	t.Setenv("AICRM_CLI_TOKEN", "")
 	t.Setenv("AICRM_CLI_CREDENTIAL_FILE", "")
 	t.Setenv("AICRM_CLI_NO_UPDATE_NOTIFIER", "1")
@@ -59,7 +60,7 @@ func TestCLICodexRealDesktopKeyringAndLegacyBinaries(t *testing.T) {
 	defer server.Close()
 	origin := server.URL
 	legacy := &Options{}
-	codex := &Options{Context: "codex"}
+	codex := &Options{Context: "codex", userConfigDir: func() (string, error) { return configRoot, nil }}
 	for _, o := range []*Options{legacy, codex} {
 		if _, err := keyring.Get(o.keyringService(), key(origin)); !errors.Is(err, keyring.ErrNotFound) {
 			t.Fatal("fixture slot already exists or keyring unavailable")
@@ -78,12 +79,12 @@ func TestCLICodexRealDesktopKeyringAndLegacyBinaries(t *testing.T) {
 	before, _ := os.ReadFile(originalConfig)
 	oldCredential := Credential{Origin: origin, Kind: "human", Token: "acl_old_fixture", CSRF: "csrf_old_fixture"}
 	if err := legacy.storeCredential(oldCredential); err != nil {
-		t.Fatal("real legacy store failed")
+		t.Fatalf("real legacy store failed: %v", err)
 	}
 	prior := oldCredential
 	prior.Token = "acl_codex_prior_fixture"
 	if err := codex.storeCredential(prior); err != nil {
-		t.Fatal("real Codex store failed")
+		t.Fatalf("real Codex store failed: %v", err)
 	}
 	c, _ := NewClient(origin, Credential{}, 3*time.Second)
 	c.HTTP.Transport = server.Client().Transport
@@ -135,8 +136,11 @@ func TestCLICodexRealDesktopKeyringAndLegacyBinaries(t *testing.T) {
 	oldTransport := http.DefaultTransport
 	http.DefaultTransport = server.Client().Transport
 	defer func() { http.DefaultTransport = oldTransport }()
-	if code, text := executeContext("--context", "codex", "auth", "logout"); code != 0 {
-		t.Fatal(text)
+	out.Reset()
+	logout := NewCommand(codex)
+	logout.SetArgs([]string{"--context", "codex", "auth", "logout"})
+	if err := logout.Execute(); err != nil {
+		t.Fatal(err)
 	}
 	got, err = legacy.loadCredential(origin)
 	if err != nil || got != oldCredential {

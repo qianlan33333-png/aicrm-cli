@@ -2,7 +2,7 @@
   "schema_version": 1,
   "cli_repository": "https://github.com/qianlan33333-png/aicrm-cli.git",
   "source_repository": "https://github.com/qianlan33333-png/AI-CRM-v4.git",
-  "payload_sha256": "2a7d3688e90d45cfddbed7740db4722ef7a355b317580f50db41920dfe0994c3",
+  "payload_sha256": "6ac0522e45c487d2e1315c91eb3685111315813dfbd31ff6060511dffb13249c",
   "files": [
     {
       "source": "cmd/aicrm-cli/main.go",
@@ -97,17 +97,17 @@
     {
       "source": "internal/crmcli/command.go",
       "destination": "internal/crmcli/command.go",
-      "sha256": "7140743d802176cca79b1049854c9f24a20adbd179400d1a7f18e6d186e3a254"
+      "sha256": "80c1a22ffd89c3c4e4b1169ba6c3168744990600fd9b917a0fcbbffdd23c41ff"
     },
     {
       "source": "internal/crmcli/context.go",
       "destination": "internal/crmcli/context.go",
-      "sha256": "d8ef3a4f771c6f9d290043f056169009cf03af8935dd493af293858d638b7705"
+      "sha256": "058cedd013c393e518d5682833d52e9500b07cf0961c1239bba79cdcbc51f260"
     },
     {
       "source": "internal/crmcli/context_desktop_test.go",
       "destination": "internal/crmcli/context_desktop_test.go",
-      "sha256": "c3db947d51c5b6d5096df990118f1578ea5aadb7399f27f2aa7fc0c2c62b66b3"
+      "sha256": "ef683ecf4c07ae459804f83245c7fa09dd2fdfaf1ab89da67e465df8392e3f3a"
     },
     {
       "source": "internal/crmcli/context_lock_unix.go",
@@ -305,6 +305,6 @@
       "sha256": "6021b275fd61655a7265ec75195b410db950aa9808bc54edcae857b6a020f693"
     }
   ],
-  "source_head": "0429a0d3b30af78c53bc152f81e6e4b89e96e93b",
-  "source_tree": "cad8ed73bef1a5414ccdda2eef6e1fa9aed55ac6"
+  "source_head": "2283528ca7f688bd7e92bfcc28d945b3e8a700f9",
+  "source_tree": "b2019eeb058a7df4eaa852bea1e04e1eaee356ae"
 }

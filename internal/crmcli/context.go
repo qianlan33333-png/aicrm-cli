@@ -13,7 +13,11 @@ func (o *Options) configPath() (string, error) {
 	if o.Context != "codex" {
 		return configPath()
 	}
-	dir, err := os.UserConfigDir()
+	resolve := os.UserConfigDir
+	if o.userConfigDir != nil {
+		resolve = o.userConfigDir
+	}
+	dir, err := resolve()
 	return filepath.Join(dir, "aicrm-cli-codex", "profiles.json"), err
 }
 func (o *Options) keyringService() string {

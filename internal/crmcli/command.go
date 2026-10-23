@@ -22,6 +22,8 @@ import (
 )
 
 type Options struct {
+	// OS directory resolver seam keeps desktop-keyring tests off real profiles.
+	userConfigDir   func() (string, error)
 	OpenBrowser     func(context.Context, string) error
 	Profile, Format string
 	Context         string
