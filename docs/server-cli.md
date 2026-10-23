@@ -140,4 +140,4 @@ go run ./cmd/generate-cli-catalog
 
 ## Codex 桌面独立授权
 
-使用 [Codex 授权说明](codex-auth.md) 配置独立空间；不传 `--context` 保持原程序能力。
+使用 [Codex 授权说明](crm/codex-auth.md) 配置独立空间；不传 `--context` 保持原程序能力。

@@ -102,6 +102,22 @@ func TestCLICodexConfigAndIdentityIsolation(t *testing.T) {
 			t.Fatal("explicit input lost", err)
 		}
 	}
+	if err := codex.deleteCredential(origin); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := codex.loadCredential(origin); err == nil {
+		t.Fatal("empty Codex space borrowed environment/file identity")
+	}
+	if err := codex.storeCredential(b); err != nil {
+		t.Fatal(err)
+	}
+	for _, profile := range []string{"mine", "alias"} {
+		codex.Profile = profile
+		c, err := codex.client()
+		if err != nil || c.Credential != b {
+			t.Fatal("same-origin profiles are not aliases", err)
+		}
+	}
 	t.Setenv("AICRM_CLI_TOKEN", "")
 	t.Setenv("AICRM_CLI_CREDENTIAL_FILE", "")
 	if err := codex.deleteCredential(origin); err != nil {
@@ -370,11 +386,9 @@ func TestCLICodexLinkBeforeAuthorizationAndInterruptCleanup(t *testing.T) {
 	keyring.MockInit()
 	var server *httptest.Server
 	closed := make(chan struct{}, 1)
-	started := make(chan struct{}, 1)
 	server = httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case "/api/admin/access/cli/device-authorization":
-			started <- struct{}{}
 			json.NewEncoder(w).Encode(map[string]any{"device_code": "acd_private", "user_code": "ABCD-EFGH", "verification_uri": server.URL + "/cli/authorize?code=ABCDEFGH", "expires_at": time.Now().Add(time.Minute), "interval": 1})
 		case "/api/admin/access/cli/device-token":
 			io.WriteString(w, `{"state":"pending"}`)

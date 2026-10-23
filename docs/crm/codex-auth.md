@@ -27,3 +27,9 @@
 隔离单位是空间和 Origin。同域多个 Codex profile 共用该空间身份，不能作为多账号切换功能。Codex 退出、扫码失败恢复和取消只操作当前空间/本次会话；账号停用等服务端全局撤销仍正常生效。本地空间不作为同一 OS 恶意用户的安全沙箱。
 
 Codex 桌面要求可用的系统钥匙串；不支持 auth login --secret-output，不提供远程无钥匙串模式。密码及机器登录仍可显式交互或 --secret-stdin，独立签名 group-ops webhook 命令在 Codex 空间不可用。旧模式保留这些原有能力。会话仍按原 24 小时/白名单规则签发，不自动续期。
+
+## 独立验收
+
+普通单元检查使用 `go test ./internal/crmcli ./internal/crmcli/update`。真实桌面钥匙串仅单独运行 `go test -tags desktop_keyring ./internal/crmcli -run '^TestCLICodexRealDesktopKeyringAndLegacyBinaries$' -count=1 -v`，并通过 `AICRM_TEST_LEGACY_BINARIES` 提供经过发行摘要验证的 v0.3.0、v0.4.0 二进制绝对路径（按 OS 路径列表分隔符连接）。不要在同一进程中连跑 mock provider 用例。
+
+该测试仅操作随机 loopback Origin 的临时钥匙串条目并清理，不使用真实 CRM 身份。旧二进制检查原配置和真实钥匙串读取/删除，保留对自签 fixture 证书的拒绝；不把它记成旧版真实服务登录成功。扫码 Provider、Windows/Linux 桌面原生钥匙串和非本机架构运行结果独立验收，交叉编译不代替运行。

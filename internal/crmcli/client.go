@@ -227,6 +227,9 @@ func (o *Options) loadCredential(origin string) (Credential, error) {
 	}
 	b, e := keyring.Get(o.keyringService(), key(origin))
 	if e != nil {
+		if o.Context == "codex" {
+			return Credential{}, fail("authentication", "no Codex credential for this origin; run --context codex auth login", 3)
+		}
 		return Credential{}, fail("authentication", "no credential for this origin; run auth login or supply an origin-bound token", 3)
 	}
 	var c Credential
