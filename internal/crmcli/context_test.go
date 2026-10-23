@@ -15,6 +15,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -463,5 +464,97 @@ func TestCLICodexLinkBeforeAuthorizationAndInterruptCleanup(t *testing.T) {
 	unlock()
 	if strings.Contains(stderr.String()+out.String(), "acd_private") {
 		t.Fatal("private claim proof printed")
+	}
+}
+
+// A current-profile change is legitimate while a credential mutation is active.
+// Reproduce it exactly after A resolves, before its lock is returned, with B's
+// credential lock already held by another login/logout process.
+func TestCLICodexLogoutKeepsLockedOriginWhenCurrentProfileChanges(t *testing.T) {
+	isolateContextHome(t)
+	keyring.MockInit()
+	var revokedA, revokedB atomic.Int32
+	serverA := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/api/admin/access/cli/logout" || r.Header.Get("Authorization") != "Bearer acl_A" {
+			t.Error("wrong logout target or identity")
+		}
+		revokedA.Add(1)
+		io.WriteString(w, `{}`)
+	}))
+	defer serverA.Close()
+	serverB := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { revokedB.Add(1); io.WriteString(w, `{}`) }))
+	defer serverB.Close()
+	old := http.DefaultTransport
+	http.DefaultTransport = serverA.Client().Transport
+	defer func() { http.DefaultTransport = old }()
+	dir := t.TempDir()
+	resolve := func() (string, error) { return dir, nil }
+	storage := &Options{Context: "codex", userConfigDir: resolve}
+	if err := storage.saveConfig(Config{Current: "a", Profiles: map[string]Profile{"a": {Origin: serverA.URL}, "b": {Origin: serverB.URL}}}); err != nil {
+		t.Fatal(err)
+	}
+	a := Credential{Origin: serverA.URL, Kind: "human", Token: "acl_A", CSRF: "csrf_A"}
+	b := Credential{Origin: serverB.URL, Kind: "human", Token: "acl_B", CSRF: "csrf_B"}
+	for _, credential := range []Credential{a, b} {
+		if err := storage.storeCredential(credential); err != nil {
+			t.Fatal(err)
+		}
+		if err := StoreCredential(credential); err != nil {
+			t.Fatal(err)
+		}
+	}
+	unlockB, err := storage.lockCredential(serverB.URL)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer unlockB()
+	var out, stderr bytes.Buffer
+	resolutions := 0
+	o := &Options{In: strings.NewReader(""), Out: &out, Err: &stderr, userConfigDir: func() (string, error) {
+		resolutions++
+		if resolutions == 2 {
+			var switchOut, switchErr bytes.Buffer
+			other := NewCommand(&Options{In: strings.NewReader(""), Out: &switchOut, Err: &switchErr, userConfigDir: resolve})
+			other.SetArgs([]string{"--context", "codex", "profile", "use", "b"})
+			if err := other.Execute(); err != nil {
+				return "", err
+			}
+		}
+		return dir, nil
+	}}
+	cmd := NewCommand(o)
+	cmd.SetArgs([]string{"--context", "codex", "auth", "logout"})
+	if err := cmd.Execute(); err != nil {
+		t.Fatal(err)
+	}
+	if revokedA.Load() != 1 || revokedB.Load() != 0 {
+		t.Fatalf("logout drifted after profile switch: A=%d B=%d", revokedA.Load(), revokedB.Load())
+	}
+	if resolutions != 2 {
+		t.Fatalf("logout resolved configuration again after locking: %d reads", resolutions)
+	}
+	if _, err := storage.loadCredential(serverA.URL); err == nil {
+		t.Fatal("A credential not deleted")
+	}
+	if got, err := storage.loadCredential(serverB.URL); err != nil || got != b {
+		t.Fatal("B credential changed")
+	}
+	for _, prior := range []Credential{a, b} {
+		if got, err := LoadCredential(prior.Origin); err != nil || got != prior {
+			t.Fatal("legacy credential changed")
+		}
+	}
+	cfg, err := storage.loadConfig()
+	if err != nil || cfg.Current != "b" {
+		t.Fatal("normal profile switch was prevented")
+	}
+	unlockA, err := storage.lockCredential(serverA.URL)
+	if err != nil {
+		t.Fatal("logout retained A lock")
+	}
+	unlockA()
+	if unlock, err := storage.lockCredential(serverB.URL); err == nil {
+		unlock()
+		t.Fatal("logout released or bypassed B lock")
 	}
 }

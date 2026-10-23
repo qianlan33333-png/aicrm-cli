@@ -37,6 +37,11 @@ func (o *Options) client() (*Client, error) {
 	if e != nil {
 		return nil, e
 	}
+	return o.clientForOrigin(origin)
+}
+
+// Credential mutations must use the origin they already resolved and locked.
+func (o *Options) clientForOrigin(origin string) (*Client, error) {
 	credential, e := o.loadCredential(origin)
 	if e != nil {
 		return nil, e
@@ -830,7 +835,7 @@ func authCommands(o *Options) *cobra.Command {
 			return e
 		}
 		defer unlock()
-		c, e := o.client()
+		c, e := o.clientForOrigin(origin)
 		if e != nil {
 			return e
 		}
