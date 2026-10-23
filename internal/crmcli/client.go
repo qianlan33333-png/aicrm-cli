@@ -107,8 +107,9 @@ func configPath() (string, error) {
 	dir, e := os.UserConfigDir()
 	return filepath.Join(dir, "aicrm-cli", "profiles.json"), e
 }
-func LoadConfig() (Config, error) {
-	path, e := configPath()
+func LoadConfig() (Config, error) { return (&Options{}).loadConfig() }
+func (o *Options) loadConfig() (Config, error) {
+	path, e := o.configPath()
 	if e != nil {
 		return Config{}, e
 	}
@@ -126,8 +127,9 @@ func LoadConfig() (Config, error) {
 	}
 	return c, e
 }
-func SaveConfig(c Config) error {
-	path, e := configPath()
+func SaveConfig(c Config) error { return (&Options{}).saveConfig(c) }
+func (o *Options) saveConfig(c Config) error {
+	path, e := o.configPath()
 	if e != nil {
 		return e
 	}
@@ -187,16 +189,21 @@ func key(origin string) string {
 	sum := sha256.Sum256([]byte(origin))
 	return hex.EncodeToString(sum[:])
 }
-func StoreCredential(c Credential) error {
+func StoreCredential(c Credential) error { return (&Options{}).storeCredential(c) }
+func (o *Options) storeCredential(c Credential) error {
 	b, e := json.Marshal(c)
 	if e != nil {
 		return e
 	}
-	return keyring.Set("aicrm-cli", key(c.Origin), string(b))
+	return keyring.Set(o.keyringService(), key(c.Origin), string(b))
 }
-func DeleteCredential(origin string) error { return keyring.Delete("aicrm-cli", key(origin)) }
-func LoadCredential(origin string) (Credential, error) {
-	environment := platformconfig.LoadCLIEnvironment()
+func DeleteCredential(origin string) error { return (&Options{}).deleteCredential(origin) }
+func (o *Options) deleteCredential(origin string) error {
+	return keyring.Delete(o.keyringService(), key(origin))
+}
+func LoadCredential(origin string) (Credential, error) { return (&Options{}).loadCredential(origin) }
+func (o *Options) loadCredential(origin string) (Credential, error) {
+	environment := o.authEnvironment()
 	if token := environment.Token; token != "" {
 		if environment.CredentialOrigin != origin {
 			return Credential{}, fail("authentication", "environment token requires matching AICRM_CLI_CREDENTIAL_ORIGIN", 3)
@@ -218,7 +225,7 @@ func LoadCredential(origin string) (Credential, error) {
 		}
 		return c, nil
 	}
-	b, e := keyring.Get("aicrm-cli", key(origin))
+	b, e := keyring.Get(o.keyringService(), key(origin))
 	if e != nil {
 		return Credential{}, fail("authentication", "no credential for this origin; run auth login or supply an origin-bound token", 3)
 	}

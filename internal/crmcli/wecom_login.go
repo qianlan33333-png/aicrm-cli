@@ -50,6 +50,9 @@ func cliDeviceJSON(ctx context.Context, c *Client, path string, body any, result
 	return nil
 }
 func (o *Options) wecomLogin(ctx context.Context, c *Client, noBrowser bool, outputFile string) (resultErr error) {
+	if o.Context == "codex" && outputFile != "" {
+		return fail("validation", "Codex login requires the system keyring; --secret-output is only supported in legacy mode", 2)
+	}
 	ctx, stopSignals := signal.NotifyContext(ctx, os.Interrupt, syscall.SIGTERM)
 	defer stopSignals()
 	// Preserve the prior credential without consulting environment-token overrides.
@@ -61,9 +64,12 @@ func (o *Options) wecomLogin(ctx context.Context, c *Client, noBrowser bool, out
 		}
 	} else {
 		var e error
-		previous, e = keyring.Get("aicrm-cli", key(c.Origin))
+		previous, e = keyring.Get(o.keyringService(), key(c.Origin))
 		hadPrevious = e == nil
 		if e != nil && !errors.Is(e, keyring.ErrNotFound) {
+			if o.Context == "codex" {
+				return fail("credential_storage", "Codex system keyring unavailable; unlock the desktop keyring before login", 1)
+			}
 			return fail("credential_storage", "system keyring unavailable; use an explicit --secret-output on a headless host", 1)
 		}
 	}
@@ -104,9 +110,9 @@ func (o *Options) wecomLogin(ctx context.Context, c *Client, noBrowser bool, out
 			if outputFile != "" {
 				restoreErr = os.Remove(outputFile)
 			} else if hadPrevious {
-				restoreErr = keyring.Set("aicrm-cli", key(c.Origin), previous)
+				restoreErr = keyring.Set(o.keyringService(), key(c.Origin), previous)
 			} else {
-				restoreErr = DeleteCredential(c.Origin)
+				restoreErr = o.deleteCredential(c.Origin)
 				if errors.Is(restoreErr, keyring.ErrNotFound) {
 					restoreErr = nil
 				}
@@ -181,7 +187,7 @@ save:
 		e = privateFile(outputFile, b, false)
 	} else {
 		stored = true
-		e = StoreCredential(credential)
+		e = o.storeCredential(credential)
 	}
 	if e != nil {
 		return fail("credential_storage", "new credential could not be saved; this login will be revoked", 1)
@@ -198,7 +204,7 @@ save:
 			return fail("credential_storage", "saved CLI credential invalid", 1)
 		}
 	} else {
-		b, err := keyring.Get("aicrm-cli", key(c.Origin))
+		b, err := keyring.Get(o.keyringService(), key(c.Origin))
 		if err != nil || json.Unmarshal([]byte(b), &saved) != nil {
 			return fail("credential_storage", "saved CLI credential unavailable", 1)
 		}

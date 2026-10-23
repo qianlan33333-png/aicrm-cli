@@ -137,3 +137,7 @@ go run ./cmd/generate-cli-catalog
 本候选没有新增全系统机器写合同，没有为所有领域补新的字段/导出/授权游标或异步撤权调度合同，也没有实现待核 Provider 目录。这些仍需逐项完整旅程开发。现有 20 项机器操作继续其当前合同；其他管理接口仅供有权人类调用。目录中 `source_contract_only`/`source_handler_only` 不得视为这些接口已完成真实验收。
 
 当前本地验证包括修改包测试、CLI TLS 旅程和真实 Access HTTP 协议旅程。它们使用认证/业务 fixture，无真实企微发送、支付或生产数据；安装、Linux PostgreSQL/浏览器旅程和真实 Provider 结果另行记录。普通 CLI 不新增应用部署或数据库迁移通道。
+
+## Codex 桌面独立授权
+
+使用 [Codex 授权说明](codex-auth.md) 配置独立空间；不传 `--context` 保持原程序能力。

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "cli_repository": "https://github.com/qianlan33333-png/aicrm-cli.git",
   "source_repository": "https://github.com/qianlan33333-png/AI-CRM-v4.git",
-  "payload_sha256": "869cff61d5434597db6e91a701cfdd3e8cf1844d69ffe62104b756a798ee0ed2",
+  "payload_sha256": "2a7d3688e90d45cfddbed7740db4722ef7a355b317580f50db41920dfe0994c3",
   "files": [
     {
       "source": "cmd/aicrm-cli/main.go",
@@ -20,6 +20,11 @@
       "sha256": "66e3f30a73820241b2a1abfc2e1cae1003f6c724fb83d0d177d7cf141b165cb0"
     },
     {
+      "source": "docs/cli/codex-auth.md",
+      "destination": "docs/crm/codex-auth.md",
+      "sha256": "9a398ab4251589c8c23d391bb1dad091b65a9f4b75cf0d7a8cee2753d72c99ab"
+    },
+    {
       "source": "docs/cli/rpa-packages.md",
       "destination": "docs/crm/rpa-packages.md",
       "sha256": "c8be112f34933fc65fa7c68687fb1693876a167fca65b031494e1563b7cdbb23"
@@ -32,7 +37,7 @@
     {
       "source": "docs/cli/README.md",
       "destination": "docs/server-cli.md",
-      "sha256": "81300c98a00429567dbd4746abc7226f8c20503eb84d1ab7d713a2a7525ba1fd"
+      "sha256": "8af7a8ea73ce4ea887feb3c818bf6cb716454ecec417c18aafc1c3e14ab52bb2"
     },
     {
       "source": "derived:current-v4-client-dependencies",
@@ -82,7 +87,7 @@
     {
       "source": "internal/crmcli/client.go",
       "destination": "internal/crmcli/client.go",
-      "sha256": "71aa60e236fd91fe8435ebbf05978ef09bd91daf13cd45eee142a0b687fa2ebd"
+      "sha256": "1a5e739aa760d4f81ff468260a12a1aacd720a3497aa4872f27bf0965ca4f711"
     },
     {
       "source": "internal/crmcli/client_test.go",
@@ -92,7 +97,32 @@
     {
       "source": "internal/crmcli/command.go",
       "destination": "internal/crmcli/command.go",
-      "sha256": "a3ec5b551c5709d30395a33682b667a69292f9fe2ef7b5e02774d57cb1522568"
+      "sha256": "7140743d802176cca79b1049854c9f24a20adbd179400d1a7f18e6d186e3a254"
+    },
+    {
+      "source": "internal/crmcli/context.go",
+      "destination": "internal/crmcli/context.go",
+      "sha256": "d8ef3a4f771c6f9d290043f056169009cf03af8935dd493af293858d638b7705"
+    },
+    {
+      "source": "internal/crmcli/context_desktop_test.go",
+      "destination": "internal/crmcli/context_desktop_test.go",
+      "sha256": "c3db947d51c5b6d5096df990118f1578ea5aadb7399f27f2aa7fc0c2c62b66b3"
+    },
+    {
+      "source": "internal/crmcli/context_lock_unix.go",
+      "destination": "internal/crmcli/context_lock_unix.go",
+      "sha256": "a9415815d6b64199dcb7bfd1d283a4dd2f8493d5204f2659cb4af3cef3d86a01"
+    },
+    {
+      "source": "internal/crmcli/context_lock_windows.go",
+      "destination": "internal/crmcli/context_lock_windows.go",
+      "sha256": "61e67854c8be78c6f11e7203cd978f28f023e88467d862a467e4cfa71a81551d"
+    },
+    {
+      "source": "internal/crmcli/context_test.go",
+      "destination": "internal/crmcli/context_test.go",
+      "sha256": "fc765579459bf0dba0e1bc7ccb5afbae33f26081793f710e589d00dca491388f"
     },
     {
       "source": "derived:preserve-existing-distribution-commands",
@@ -192,12 +222,12 @@
     {
       "source": "internal/crmcli/wecom_login.go",
       "destination": "internal/crmcli/wecom_login.go",
-      "sha256": "5edd987c2cec7b675d9251824a64769a02f526c67f8ba8a29b2b955cda400c22"
+      "sha256": "56b1959b0b2f5b54a5872b3dcae6381f6881e48d46c5e870506b6a2e3f50da62"
     },
     {
       "source": "internal/crmcli/wecom_login_test.go",
       "destination": "internal/crmcli/wecom_login_test.go",
-      "sha256": "66ca83ed05e0c362711ba5deb2f6943b3b3b76a2d2152ea9c49efd5057be20ff"
+      "sha256": "288162c3bb6d8fadc3f460cd335452a0760eee8b4c3a497c4958a52927ce4b25"
     },
     {
       "source": "internal/groupops/port/batch.go",
@@ -275,6 +305,6 @@
       "sha256": "6021b275fd61655a7265ec75195b410db950aa9808bc54edcae857b6a020f693"
     }
   ],
-  "source_head": "026ad10719cd84286d1c4f29bafe0aa567b0c21a",
-  "source_tree": "e9c8fc38b8b8573f733d0e1c95d6437134f0e349"
+  "source_head": "0429a0d3b30af78c53bc152f81e6e4b89e96e93b",
+  "source_tree": "cad8ed73bef1a5414ccdda2eef6e1fa9aed55ac6"
 }
