@@ -12,6 +12,7 @@ type Binding struct {
 	Auth                string           `json:"auth"`
 	Capability          string           `json:"capability,omitempty"`
 	Scope               string           `json:"scope,omitempty"`
+	CSRFRequired        bool             `json:"csrf_required,omitempty"`
 	Parameters          []map[string]any `json:"parameters,omitempty"`
 	Body                map[string]any   `json:"body,omitempty"`
 	ContentType         string           `json:"content_type,omitempty"`

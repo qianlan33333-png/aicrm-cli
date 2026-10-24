@@ -33,6 +33,11 @@ type Credential struct {
 }
 
 type machineOperationKey struct{}
+type operationTransportKey struct{}
+type operationTransport struct {
+	scope string
+	csrf  bool
+}
 
 type Profile struct {
 	Origin string `json:"origin"`
@@ -251,11 +256,17 @@ func (c *Client) request(ctx context.Context, method, path, content string, body
 	if e != nil {
 		return nil, e
 	}
+	policy, _ := ctx.Value(operationTransportKey{}).(operationTransport)
+	writeRequest := method != "GET"
+	if policy.scope != "" {
+		writeRequest = policy.scope == "write"
+	}
+	csrfRequired := method != "GET" || policy.csrf
 	r.Header.Set("Accept", "application/json")
 	if id, ok := ctx.Value(machineOperationKey{}).(string); ok {
 		r.Header.Set("X-AICRM-CLI-Operation", id)
 	}
-	if method != "GET" {
+	if writeRequest {
 		r.GetBody = nil
 		r.Close = true
 	}
@@ -268,25 +279,50 @@ func (c *Client) request(ctx context.Context, method, path, content string, body
 	if c.Credential.Kind == "machine" || (c.Credential.Kind == "human" && c.Credential.Token != "") {
 		r.Header.Set("Authorization", "Bearer "+c.Credential.Token)
 	}
-	if c.Credential.Kind == "human" && c.Credential.Token != "" && method != "GET" {
+	if c.Credential.Kind == "human" && c.Credential.Token != "" && csrfRequired {
 		r.Header.Set("X-CSRF-Token", c.Credential.CSRF)
 	}
 	if c.Credential.Kind == "human" && c.Credential.Token == "" {
 		r.AddCookie(&http.Cookie{Name: "aicrm_admin_session", Value: c.Credential.Session})
-		if method != "GET" {
+		if csrfRequired {
 			r.AddCookie(&http.Cookie{Name: "aicrm_admin_csrf", Value: c.Credential.CSRF})
 			r.Header.Set("X-CSRF-Token", c.Credential.CSRF)
 		}
 	}
-	resp, e := c.HTTP.Do(r)
+	httpClient := c.HTTP
+	if writeRequest && method == "GET" {
+		// A GET with Owner side effects must not be replayed by Go on a reused
+		// connection. A fresh transport also preserves TLS/proxy policy.
+		if base, ok := c.HTTP.Transport.(*http.Transport); ok {
+			transport := base.Clone()
+			transport.DisableKeepAlives = true
+			defer transport.CloseIdleConnections()
+			copy := *c.HTTP
+			copy.Transport = transport
+			httpClient = &copy
+		}
+	}
+	resp, e := httpClient.Do(r)
 	if e != nil {
-		if method != "GET" {
+		if writeRequest {
 			return nil, fail("outcome_unknown", "request outcome is unknown; query the original operation before retrying", 7)
 		}
 		return nil, fail("transport", "read request failed", 1)
 	}
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		resp.Body.Close()
+		defer resp.Body.Close()
+		// Only this registered response may disclose these two recovery facts.
+		// Never forward arbitrary server errors, credentials or customer data.
+		if id, _ := ctx.Value(machineOperationKey{}).(string); id == "admin.saveGroupInvitationPlan" {
+			raw, err := io.ReadAll(io.LimitReader(resp.Body, 4097))
+			var known struct {
+				PlanID    int64 `json:"plan_id"`
+				Committed bool  `json:"local_save_committed"`
+			}
+			if err == nil && len(raw) <= 4096 && json.Unmarshal(raw, &known) == nil && known.Committed && known.PlanID > 0 {
+				return nil, &Failure{Code: "outcome_unknown", Message: "invitation was saved; read the original plan before any further change", Status: resp.StatusCode, Exit: 7, Result: map[string]any{"operation_id": id, "plan_id": known.PlanID, "local_save_committed": true}}
+			}
+		}
 		exit := 1
 		code := "http_error"
 		switch resp.StatusCode {
@@ -308,7 +344,7 @@ func (c *Client) request(ctx context.Context, method, path, content string, body
 		if resp.StatusCode >= 300 && resp.StatusCode < 400 {
 			code = "redirect_refused"
 		}
-		if resp.StatusCode >= 500 && method != "GET" {
+		if resp.StatusCode >= 500 && writeRequest {
 			code = "outcome_unknown"
 			exit = 7
 		}
@@ -329,6 +365,11 @@ type CallInput struct {
 func BuildRequest(op catalog.Operation, input CallInput) (string, string, io.Reader, error) {
 	if op.Binding == nil {
 		return "", "", nil, fail("unavailable", op.BlockedReason, 4)
+	}
+	var err error
+	input, err = normalizeTagCommandKey(op, input)
+	if err != nil {
+		return "", "", nil, err
 	}
 	b := op.Binding
 	if b.BodyRequired && len(input.Body) == 0 && len(input.Uploads) == 0 {
@@ -502,6 +543,10 @@ func (c *Client) Call(ctx context.Context, op catalog.Operation, input CallInput
 	} else if c.Credential.Kind != op.Binding.Auth {
 		return nil, fail("permission", "operation is registered for a different identity kind", 4)
 	}
+	input, e := normalizeTagCommandKey(op, input)
+	if e != nil {
+		return nil, e
+	}
 	path, content, body, e := BuildRequest(op, input)
 	if e != nil {
 		return nil, e
@@ -514,5 +559,32 @@ func (c *Client) Call(ctx context.Context, op catalog.Operation, input CallInput
 	if op.Binding.Auth == "human" {
 		ctx = context.WithValue(ctx, machineOperationKey{}, op.ID)
 	}
+	if op.Binding.Auth == "human" {
+		ctx = context.WithValue(ctx, operationTransportKey{}, operationTransport{scope: op.Binding.Scope, csrf: op.Binding.CSRFRequired})
+	}
 	return c.request(ctx, op.Binding.Method, path, content, body, input.IdempotencyKey)
+}
+
+// Both original Owner endpoints accept an existing body key or header key.
+// Resolve once without changing the body or ever manufacturing a new key.
+func normalizeTagCommandKey(op catalog.Operation, input CallInput) (CallInput, error) {
+	if op.ID != "admin.acceptCustomerTagCommand" && op.ID != "admin.previewCustomerTagCommand" {
+		return input, nil
+	}
+	var value struct {
+		Key string `json:"idempotency_key"`
+	}
+	if len(input.Body) > 0 && json.Unmarshal(input.Body, &value) != nil {
+		return input, fail("validation", "invalid tag command JSON", 2)
+	}
+	if value.Key != "" && input.IdempotencyKey != "" && value.Key != input.IdempotencyKey {
+		return input, fail("validation", "body and flag idempotency keys conflict", 2)
+	}
+	if input.IdempotencyKey == "" {
+		input.IdempotencyKey = value.Key
+	}
+	if input.IdempotencyKey == "" {
+		return input, fail("validation", "tag command requires an existing idempotency key in input or flag", 2)
+	}
+	return input, nil
 }

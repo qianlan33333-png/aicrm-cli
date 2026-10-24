@@ -8,6 +8,8 @@
 
 客户端构建身份、可选更新、校验安装/回滚与独立仓库同步见 [版本与同步](crm/update-and-sync.md)。
 
+新增能力的最小调用说明见 [v0.6.0 能力补齐](capability-completion.md)。
+
 ## 构建与环境
 
 在当前 V4 checkout 中：

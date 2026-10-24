@@ -390,7 +390,10 @@ func (o *Options) invoke(cmd *cobra.Command, op catalog.Operation) error {
 	}
 	all, _ := cmd.Flags().GetBool("all")
 	wait, _ := cmd.Flags().GetBool("wait")
-	if (all || wait) && op.Binding.Method != "GET" {
+	if op.ID == "admin.downloadGroupInvitationQRCode" && output == "" {
+		return fail("validation", "invitation QR download requires --output", 2)
+	}
+	if (all || wait) && (op.Binding.Method != "GET" || op.Binding.EffectiveScope() != "read") {
 		return fail("validation", "pagination and waiting only apply to registered GET operations", 2)
 	}
 	if all && wait {
@@ -462,7 +465,7 @@ func (o *Options) invoke(cmd *cobra.Command, op catalog.Operation) error {
 			_, e := io.Copy(destination, resp.Body)
 			resp.Body.Close()
 			if e != nil {
-				if op.Binding.Method != "GET" {
+				if op.Binding.EffectiveScope() == "write" {
 					return fail("outcome_unknown", "write response download incomplete; query the original operation before retrying", 7)
 				}
 				return fail("io", "response download incomplete", 1)
@@ -486,20 +489,20 @@ func (o *Options) invoke(cmd *cobra.Command, op catalog.Operation) error {
 			return waitEnded()
 		}
 		if e != nil {
-			if op.Binding.Method != "GET" {
+			if op.Binding.EffectiveScope() == "write" {
 				return fail("outcome_unknown", "write response incomplete; query the original operation before retrying", 7)
 			}
 			return fail("io", "response incomplete; query original operation", 1)
 		}
 		if !strings.Contains(typ, "json") {
-			if op.Binding.Method != "GET" {
+			if op.Binding.EffectiveScope() == "write" {
 				return fail("outcome_unknown", "write returned an unexpected response type; inspect the original operation without resubmitting", 7)
 			}
 			return fail("output_required", "non-JSON response requires --output; request is not retried", 2)
 		}
 		var result any
 		if e = StrictJSON(body, &result); e != nil {
-			if op.Binding.Method != "GET" {
+			if op.Binding.EffectiveScope() == "write" {
 				return fail("outcome_unknown", "write response is invalid; query the original operation before retrying", 7)
 			}
 			return fail("protocol", "server response is not valid JSON", 1)

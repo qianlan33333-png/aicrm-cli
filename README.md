@@ -139,3 +139,5 @@ aicrm-cli owners customer-owner-handoff-batch get --param batch_id=YOUR_BATCH_ID
 ## 服务端边界
 
 当前目录保留 580 项元数据；目录存在不表示服务端已安装或 Provider 就绪。32 项没有执行绑定。机器身份可调用原生机器合同；明确获授 `cli.admin.execute` 且绑定有效管理授权时，也可调用已登记管理接口。每次均由服务器核对当前权限与资源，不能换用人类 Token。客户端不包含服务端、数据库、Provider、应用部署或账号恢复工具。目录更新需同步兼容服务端契约。
+
+新增 48 项管理操作的用法见 [v0.6.0 能力补齐](docs/crm/capability-completion.md)。安装需要匹配的服务端目录；原命令及认证方式保持。

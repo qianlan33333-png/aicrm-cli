@@ -368,6 +368,136 @@
       }
     },
     {
+      "id": "admin.acceptCustomerTagCommand",
+      "group": "customers",
+      "module": "customers",
+      "command": "accept-customer-tag-command invoke",
+      "summary": "",
+      "owner": "customer",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "202": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerTagCommand"
+              }
+            }
+          },
+          "description": "Command accepted with per-customer local status"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/v1/customer-tag-commands",
+        "auth": "human",
+        "parameters": [
+          {
+            "description": "Explicit keys replay or reject payload drift. Frozen v2 Media controls omit this header; the compatibility adapter mints and audits a fresh per-request key.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "$ref": "#/components/schemas/CustomerTagCommandRequest"
+        },
+        "content_type": "application/json",
+        "idempotency_required": false,
+        "body_required": true
+      }
+    },
+    {
+      "id": "admin.acceptGroupOpsBroadcast",
+      "group": "group-ops",
+      "module": "group-ops",
+      "command": "accept-group-ops-broadcast invoke",
+      "summary": "",
+      "owner": "groupops",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "202": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GroupOpsRunSummary"
+              }
+            }
+          },
+          "description": "Durable local run/EER intent accepted; Provider remains disabled"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/automation/group-ops/broadcast",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "$ref": "#/components/schemas/GroupOpsBroadcastRequest"
+        },
+        "content_type": "application/json",
+        "idempotency_required": true,
+        "body_required": true
+      }
+    },
+    {
       "id": "admin.acceptGroupOpsRunDue",
       "group": "group-ops",
       "module": "group-ops",
@@ -3657,6 +3787,83 @@
       }
     },
     {
+      "id": "admin.createAttachmentMaterialGroup",
+      "group": "materials",
+      "module": "materials",
+      "command": "attachment-material-group create",
+      "summary": "Create material group",
+      "owner": "media",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Create material group"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/admin/attachment-library/groups",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "type": "object"
+        },
+        "content_type": "application/json",
+        "idempotency_required": true,
+        "body_required": true
+      }
+    },
+    {
       "id": "admin.createAudienceRun",
       "group": "audience",
       "module": "audience",
@@ -4324,6 +4531,83 @@
         ],
         "idempotency_required": true,
         "body_required": false
+      }
+    },
+    {
+      "id": "admin.createImageMaterialGroup",
+      "group": "materials",
+      "module": "materials",
+      "command": "image-material-group create",
+      "summary": "Create material group",
+      "owner": "media",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Create material group"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/admin/image-library/groups",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "type": "object"
+        },
+        "content_type": "application/json",
+        "idempotency_required": true,
+        "body_required": true
       }
     },
     {
@@ -5013,6 +5297,83 @@
       }
     },
     {
+      "id": "admin.createMiniprogramMaterialGroup",
+      "group": "materials",
+      "module": "materials",
+      "command": "miniprogram-material-group create",
+      "summary": "Create material group",
+      "owner": "media",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Create material group"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/admin/miniprogram-library/groups",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "type": "object"
+        },
+        "content_type": "application/json",
+        "idempotency_required": true,
+        "body_required": true
+      }
+    },
+    {
       "id": "admin.createOpenPlatformClient",
       "group": "access",
       "module": "config",
@@ -5255,6 +5616,73 @@
       }
     },
     {
+      "id": "admin.createProduct",
+      "group": "products",
+      "module": "products",
+      "command": "product create",
+      "summary": "",
+      "owner": "product",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "201": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
+            }
+          },
+          "description": "Local Product created"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/v1/products",
+        "auth": "human",
+        "parameters": [
+          {
+            "description": "Explicit keys replay or reject payload drift. Frozen v2 Media controls omit this header; the compatibility adapter mints and audits a fresh per-request key.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "$ref": "#/components/schemas/CreateProductRequest"
+        },
+        "content_type": "application/json",
+        "idempotency_required": false,
+        "body_required": true
+      }
+    },
+    {
       "id": "admin.createRadarLinkV3",
       "group": "radar",
       "module": "radar",
@@ -5375,6 +5803,285 @@
         ],
         "body": {
           "$ref": "#/components/schemas/RuntimeConfigReleaseDraftRequest"
+        },
+        "content_type": "application/json",
+        "idempotency_required": true,
+        "body_required": true
+      }
+    },
+    {
+      "id": "admin.createServicePeriodMemberCollaborator",
+      "group": "period-products",
+      "module": "period-products",
+      "command": "service-period-member-collaborator create",
+      "summary": "Grant member workspace collaboration",
+      "owner": "serviceperiod",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "201": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Grant member workspace collaboration"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/admin/service-period-products/{service_product_id}/member-grid/collaborators",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "service_product_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "permission": {
+              "enum": [
+                "read",
+                "edit"
+              ],
+              "type": "string"
+            },
+            "wecom_userid": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "wecom_userid",
+            "permission"
+          ],
+          "type": "object"
+        },
+        "content_type": "application/json",
+        "idempotency_required": true,
+        "body_required": true
+      }
+    },
+    {
+      "id": "admin.createServicePeriodMemberView",
+      "group": "period-products",
+      "module": "period-products",
+      "command": "service-period-member-view create",
+      "summary": "Create member view",
+      "owner": "serviceperiod",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Create member view"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/admin/service-period-products/{service_product_id}/member-views",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "service_product_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PositiveID"
+            }
+          },
+          {
+            "in": "path",
+            "name": "service_product_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "config": {
+              "additionalProperties": false,
+              "properties": {
+                "filter": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "conditions": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "field": {
+                            "type": "string"
+                          },
+                          "operator": {
+                            "type": "string"
+                          },
+                          "value": {}
+                        },
+                        "required": [
+                          "field",
+                          "operator"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "logic": {
+                      "enum": [
+                        "and",
+                        "or"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [],
+                  "type": "object"
+                },
+                "groups": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "direction": {
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ],
+                        "type": "string"
+                      },
+                      "field": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "field",
+                      "direction"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "presentation": {},
+                "schema_version": {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "sorts": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "direction": {
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ],
+                        "type": "string"
+                      },
+                      "field": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "field",
+                      "direction"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              },
+              "required": [
+                "schema_version"
+              ],
+              "type": "object"
+            },
+            "name": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "config"
+          ],
+          "type": "object"
         },
         "content_type": "application/json",
         "idempotency_required": true,
@@ -6110,6 +6817,91 @@
       }
     },
     {
+      "id": "admin.deleteAttachmentMaterialGroup",
+      "group": "materials",
+      "module": "materials",
+      "command": "attachment-material-group delete",
+      "summary": "Delete material group with current version",
+      "owner": "media",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Delete material group with current version"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "DELETE",
+        "path": "/api/admin/attachment-library/groups/{group_id}",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "group_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "expected_version": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "expected_version"
+          ],
+          "type": "object"
+        },
+        "content_type": "application/json",
+        "idempotency_required": true,
+        "body_required": true
+      }
+    },
+    {
       "id": "admin.deleteChannelContactWay",
       "group": "channels",
       "module": "channels",
@@ -6394,6 +7186,91 @@
       }
     },
     {
+      "id": "admin.deleteImageMaterialGroup",
+      "group": "materials",
+      "module": "materials",
+      "command": "image-material-group delete",
+      "summary": "Delete material group with current version",
+      "owner": "media",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Delete material group with current version"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "DELETE",
+        "path": "/api/admin/image-library/groups/{group_id}",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "group_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "expected_version": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "expected_version"
+          ],
+          "type": "object"
+        },
+        "content_type": "application/json",
+        "idempotency_required": true,
+        "body_required": true
+      }
+    },
+    {
       "id": "admin.deleteLocalWechatPayProduct",
       "group": "products",
       "module": "products",
@@ -6664,6 +7541,91 @@
       }
     },
     {
+      "id": "admin.deleteMiniprogramMaterialGroup",
+      "group": "materials",
+      "module": "materials",
+      "command": "miniprogram-material-group delete",
+      "summary": "Delete material group with current version",
+      "owner": "media",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Delete material group with current version"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "DELETE",
+        "path": "/api/admin/miniprogram-library/groups/{group_id}",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "group_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "expected_version": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "expected_version"
+          ],
+          "type": "object"
+        },
+        "content_type": "application/json",
+        "idempotency_required": true,
+        "body_required": true
+      }
+    },
+    {
       "id": "admin.deleteProductWorkspaceShares",
       "group": "period-products",
       "module": "period-products",
@@ -6728,6 +7690,194 @@
         ],
         "body": {
           "$ref": "#/components/schemas/DataWorkspaceShare"
+        },
+        "content_type": "application/json",
+        "idempotency_required": true,
+        "body_required": true
+      }
+    },
+    {
+      "id": "admin.deleteServicePeriodMemberCollaborator",
+      "group": "period-products",
+      "module": "period-products",
+      "command": "service-period-member-collaborator delete",
+      "summary": "Remove collaborator using current version",
+      "owner": "serviceperiod",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Remove collaborator using current version"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "DELETE",
+        "path": "/api/admin/service-period-products/{service_product_id}/member-grid/collaborators/{collaborator_id}",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "service_product_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "collaborator_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "version": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "version"
+          ],
+          "type": "object"
+        },
+        "content_type": "application/json",
+        "idempotency_required": true,
+        "body_required": true
+      }
+    },
+    {
+      "id": "admin.deleteServicePeriodMemberView",
+      "group": "period-products",
+      "module": "period-products",
+      "command": "service-period-member-view delete",
+      "summary": "Delete member view using current version",
+      "owner": "serviceperiod",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Delete member view using current version"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "DELETE",
+        "path": "/api/admin/service-period-products/{service_product_id}/member-views/{view_id}",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "service_product_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "view_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "version": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "version"
+          ],
+          "type": "object"
         },
         "content_type": "application/json",
         "idempotency_required": true,
@@ -7390,6 +8540,69 @@
         "method": "GET",
         "path": "/api/admin/config/openapi.yaml",
         "auth": "human",
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
+      "id": "admin.downloadGroupInvitationQRCode",
+      "group": "group-invitations",
+      "module": "group-invitations",
+      "command": "group-invitation-qrcode download",
+      "summary": "Download current official QR; may evaluate existing plan",
+      "owner": "media",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "image/png": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            }
+          },
+          "description": "Download current official QR; may evaluate existing plan"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/group-invitations/{id}/qr-download",
+        "auth": "human",
+        "scope": "write",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
         "idempotency_required": false,
         "body_required": false
       }
@@ -8259,7 +9472,15 @@
       "version": 1,
       "responses": {
         "200": {
-          "description": "Audited streamed CSV export"
+          "content": {
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            }
+          },
+          "description": "Audited XLSX with complete answers grouped by submitted definition version"
         }
       },
       "prerequisites": [
@@ -9801,6 +11022,69 @@
       }
     },
     {
+      "id": "admin.getCouponShare",
+      "group": "coupons",
+      "module": "coupons",
+      "command": "coupon-share get",
+      "summary": "Ensure coupon public share; this GET can write",
+      "owner": "coupon",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Ensure coupon public share; this GET can write"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/coupons/{coupon_id}/share",
+        "auth": "human",
+        "scope": "write",
+        "csrf_required": true,
+        "parameters": [
+          {
+            "in": "path",
+            "name": "coupon_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
       "id": "admin.getCustomer360",
       "group": "customers",
       "module": "customers",
@@ -10723,6 +12007,177 @@
         "method": "GET",
         "path": "/api/admin/access/cli-policy",
         "auth": "human",
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
+      "id": "admin.getGroupDirectoryEntry",
+      "group": "group-invitations",
+      "module": "group-invitations",
+      "command": "group-directory-entry get",
+      "summary": "Read one directory group",
+      "owner": "media",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Read one directory group"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/group-directory/{chat_id}",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "chat_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
+      "id": "admin.getGroupDirectoryStatus",
+      "group": "group-invitations",
+      "module": "group-invitations",
+      "command": "group-directory-status get",
+      "summary": "Read group directory sync status",
+      "owner": "media",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Read group directory sync status"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/group-directory/status",
+        "auth": "human",
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
+      "id": "admin.getGroupInvitationPlan",
+      "group": "group-invitations",
+      "module": "group-invitations",
+      "command": "group-invitation-plan get",
+      "summary": "Read original invitation plan",
+      "owner": "media",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Read original invitation plan"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/group-invitations/{id}",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
         "idempotency_required": false,
         "body_required": false
       }
@@ -12459,6 +13914,63 @@
       }
     },
     {
+      "id": "admin.getProduct",
+      "group": "products",
+      "module": "products",
+      "command": "product get",
+      "summary": "",
+      "owner": "product",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
+            }
+          },
+          "description": "Local ordinary Product"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "404": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/v1/products/{product_id}",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PositiveID"
+            }
+          }
+        ],
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
       "id": "admin.getProductWorkspaceShares",
       "group": "period-products",
       "module": "period-products",
@@ -12948,6 +14460,56 @@
             }
           }
         ],
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
+      "id": "admin.getRuntimeConfigurationCatalog",
+      "group": "config",
+      "module": "config",
+      "command": "runtime-configuration-catalog get",
+      "summary": "Read runtime configuration definitions",
+      "owner": "config",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Read runtime configuration definitions"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/config/runtime-catalog",
+        "auth": "human",
         "idempotency_required": false,
         "body_required": false
       }
@@ -15703,6 +17265,83 @@
       }
     },
     {
+      "id": "admin.listAutomationGenerationItems",
+      "group": "automation",
+      "module": "automation",
+      "command": "automation-generation-items list",
+      "summary": "Read generated items for original run",
+      "owner": "automation",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Read generated items for original run"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/automation-runs/{run_id}/generation-items",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
       "id": "admin.listAutomationPolicies",
       "group": "automation",
       "module": "automation",
@@ -16336,6 +17975,86 @@
       }
     },
     {
+      "id": "admin.listCouponClaims",
+      "group": "coupons",
+      "module": "coupons",
+      "command": "coupon-claims list",
+      "summary": "Read claims for coupon",
+      "owner": "coupon",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Read claims for coupon"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/coupons/{coupon_id}/claims",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "coupon_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          }
+        ],
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
       "id": "admin.listCouponProductOptions",
       "group": "coupons",
       "module": "coupons",
@@ -16764,6 +18483,73 @@
       }
     },
     {
+      "id": "admin.listCustomerTagCommands",
+      "group": "customers",
+      "module": "customers",
+      "command": "customer-tag-commands list",
+      "summary": "",
+      "owner": "customer",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerTagCommandPage"
+              }
+            }
+          },
+          "description": "Durable command history"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "404": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/v1/customers/{customer_id}/tag-commands",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "customer_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PositiveID"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
       "id": "admin.listCustomers",
       "group": "customers",
       "module": "customers",
@@ -16978,6 +18764,196 @@
             }
           }
         ],
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
+      "id": "admin.listGroupDirectory",
+      "group": "group-invitations",
+      "module": "group-invitations",
+      "command": "group-directory list",
+      "summary": "Read invitation group directory",
+      "owner": "media",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Read invitation group directory"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/group-directory",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          }
+        ],
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
+      "id": "admin.listGroupInvitationHistory",
+      "group": "group-invitations",
+      "module": "group-invitations",
+      "command": "group-invitation-history list",
+      "summary": "Read invitation switching history",
+      "owner": "media",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Read invitation switching history"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/group-invitations/{id}/history",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
+      "id": "admin.listGroupInvitationPlans",
+      "group": "group-invitations",
+      "module": "group-invitations",
+      "command": "group-invitation-plans list",
+      "summary": "List local invitation plans",
+      "owner": "media",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "List local invitation plans"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/group-invitations",
+        "auth": "human",
         "idempotency_required": false,
         "body_required": false
       }
@@ -18007,6 +19983,117 @@
             }
           }
         ],
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
+      "id": "admin.listImageMaterialGroupMembers",
+      "group": "materials",
+      "module": "materials",
+      "command": "image-material-group-members list",
+      "summary": "Read image IDs and current versions for group mutation",
+      "owner": "media",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Read image IDs and current versions for group mutation"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/image-library/group-members",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "ids",
+            "required": true,
+            "schema": {
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
+      "id": "admin.listImageMaterialGroups",
+      "group": "materials",
+      "module": "materials",
+      "command": "image-material-groups list",
+      "summary": "Read material group IDs versions and counts",
+      "owner": "media",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Read material group IDs versions and counts"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/image-library/groups",
+        "auth": "human",
         "idempotency_required": false,
         "body_required": false
       }
@@ -19683,6 +21770,81 @@
       }
     },
     {
+      "id": "admin.listOrderProviderDeliveries",
+      "group": "api",
+      "module": "api",
+      "command": "order-provider-deliveries list",
+      "summary": "Read deliveries using explicit payment provider",
+      "owner": "route-owner",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Read deliveries using explicit payment provider"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/order-deliveries/{order_ref}",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "order_ref",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "provider",
+            "required": true,
+            "schema": {
+              "enum": [
+                "wechat",
+                "wechat_pay",
+                "wechat_shop",
+                "no_payment",
+                "alipay"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
       "id": "admin.listOrdinaryProductSalesSources",
       "group": "products",
       "module": "products",
@@ -19777,6 +21939,74 @@
             "required": true,
             "schema": {
               "$ref": "#/components/schemas/PositiveID"
+            }
+          }
+        ],
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
+      "id": "admin.listProducts",
+      "group": "products",
+      "module": "products",
+      "command": "products list",
+      "summary": "",
+      "owner": "product",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductPage"
+              }
+            }
+          },
+          "description": "Ordinary Product page"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/v1/products",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
             }
           }
         ],
@@ -20315,6 +22545,67 @@
       }
     },
     {
+      "id": "admin.listServicePeriodMemberStaff",
+      "group": "period-products",
+      "module": "period-products",
+      "command": "service-period-member-staff list",
+      "summary": "Read staff eligible for workspace sharing",
+      "owner": "serviceperiod",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Read staff eligible for workspace sharing"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/service-period-products/{service_product_id}/member-grid/staff",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "service_product_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
       "id": "admin.listServicePeriodMemberViewsCompatibility",
       "group": "period-products",
       "module": "period-products",
@@ -20326,7 +22617,7 @@
       "evidence": "source_contract_only",
       "version": 1,
       "responses": {
-        "200": {
+        "201": {
           "content": {
             "application/json": {
               "schema": {
@@ -21165,6 +23456,309 @@
         ],
         "body": {
           "$ref": "#/components/schemas/AutomationOpsMaterializeRequest"
+        },
+        "content_type": "application/json",
+        "idempotency_required": true,
+        "body_required": true
+      }
+    },
+    {
+      "id": "admin.moveAttachmentMaterialGroupItems",
+      "group": "materials",
+      "module": "materials",
+      "command": "move-attachment-material-group-items invoke",
+      "summary": "Move material items with each current version",
+      "owner": "media",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Move material items with each current version"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/admin/attachment-library/group-moves",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "group_id": {
+              "minimum": 1,
+              "nullable": true,
+              "type": "integer"
+            },
+            "items": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "expected_version": {
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  "id": {
+                    "minimum": 1,
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "id",
+                  "expected_version"
+                ],
+                "type": "object"
+              },
+              "maxItems": 200,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "group_id",
+            "items"
+          ],
+          "type": "object"
+        },
+        "content_type": "application/json",
+        "idempotency_required": true,
+        "body_required": true
+      }
+    },
+    {
+      "id": "admin.moveImageMaterialGroupItems",
+      "group": "materials",
+      "module": "materials",
+      "command": "move-image-material-group-items invoke",
+      "summary": "Move material items with each current version",
+      "owner": "media",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Move material items with each current version"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/admin/image-library/group-moves",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "group_id": {
+              "minimum": 1,
+              "nullable": true,
+              "type": "integer"
+            },
+            "items": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "expected_version": {
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  "id": {
+                    "minimum": 1,
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "id",
+                  "expected_version"
+                ],
+                "type": "object"
+              },
+              "maxItems": 200,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "group_id",
+            "items"
+          ],
+          "type": "object"
+        },
+        "content_type": "application/json",
+        "idempotency_required": true,
+        "body_required": true
+      }
+    },
+    {
+      "id": "admin.moveMiniprogramMaterialGroupItems",
+      "group": "materials",
+      "module": "materials",
+      "command": "move-miniprogram-material-group-items invoke",
+      "summary": "Move material items with each current version",
+      "owner": "media",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Move material items with each current version"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/admin/miniprogram-library/group-moves",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "group_id": {
+              "minimum": 1,
+              "nullable": true,
+              "type": "integer"
+            },
+            "items": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "expected_version": {
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  "id": {
+                    "minimum": 1,
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "id",
+                  "expected_version"
+                ],
+                "type": "object"
+              },
+              "maxItems": 200,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "group_id",
+            "items"
+          ],
+          "type": "object"
         },
         "content_type": "application/json",
         "idempotency_required": true,
@@ -23718,6 +26312,55 @@
       }
     },
     {
+      "id": "admin.previewCustomerTagCommand",
+      "group": "customers",
+      "module": "customers",
+      "command": "customer-tag-command preview",
+      "summary": "",
+      "owner": "customer",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerTagCommand"
+              }
+            }
+          },
+          "description": "Per-customer eligibility preview without an effect"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/v1/customer-tag-commands/preview",
+        "auth": "human",
+        "scope": "read",
+        "body": {
+          "$ref": "#/components/schemas/CustomerTagCommandRequest"
+        },
+        "content_type": "application/json",
+        "idempotency_required": false,
+        "body_required": true
+      }
+    },
+    {
       "id": "admin.previewGroupOpsContentPackage",
       "group": "group-ops",
       "module": "group-ops",
@@ -24993,6 +27636,182 @@
         "auth": "human",
         "body": {
           "$ref": "#/components/schemas/HXCDashboardQuery"
+        },
+        "content_type": "application/json",
+        "idempotency_required": false,
+        "body_required": true
+      }
+    },
+    {
+      "id": "admin.queryServicePeriodMemberGrid",
+      "group": "period-products",
+      "module": "period-products",
+      "command": "query-service-period-member-grid invoke",
+      "summary": "Read member grid with explicit cursor",
+      "owner": "serviceperiod",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Read member grid with explicit cursor"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/admin/service-period-products/{service_product_id}/member-grid/query",
+        "auth": "human",
+        "scope": "read",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "service_product_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "config": {
+              "additionalProperties": false,
+              "properties": {
+                "filter": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "conditions": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "field": {
+                            "type": "string"
+                          },
+                          "operator": {
+                            "type": "string"
+                          },
+                          "value": {}
+                        },
+                        "required": [
+                          "field",
+                          "operator"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "logic": {
+                      "enum": [
+                        "and",
+                        "or"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [],
+                  "type": "object"
+                },
+                "groups": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "direction": {
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ],
+                        "type": "string"
+                      },
+                      "field": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "field",
+                      "direction"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "presentation": {},
+                "schema_version": {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "sorts": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "direction": {
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ],
+                        "type": "string"
+                      },
+                      "field": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "field",
+                      "direction"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              },
+              "required": [
+                "schema_version"
+              ],
+              "type": "object"
+            },
+            "cursor": {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            "limit": {
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "config",
+            "limit"
+          ],
+          "type": "object"
         },
         "content_type": "application/json",
         "idempotency_required": false,
@@ -26496,6 +29315,90 @@
       }
     },
     {
+      "id": "admin.recoverProfitSharingReceiver",
+      "group": "api",
+      "module": "api",
+      "command": "recover-profit-sharing-receiver invoke",
+      "summary": "Super admin recovery with original evidence and safety proof",
+      "owner": "route-owner",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "202": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Super admin recovery with original evidence and safety proof"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/admin/wechat-pay/profit-sharing/receivers/{reference}/recover",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "reference",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "evidence_reference": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": [
+            "evidence_reference"
+          ],
+          "type": "object"
+        },
+        "content_type": "application/json",
+        "idempotency_required": true,
+        "body_required": true
+      }
+    },
+    {
       "id": "admin.refreshAccessStaffDirectory",
       "group": "access",
       "module": "config",
@@ -26670,6 +29573,56 @@
         "content_type": "application/json",
         "idempotency_required": false,
         "body_required": true
+      }
+    },
+    {
+      "id": "admin.refreshGroupDirectory",
+      "group": "group-invitations",
+      "module": "group-invitations",
+      "command": "group-directory refresh",
+      "summary": "Request existing directory sync",
+      "owner": "media",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "202": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Request existing directory sync"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/admin/group-directory/refresh",
+        "auth": "human",
+        "idempotency_required": false,
+        "body_required": false
       }
     },
     {
@@ -27262,6 +30215,279 @@
         ],
         "body": {
           "$ref": "#/components/schemas/GroupOpsRevisionRequest"
+        },
+        "content_type": "application/json",
+        "idempotency_required": true,
+        "body_required": true
+      }
+    },
+    {
+      "id": "admin.renameAttachmentMaterialGroup",
+      "group": "materials",
+      "module": "materials",
+      "command": "rename-attachment-material-group invoke",
+      "summary": "Rename material group with current version",
+      "owner": "media",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Rename material group with current version"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "PUT",
+        "path": "/api/admin/attachment-library/groups/{group_id}",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "group_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "expected_version": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "name": {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "expected_version"
+          ],
+          "type": "object"
+        },
+        "content_type": "application/json",
+        "idempotency_required": true,
+        "body_required": true
+      }
+    },
+    {
+      "id": "admin.renameImageMaterialGroup",
+      "group": "materials",
+      "module": "materials",
+      "command": "rename-image-material-group invoke",
+      "summary": "Rename material group with current version",
+      "owner": "media",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Rename material group with current version"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "PUT",
+        "path": "/api/admin/image-library/groups/{group_id}",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "group_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "expected_version": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "name": {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "expected_version"
+          ],
+          "type": "object"
+        },
+        "content_type": "application/json",
+        "idempotency_required": true,
+        "body_required": true
+      }
+    },
+    {
+      "id": "admin.renameMiniprogramMaterialGroup",
+      "group": "materials",
+      "module": "materials",
+      "command": "rename-miniprogram-material-group invoke",
+      "summary": "Rename material group with current version",
+      "owner": "media",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Rename material group with current version"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "PUT",
+        "path": "/api/admin/miniprogram-library/groups/{group_id}",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "group_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "expected_version": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "name": {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "expected_version"
+          ],
+          "type": "object"
         },
         "content_type": "application/json",
         "idempotency_required": true,
@@ -28349,6 +31575,77 @@
       }
     },
     {
+      "id": "admin.retryWeComTagMutation",
+      "group": "wecom",
+      "module": "wecom",
+      "command": "retry-we-com-tag-mutation invoke",
+      "summary": "Retry only after original durable attempt safety proof",
+      "owner": "wecom",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "202": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Retry only after original durable attempt safety proof"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/admin/wecom/tags/mutations/{mutation_id}/retry",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "mutation_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "idempotency_required": true,
+        "body_required": false
+      }
+    },
+    {
       "id": "admin.revealCustomerContact",
       "group": "customers",
       "module": "customers",
@@ -29301,6 +32598,191 @@
         },
         "content_type": "application/json",
         "idempotency_required": false,
+        "body_required": true
+      }
+    },
+    {
+      "id": "admin.saveGroupInvitationPlan",
+      "group": "group-invitations",
+      "module": "group-invitations",
+      "command": "group-invitation-plan save",
+      "summary": "Save invitation plan; acceptance is not Provider execution",
+      "owner": "media",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Save invitation plan; acceptance is not Provider execution"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "local_save_committed": {
+                    "type": "boolean"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "ok": {
+                    "type": "boolean"
+                  },
+                  "plan_id": {
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  "request_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [],
+                "type": "object"
+              }
+            }
+          },
+          "description": "Save failed; only confirmed local commit includes recovery facts"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "POST",
+        "path": "/api/admin/group-invitations",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "chat_ids": {
+              "items": {
+                "maxLength": 128,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 200,
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "cover_image_id": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "description": {
+              "maxLength": 512,
+              "type": "string"
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "id": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "mode": {
+              "enum": [
+                "single",
+                "sequence",
+                "native"
+              ],
+              "type": "string"
+            },
+            "name": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            "native_options": {
+              "additionalProperties": false,
+              "properties": {
+                "auto_create_room": {
+                  "type": "boolean"
+                },
+                "remark": {
+                  "maxLength": 30,
+                  "type": "string"
+                },
+                "room_base_id": {
+                  "type": "integer"
+                },
+                "room_base_name": {
+                  "maxLength": 40,
+                  "type": "string"
+                },
+                "state": {
+                  "maxLength": 30,
+                  "type": "string"
+                }
+              },
+              "required": [],
+              "type": "object"
+            },
+            "threshold": {
+              "maximum": 200,
+              "minimum": 1,
+              "nullable": true,
+              "type": "integer"
+            },
+            "title": {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            "version": {
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "name",
+            "title",
+            "mode",
+            "chat_ids",
+            "enabled"
+          ],
+          "type": "object"
+        },
+        "content_type": "application/json",
+        "idempotency_required": true,
         "body_required": true
       }
     },
@@ -33077,6 +36559,84 @@
       }
     },
     {
+      "id": "admin.updateProduct",
+      "group": "products",
+      "module": "products",
+      "command": "product update",
+      "summary": "",
+      "owner": "product",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
+            }
+          },
+          "description": "CAS-updated local Product"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "404": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "PUT",
+        "path": "/api/v1/products/{product_id}",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PositiveID"
+            }
+          },
+          {
+            "description": "Explicit keys replay or reject payload drift. Frozen v2 Media controls omit this header; the compatibility adapter mints and audits a fresh per-request key.",
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "$ref": "#/components/schemas/UpdateProductRequest"
+        },
+        "content_type": "application/json",
+        "idempotency_required": false,
+        "body_required": true
+      }
+    },
+    {
       "id": "admin.updateRadarLinkV3",
       "group": "radar",
       "module": "radar",
@@ -33139,6 +36699,122 @@
         },
         "content_type": "application/json",
         "idempotency_required": false,
+        "body_required": true
+      }
+    },
+    {
+      "id": "admin.updateReferralCampaignPosterLayouts",
+      "group": "referral",
+      "module": "referral",
+      "command": "referral-campaign-poster-layouts update",
+      "summary": "Update campaign poster layouts with CAS",
+      "owner": "referral",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Update campaign poster layouts with CAS"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "PUT",
+        "path": "/api/admin/referral/campaigns/{id}/poster-layouts",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "expected_version": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "posters": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "size": {
+                    "type": "integer"
+                  },
+                  "slot": {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "x": {
+                    "type": "integer"
+                  },
+                  "y": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "slot",
+                  "x",
+                  "y",
+                  "size"
+                ],
+                "type": "object"
+              },
+              "maxItems": 3,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "expected_version",
+            "posters"
+          ],
+          "type": "object"
+        },
+        "content_type": "application/json",
+        "idempotency_required": true,
         "body_required": true
       }
     },
@@ -33230,6 +36906,403 @@
           },
           "required": [
             "alliance",
+            "version"
+          ],
+          "type": "object"
+        },
+        "content_type": "application/json",
+        "idempotency_required": true,
+        "body_required": true
+      }
+    },
+    {
+      "id": "admin.updateServicePeriodMemberCollaborator",
+      "group": "period-products",
+      "module": "period-products",
+      "command": "service-period-member-collaborator update",
+      "summary": "Update collaborator using current version",
+      "owner": "serviceperiod",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Update collaborator using current version"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "PUT",
+        "path": "/api/admin/service-period-products/{service_product_id}/member-grid/collaborators/{collaborator_id}",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "service_product_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "collaborator_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "permission": {
+              "enum": [
+                "read",
+                "edit"
+              ],
+              "type": "string"
+            },
+            "version": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "permission",
+            "version"
+          ],
+          "type": "object"
+        },
+        "content_type": "application/json",
+        "idempotency_required": true,
+        "body_required": true
+      }
+    },
+    {
+      "id": "admin.updateServicePeriodMemberRemark",
+      "group": "period-products",
+      "module": "period-products",
+      "command": "service-period-member-remark update",
+      "summary": "Update member remark with current version",
+      "owner": "serviceperiod",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Update member remark with current version"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "PUT",
+        "path": "/api/admin/service-period-products/{service_product_id}/members/{member_ref}/remark",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "service_product_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "member_ref",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "customer_id": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "remark": {
+              "type": "string"
+            },
+            "version": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "customer_id",
+            "remark",
+            "version"
+          ],
+          "type": "object"
+        },
+        "content_type": "application/json",
+        "idempotency_required": true,
+        "body_required": true
+      }
+    },
+    {
+      "id": "admin.updateServicePeriodMemberView",
+      "group": "period-products",
+      "module": "period-products",
+      "command": "service-period-member-view update",
+      "summary": "Update member view using current version",
+      "owner": "serviceperiod",
+      "execution": "owner_contract",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "description": "Update member view using current version"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "PUT",
+        "path": "/api/admin/service-period-products/{service_product_id}/member-views/{view_id}",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "service_product_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "view_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 200,
+              "minLength": 8,
+              "type": "string"
+            }
+          }
+        ],
+        "body": {
+          "additionalProperties": false,
+          "properties": {
+            "config": {
+              "additionalProperties": false,
+              "properties": {
+                "filter": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "conditions": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "field": {
+                            "type": "string"
+                          },
+                          "operator": {
+                            "type": "string"
+                          },
+                          "value": {}
+                        },
+                        "required": [
+                          "field",
+                          "operator"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "logic": {
+                      "enum": [
+                        "and",
+                        "or"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [],
+                  "type": "object"
+                },
+                "groups": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "direction": {
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ],
+                        "type": "string"
+                      },
+                      "field": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "field",
+                      "direction"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "presentation": {},
+                "schema_version": {
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "sorts": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "direction": {
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ],
+                        "type": "string"
+                      },
+                      "field": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "field",
+                      "direction"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              },
+              "required": [
+                "schema_version"
+              ],
+              "type": "object"
+            },
+            "name": {
+              "type": "string"
+            },
+            "version": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "name",
+            "config",
             "version"
           ],
           "type": "object"
@@ -42714,6 +46787,9 @@
           "maxLength": 10000,
           "type": "string"
         },
+        "distribution_policy": {
+          "$ref": "#/components/schemas/ProductDistributionPolicyRequest"
+        },
         "images": {
           "items": {
             "maxLength": 2048,
@@ -42737,6 +46813,18 @@
           "maxLength": 200,
           "minLength": 1,
           "type": "string"
+        },
+        "stock_quantity": {
+          "description": "Legacy accepted field; it does not manage inventory"
+        },
+        "variants": {
+          "items": {
+            "$ref": "#/components/schemas/ProductVariantInput"
+          },
+          "type": "array"
+        },
+        "variants_enabled": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -56134,6 +60222,14 @@
             "null"
           ]
         },
+        "contact_collection_level": {
+          "enum": [
+            "none",
+            "mobile",
+            "shipping_address"
+          ],
+          "type": "string"
+        },
         "enabled": {
           "type": "boolean"
         },
@@ -56333,6 +60429,49 @@
       "required": [
         "name"
       ],
+      "type": "object"
+    },
+    "ProductVariantInput": {
+      "additionalProperties": false,
+      "properties": {
+        "attributes": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "value"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "description": {
+          "type": "string"
+        },
+        "id": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "price_minor": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "version": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
       "type": "object"
     },
     "PublicPaymentCheckoutRequest": {
@@ -61417,6 +65556,9 @@
           "maxLength": 10000,
           "type": "string"
         },
+        "distribution_policy": {
+          "$ref": "#/components/schemas/ProductDistributionPolicyRequest"
+        },
         "expected_version": {
           "$ref": "#/components/schemas/PositiveID"
         },
@@ -61438,6 +65580,18 @@
           "format": "int64",
           "minimum": 0,
           "type": "integer"
+        },
+        "stock_quantity": {
+          "description": "Legacy accepted field; it does not manage inventory"
+        },
+        "variants": {
+          "items": {
+            "$ref": "#/components/schemas/ProductVariantInput"
+          },
+          "type": "array"
+        },
+        "variants_enabled": {
+          "type": "boolean"
         }
       },
       "required": [
