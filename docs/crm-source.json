@@ -2,7 +2,7 @@
   "schema_version": 1,
   "cli_repository": "https://github.com/qianlan33333-png/aicrm-cli.git",
   "source_repository": "https://github.com/qianlan33333-png/AI-CRM-v4.git",
-  "payload_sha256": "745f8918becdb88c42ea6e6f490b5e21f7909f4ac7235d47b1ee0e3a7accfe85",
+  "payload_sha256": "cd9d4ef32f5b45c8c7534b656dce6f4664967a432bdea75e0f44603ab5a84306",
   "files": [
     {
       "source": "cmd/aicrm-cli/main.go",
@@ -187,7 +187,7 @@
     {
       "source": "internal/crmcli/update/cleanup_test.go",
       "destination": "internal/crmcli/update/cleanup_test.go",
-      "sha256": "61d575f69515c512ee6f1f4f29f85627639fbaeed5d4c6e4ea197d9930e2d29a"
+      "sha256": "9bd901c746575d3e023a19d94ec974434087a3e3b04a88104e775b91441400bd"
     },
     {
       "source": "internal/crmcli/update/cleanup_unix_test.go",
@@ -355,6 +355,6 @@
       "sha256": "6021b275fd61655a7265ec75195b410db950aa9808bc54edcae857b6a020f693"
     }
   ],
-  "source_head": "ebae431fbcb709922fdb3b634d142bb2056f42c3",
-  "source_tree": "961bf4cd2fad6f4646e7b185f3a501eaae233e63"
+  "source_head": "7ef9bef1ae7ca245a2620cb682b8eedb46ff5f19",
+  "source_tree": "80049992e3f293a49ad3db9118a5c618d65060b5"
 }
