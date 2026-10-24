@@ -261,11 +261,17 @@ func TestInstallDownloadInterruptionAndPermissionsPreserveExecutable(t *testing.
 	})
 	t.Run("readonly_installation_directory", func(t *testing.T) {
 		r, o, target := installFixture(t, b, "linux")
-		dir := filepath.Dir(target)
-		if e := os.Chmod(dir, 0500); e != nil {
-			t.Fatal(e)
+		if runtime.GOOS == "windows" {
+			// Windows ignores POSIX directory write bits. Inject the same OS
+			// permission error; native executable sharing is exercised separately.
+			o.Replace = func(string, string) error { return os.ErrPermission }
+		} else {
+			dir := filepath.Dir(target)
+			if e := os.Chmod(dir, 0500); e != nil {
+				t.Fatal(e)
+			}
+			defer os.Chmod(dir, 0700)
 		}
-		defer os.Chmod(dir, 0700)
 		v, e := Install(context.Background(), r, o)
 		if e == nil || v.Status != "not_installed" || v.Download == "" {
 			t.Fatalf("permissions %+v %v", v, e)

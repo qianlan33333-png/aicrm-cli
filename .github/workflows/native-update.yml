@@ -1,7 +1,5 @@
 name: CLI native update acceptance
 on:
-  push:
-    branches: [codex/cli-codex-isolation]
   pull_request:
   workflow_dispatch:
 permissions:
