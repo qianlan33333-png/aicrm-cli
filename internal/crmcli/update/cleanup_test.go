@@ -134,7 +134,7 @@ func TestCleanupFailuresAreObservableAndRepeatable(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	receipt, e := cleanupConfirmedBackup(target, v.BinarySHA256, func(string) error { return os.ErrPermission })
+	receipt, e := cleanupConfirmedBackup(target, v.BinarySHA256, v.Version, func(string) error { return os.ErrPermission })
 	unlock()
 	if e == nil || !backupAvailable(receipt) {
 		t.Fatal("cleanup failure lost recovery copy or error")
@@ -153,7 +153,7 @@ func TestCleanupFailuresAreObservableAndRepeatable(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	receipt, e = cleanupConfirmedBackup(target, v.BinarySHA256, func(path string) error {
+	receipt, e = cleanupConfirmedBackup(target, v.BinarySHA256, v.Version, func(path string) error {
 		if err := os.Remove(path); err != nil {
 			return err
 		}
@@ -214,5 +214,76 @@ func TestNextUpgradeRetiresPriorSuccessAndReusesFailedBackup(t *testing.T) {
 				t.Fatalf("old files remain: %v", backups)
 			}
 		})
+	}
+}
+
+func TestNextUpgradeReconcilesInstalledBytesWithPendingReceipt(t *testing.T) {
+	old, next, higher := nativeBinary(t, "1.0.0"), nativeBinary(t, "1.2.0"), nativeBinary(t, "2.0.0")
+	for _, status := range []string{"prepared", "outcome_unknown", "not_installed"} {
+		for _, replace := range []bool{false, true} {
+			t.Run(status+map[bool]string{false: "_same_version", true: "_higher_version"}[replace], func(t *testing.T) {
+				r, o, target := installFixture(t, nativeArchive(t, next), runtime.GOOS)
+				os.WriteFile(target, old, 0755)
+				v, e := Install(context.Background(), r, o)
+				if e != nil {
+					t.Fatal(e)
+				}
+				previous := v.Backup
+				record, e := readReceipt(target)
+				if e != nil {
+					t.Fatal(e)
+				}
+				record.Status = status
+				if e = atomicJSON(target+".update.json", record); e != nil {
+					t.Fatal(e)
+				}
+				if replace {
+					r, o, _ = installFixtureVersion(t, nativeArchive(t, higher), runtime.GOOS, "v2.0.0")
+					o.Executable = target
+					v, e = Install(context.Background(), r, o)
+					if e != nil {
+						t.Fatal(e)
+					}
+					if _, e = os.Stat(previous); !os.IsNotExist(e) {
+						t.Fatal("confirmed prior installation orphaned its recovery copy")
+					}
+				}
+				v, e = VerifyInstalled(context.Background(), v)
+				if e != nil || v.CleanupWarning != "" || v.RollbackAvailable {
+					t.Fatalf("confirmation %+v %v", v, e)
+				}
+				backups, _ := filepath.Glob(filepath.Join(filepath.Dir(target), ".aicrm-cli-previous-*"))
+				if len(backups) != 0 {
+					t.Fatal("old recovery files remain")
+				}
+			})
+		}
+	}
+}
+func TestNextUpgradeRefusesUnconfirmedPriorVersion(t *testing.T) {
+	old, wrong, higher := nativeBinary(t, "1.0.0"), nativeBinary(t, "0.9.0"), nativeBinary(t, "2.0.0")
+	for _, payload := range [][]byte{wrong, []byte("version command unavailable")} {
+		r, o, target := installFixture(t, nativeArchive(t, payload), runtime.GOOS)
+		os.WriteFile(target, old, 0755)
+		v, e := Install(context.Background(), r, o)
+		if e != nil {
+			t.Fatal(e)
+		}
+		previous := v.Backup
+		if _, e = VerifyInstalled(context.Background(), v); e == nil {
+			t.Fatal("wrong or unavailable installed version was confirmed")
+		}
+		r, o, _ = installFixtureVersion(t, nativeArchive(t, higher), runtime.GOOS, "v2.0.0")
+		o.Executable = target
+		if _, e = Install(context.Background(), r, o); e == nil {
+			t.Fatal("unconfirmed previous install was overwritten")
+		}
+		if _, e = os.Stat(previous); e != nil {
+			t.Fatal("unconfirmed recovery copy was removed")
+		}
+		current, _ := os.ReadFile(target)
+		if string(current) != string(payload) {
+			t.Fatal("unconfirmed installation bytes changed")
+		}
 	}
 }

@@ -412,8 +412,12 @@ func Install(ctx context.Context, r Release, o InstallOptions) (result InstallRe
 	}
 	// A previous successful install (including an older updater's receipt)
 	// may still have a backup. Confirm that version before replacing its receipt.
-	if prior, readErr := readReceipt(target); readErr == nil && prior.Status == "installed" && prior.NewSHA256 == old && versionErr == nil {
-		if _, cleanErr := cleanupConfirmedBackup(target, old, os.Remove); cleanErr != nil {
+	if prior, readErr := readReceipt(target); readErr == nil && prior.NewSHA256 == old {
+		if versionErr != nil {
+			result.Status = "outcome_unknown"
+			return result, errors.New("previous installed CLI version is unconfirmed; inspect the existing receipt before another replacement")
+		}
+		if _, cleanErr := cleanupConfirmedBackup(target, old, version, os.Remove); cleanErr != nil {
 			return result, cleanErr
 		}
 	}

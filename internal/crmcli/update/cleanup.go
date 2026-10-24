@@ -8,7 +8,7 @@ import (
 // cleanupConfirmedBackup runs only under the installation lock, after the
 // caller has read the target's version and current bytes. It never scans a
 // directory or removes a backup belonging to a different installation.
-func cleanupConfirmedBackup(target, current string, remove func(string) error) (installReceipt, error) {
+func cleanupConfirmedBackup(target, current, version string, remove func(string) error) (installReceipt, error) {
 	r, err := readReceipt(target)
 	if errors.Is(err, os.ErrNotExist) {
 		return installReceipt{}, nil
@@ -16,7 +16,8 @@ func cleanupConfirmedBackup(target, current string, remove func(string) error) (
 	if err != nil {
 		return installReceipt{}, errors.New("installed CLI is confirmed, but its cleanup receipt could not be read")
 	}
-	if r.Status != "installed" || r.NewSHA256 != current {
+	cmp, versionErr := Compare(version, r.Version)
+	if r.NewSHA256 != current || versionErr != nil || cmp < 0 {
 		return r, errors.New("installed CLI is confirmed, but the cleanup receipt does not match; old files were retained")
 	}
 	if r.Backup == "" {
@@ -34,6 +35,7 @@ func cleanupConfirmedBackup(target, current string, remove func(string) error) (
 			return r, errors.New("CLI upgraded successfully, but the old version backup could not be deleted")
 		}
 	}
+	r.Status = "installed"
 	r.Backup = ""
 	if err = atomicJSON(target+".update.json", r); err != nil {
 		return r, errors.New("old CLI backup was deleted, but the cleanup receipt could not be saved")

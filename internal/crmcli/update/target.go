@@ -93,7 +93,7 @@ func VerifyInstalled(ctx context.Context, result InstallResult) (InstallResult, 
 			}
 			result.Version, result.BinarySHA256 = version, current
 			originalBackup := result.Backup
-			receipt, cleanupErr := cleanupConfirmedBackup(result.Target, current, os.Remove)
+			receipt, cleanupErr := cleanupConfirmedBackup(result.Target, current, version, os.Remove)
 			if cleanupErr == nil && receipt.Target == "" && originalBackup != "" {
 				cleanupErr = errors.New("installed CLI is confirmed, but its cleanup receipt is missing; old files were retained")
 				receipt.Backup = originalBackup
