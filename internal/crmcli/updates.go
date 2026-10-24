@@ -74,13 +74,31 @@ func addUpdateCommands(root *cobra.Command, o *Options) {
 	upgradeChannel := "stable"
 	downloadOnly := false
 	target := ""
-	upgrade := &cobra.Command{Use: "upgrade", Args: cobra.NoArgs, Short: "explicitly install a checksum-verified release; preserves rollback", RunE: func(cmd *cobra.Command, _ []string) error {
+	upgrade := &cobra.Command{Use: "upgrade", Args: cobra.NoArgs, Short: "install a checksum-verified release; remove old backup after version readback", RunE: func(cmd *cobra.Command, _ []string) error {
 		r, e := o.checker().Check(cmd.Context(), clientVersion(), upgradeChannel, true)
 		if e != nil {
 			return updateFailure(e, nil)
 		}
 		if !r.Available && target == "" {
-			return o.print(map[string]any{"status": "up_to_date", "version": clientVersion(), "channel": upgradeChannel})
+			entry := o.updateExecutable
+			if entry == "" {
+				entry, e = os.Executable()
+				if e != nil {
+					return updateFailure(e, nil)
+				}
+			}
+			entry, e = updater.ResolveTarget(entry)
+			if e != nil {
+				return updateFailure(e, nil)
+			}
+			result, err := updater.VerifyInstalled(cmd.Context(), updater.InstallResult{Status: "up_to_date", Version: clientVersion(), Target: entry})
+			if err != nil {
+				return updateFailure(err, result)
+			}
+			return o.print(struct {
+				updater.InstallResult
+				Channel string `json:"channel"`
+			}{result, upgradeChannel})
 		}
 		v, e := o.installUpdate(cmd.Context(), r.Release, updater.InstallOptions{Executable: target, DownloadOnly: downloadOnly})
 		if e == nil {
@@ -101,7 +119,7 @@ func addUpdateCommands(root *cobra.Command, o *Options) {
 		}
 		return o.print(r)
 	}})
-	upgrade.AddCommand(&cobra.Command{Use: "rollback", Args: cobra.NoArgs, Short: "restore the exact previous executable if current and backup digests match", RunE: func(*cobra.Command, []string) error {
+	upgrade.AddCommand(&cobra.Command{Use: "rollback", Args: cobra.NoArgs, Short: "restore a retained failure-recovery copy if both digests match", RunE: func(*cobra.Command, []string) error {
 		r, e := updater.Rollback(target)
 		if e != nil {
 			return updateFailure(e, nil)
@@ -158,7 +176,11 @@ func maybeNotifyUpdate(args []string, in io.Reader, stdout, stderr io.Writer) {
 	offerUpdate(in, stderr, r, func() (updater.InstallResult, error) {
 		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 		defer cancel()
-		return updater.Install(ctx, r.Release, updater.InstallOptions{})
+		result, err := updater.Install(ctx, r.Release, updater.InstallOptions{})
+		if err == nil {
+			result, err = updater.VerifyInstalled(ctx, result)
+		}
+		return result, err
 	})
 }
 func offerUpdate(in io.Reader, stderr io.Writer, r updater.Result, install func() (updater.InstallResult, error)) {
@@ -177,5 +199,10 @@ func offerUpdate(in io.Reader, stderr io.Writer, r updater.Result, install func(
 		}
 		return
 	}
-	fmt.Fprintf(stderr, "CLI 更新结果：%s %s；回滚：aicrm-cli upgrade rollback\n", result.Status, result.Version)
+	fmt.Fprintf(stderr, "CLI 更新结果：%s %s\n", result.Status, result.Version)
+	if result.CleanupWarning != "" {
+		fmt.Fprintf(stderr, "清理提示：%s\n", result.CleanupWarning)
+	} else if result.Status != "downloaded_verified" {
+		fmt.Fprintln(stderr, "升级已确认，旧版本备份已自动删除。")
+	}
 }

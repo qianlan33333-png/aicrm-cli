@@ -39,6 +39,7 @@ type InstallResult struct {
 	BinarySHA256        string `json:"binary_sha256,omitempty"`
 	Backup              string `json:"rollback_backup,omitempty"`
 	RollbackAvailable   bool   `json:"rollback_available"`
+	CleanupWarning      string `json:"cleanup_warning,omitempty"`
 	ServerCompatibility string `json:"server_compatibility"`
 }
 type installReceipt struct {
@@ -257,7 +258,7 @@ func readReceipt(target string) (installReceipt, error) {
 	if e != nil {
 		return r, e
 	}
-	if e = json.Unmarshal(b, &r); e != nil || r.Target != target || filepath.Dir(r.Backup) != filepath.Dir(target) || !strings.HasPrefix(filepath.Base(r.Backup), ".aicrm-cli-previous-") || !digestOK(r.OldSHA256) || !digestOK(r.NewSHA256) {
+	if e = json.Unmarshal(b, &r); e != nil || r.Target != target || !digestOK(r.OldSHA256) || !digestOK(r.NewSHA256) || (r.Backup == "" && r.Status != "installed") || (r.Backup != "" && (filepath.Dir(r.Backup) != filepath.Dir(target) || !strings.HasPrefix(filepath.Base(r.Backup), ".aicrm-cli-previous-"))) {
 		return r, errors.New("upgrade receipt invalid")
 	}
 	return r, nil
@@ -409,6 +410,13 @@ func Install(ctx context.Context, r Release, o InstallOptions) (result InstallRe
 		result.Status = "outcome_unknown"
 		return result, e
 	}
+	// A previous successful install (including an older updater's receipt)
+	// may still have a backup. Confirm that version before replacing its receipt.
+	if prior, readErr := readReceipt(target); readErr == nil && prior.Status == "installed" && prior.NewSHA256 == old && versionErr == nil {
+		if _, cleanErr := cleanupConfirmedBackup(target, old, os.Remove); cleanErr != nil {
+			return result, cleanErr
+		}
+	}
 	newFile, e := os.CreateTemp(filepath.Dir(target), ".aicrm-cli-new-*")
 	if e != nil {
 		return result, fmt.Errorf("installation directory is not writable; verified archive retained: %w", e)
@@ -437,7 +445,15 @@ func Install(ctx context.Context, r Release, o InstallOptions) (result InstallRe
 		result.Download = ""
 		return result, nil
 	}
-	backup, e := tempCopy(target, filepath.Dir(target), ".aicrm-cli-previous-*", info.Mode())
+	// Failed attempts can reuse their exact recovery copy instead of leaving
+	// an orphan when the next receipt replaces the failed attempt's receipt.
+	backup := ""
+	if prior, readErr := readReceipt(target); readErr == nil && prior.OldSHA256 == old && backupAvailable(prior) {
+		backup = prior.Backup
+	}
+	if backup == "" {
+		backup, e = tempCopy(target, filepath.Dir(target), ".aicrm-cli-previous-*", info.Mode())
+	}
 	if e != nil {
 		return result, e
 	}
@@ -523,7 +539,7 @@ func Status(target string) (map[string]any, error) {
 	if actual == r.OldSHA256 {
 		state = "original_binary"
 	}
-	return map[string]any{"status": state, "receipt_status": r.Status, "target": target, "binary_sha256": actual, "version": r.Version, "rollback_backup": r.Backup}, nil
+	return map[string]any{"status": state, "receipt_status": r.Status, "target": target, "binary_sha256": actual, "version": r.Version, "rollback_backup": r.Backup, "rollback_available": backupAvailable(r)}, nil
 }
 func Rollback(target string) (map[string]any, error) {
 	target, e := ResolveTarget(target)
@@ -541,6 +557,9 @@ func Rollback(target string) (map[string]any, error) {
 	r, e := readReceipt(target)
 	if e != nil {
 		return nil, e
+	}
+	if r.Backup == "" {
+		return nil, errors.New("old version backup was automatically deleted after successful upgrade; rollback is unavailable")
 	}
 	if _, e = regularTarget(r.Backup); e != nil {
 		return nil, e

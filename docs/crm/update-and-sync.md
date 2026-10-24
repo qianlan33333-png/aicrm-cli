@@ -18,7 +18,7 @@ stable 使用一次公开 `HEAD https://github.com/qianlan33333-png/aicrm-cli/re
 
 校验文件和平台归档直接从同一已选 tag 的 `releases/download/<tag>/` 下载，不查询资产列表；即使下载期间发布新版也不切换 tag。安装必须匹配 `checksums.txt` 中的 SHA-256，保留下载和解压大小限制。`update check` 保留现有结果结构，`release.assets` 为兼容保留为空数组，不提供 REST 资产 Size/digest。仅接受固定仓库及指定 GitHub 下载域，不附带 CRM token、Cookie 或密钥环凭据。五种发行平台为 Darwin arm64/amd64、Linux arm64/amd64、Windows amd64。不支持的平台明确报错。
 
-二进制在原目录准备、备份和原子替换，随后独立计算文件摘要。失败保留原文件或回滚备份；`upgrade status` 根据实际摘要读回，未知结果停止下一次覆盖。`upgrade rollback` 只恢复该次收据对应、摘要匹配的备份，拒绝覆盖其他安装器改写的文件。不会迁移用户配置、登录状态或服务端数据，也不提权。安装目录无写权限或 Windows 正在运行的文件被锁定时，保留已校验归档并报告失败；可退出程序后按原安装方式替换。Windows 实际运行文件替换应在 Windows 上另行验证。
+二进制在原目录准备临时恢复备份并原子替换，随后锁内独立读回版本和文件摘要。确认成功后自动删除该安装收据关联的旧版本文件，返回 `rollback_available=false` 且不再保留 `rollback_backup`；`upgrade status` 仍可读回安装状态。下载准备、升级失败或版本不明时保留恢复材料。清理失败通过 `cleanup_warning` 明确报告，已确认的安装不被冒称失败，不自动重装或重放业务。失败保留原文件或回滚备份；`upgrade status` 根据实际摘要读回，未知结果停止下一次覆盖。`upgrade rollback` 仅用于仍保留恢复副本的失败/未确认安装；成功清理后会明确告知无旧版本备份可回滚，拒绝覆盖其他安装器改写的文件。不会迁移用户配置、登录状态或服务端数据，也不提权。安装目录无写权限或 Windows 正在运行的文件被锁定时，保留已校验归档并报告失败；可退出程序后按原安装方式替换。Windows 实际运行文件替换应在 Windows 上另行验证。
 
 ## Codex 业务前检查与接续
 

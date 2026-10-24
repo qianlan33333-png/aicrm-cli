@@ -24,7 +24,7 @@ jobs:
           system = {'Darwin':'darwin','Linux':'linux','Windows':'windows'}[platform.system()]
           arch = 'arm64' if platform.machine().lower() in ('arm64','aarch64') else 'amd64'
           binaries = []
-          for version in ('0.3.0','0.4.0','0.5.0'):
+          for version in ('0.3.0','0.4.0','0.5.0','0.5.1'):
               directory = pathlib.Path(os.environ['RUNNER_TEMP']) / ('legacy-' + version)
               directory.mkdir(parents=True, exist_ok=True)
               extension = '.zip' if system == 'windows' else '.tar.gz'
@@ -57,7 +57,7 @@ jobs:
         run: |
           set -euo pipefail
           go test -json ./internal/crmcli/update > native-update.json
-          go test -json ./internal/crmcli -run '^Test(CLICodexPreflight.*|CLICodexUpdateBeforeCredentialAndRequest|CLIUpgradeExplicitTargetEvenWhenBootstrapIsLatest|CLIStableUpdateCommandsWithoutREST|CLIPrereleaseRejectedBeforeInputAndInstall)$' > preflight.json
+          go test -json ./internal/crmcli -run '^Test(CLICodexPreflight.*|CLICodexUpdateBeforeCredentialAndRequest|CLIUpgradeExplicitTargetEvenWhenBootstrapIsLatest|CLIStableUpdateCommandsWithoutREST|CLIPrereleaseRejectedBeforeInputAndInstall|UpdateNoticeMachineAndExplicitCommands|UpdateOfferRequiresChoiceAndKeepsFailureOnStderr|UpdateOfferReportsAutomaticBackupCleanup|CLIUpgradeAlreadyCurrentCleansPreviousReceipt)$' > preflight.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:

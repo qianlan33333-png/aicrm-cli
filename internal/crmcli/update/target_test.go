@@ -64,7 +64,7 @@ func TestNativeTargetReplacementVersionRaceAndReadback(t *testing.T) {
 	next := nativeBinary(t, "1.2.0")
 	higher := nativeBinary(t, "2.0.0")
 	archive := nativeArchive(t, next)
-	t.Run("actual_entry_and_rollback", func(t *testing.T) {
+	t.Run("actual_entry_and_automatic_cleanup", func(t *testing.T) {
 		r, o, target := installFixture(t, archive, runtime.GOOS)
 		os.WriteFile(target, old, 0755)
 		v, e := Install(ctx, r, o)
@@ -78,12 +78,13 @@ func TestNativeTargetReplacementVersionRaceAndReadback(t *testing.T) {
 		if e != nil || state["status"] != "installed" {
 			t.Fatalf("status %v %v", state, e)
 		}
-		if _, e = Rollback(target); e != nil {
-			t.Fatal(e)
+		if v.RollbackAvailable || v.Backup != "" || v.CleanupWarning != "" || state["rollback_available"] != false {
+			t.Fatalf("successful install retained backup: %+v %v", v, state)
 		}
-		if version, e := ReadVersion(ctx, target); e != nil || version != "1.0.0" {
-			t.Fatalf("rollback %s %v", version, e)
+		if _, e = Rollback(target); e == nil {
+			t.Fatal("cleaned install advertised rollback")
 		}
+
 	})
 	t.Run("slower_older_update_cannot_overwrite_newer", func(t *testing.T) {
 		r, o, target := installFixture(t, archive, runtime.GOOS)
@@ -177,13 +178,14 @@ func TestNativeTargetReplacementVersionRaceAndReadback(t *testing.T) {
 			if e != nil || state["status"] != "installed" {
 				t.Fatalf("legacy status %v %v", state, e)
 			}
-			if _, e = Rollback(target); e != nil {
-				t.Fatal(e)
+			if v.Backup != "" || v.RollbackAvailable || state["rollback_available"] != false {
+				t.Fatal("legacy upgrade retained old backup")
 			}
-			restored, e := os.ReadFile(target)
-			if e != nil || !bytes.Equal(restored, b) {
-				t.Fatal("legacy rollback did not restore exact original")
+			backups, _ := filepath.Glob(filepath.Join(filepath.Dir(target), ".aicrm-cli-previous-*"))
+			if len(backups) != 0 {
+				t.Fatal("legacy backup remains")
 			}
+
 		})
 	}
 }

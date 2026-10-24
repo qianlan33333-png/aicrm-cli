@@ -72,12 +72,38 @@ func VerifyInstalled(ctx context.Context, result InstallResult) (InstallResult, 
 	default:
 		return result, errors.New("update installation not confirmed")
 	}
+	unlock, err := tryLock(result.Target + ".update.lock")
+	if err != nil {
+		return result, err
+	}
+	defer unlock()
+	if _, err = regularTarget(result.Target); err != nil {
+		result.Status = "installed_version_unverified"
+		return result, err
+	}
 	version, err := ReadVersion(ctx, result.Target)
 	if err == nil {
 		var cmp int
 		cmp, err = Compare(version, result.Version)
 		if err == nil && cmp >= 0 {
-			result.Version = version
+			current, hashErr := fileSHA(result.Target)
+			if hashErr != nil {
+				result.Status = "installed_version_unverified"
+				return result, errors.New("installed CLI bytes could not be confirmed")
+			}
+			result.Version, result.BinarySHA256 = version, current
+			originalBackup := result.Backup
+			receipt, cleanupErr := cleanupConfirmedBackup(result.Target, current, os.Remove)
+			if cleanupErr == nil && receipt.Target == "" && originalBackup != "" {
+				cleanupErr = errors.New("installed CLI is confirmed, but its cleanup receipt is missing; old files were retained")
+				receipt.Backup = originalBackup
+			}
+			result.Backup, result.RollbackAvailable = receipt.Backup, backupAvailable(receipt)
+			if cleanupErr != nil {
+				result.CleanupWarning = cleanupErr.Error()
+			} else {
+				result.CleanupWarning = ""
+			}
 			return result, nil
 		}
 	}
