@@ -187,3 +187,42 @@ func TestCLILegacyNativeReadScopeDoesNotChangePOSTFailure(t *testing.T) {
 		t.Fatalf("legacy native semantics changed: %v", err)
 	}
 }
+
+func TestCLICompletionSurveyXLSXDownloadRetainsOwnerBytes(t *testing.T) {
+	keyring.MockInit()
+	t.Setenv("AICRM_CLI_CONFIG_DIR", t.TempDir())
+	t.Setenv("AICRM_CLI_TOKEN", "")
+	t.Setenv("AICRM_CLI_CREDENTIAL_FILE", "")
+	payload := []byte{'P', 'K', 3, 4, 0, 1, 2, 3}
+	calls := 0
+	server := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		calls++
+		if r.Method != "GET" || r.URL.Path != "/api/admin/questionnaires/7/export" || r.Header.Get("Authorization") != "Bearer acl_fixture" || r.Header.Get("X-AICRM-CLI-Operation") != "admin.exportSurveySubmissions" {
+			t.Error("registered export or identity changed")
+		}
+		w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+		w.Header().Set("Content-Disposition", `attachment; filename="survey.xlsx"`)
+		w.Write(payload)
+	}))
+	defer server.Close()
+	original := http.DefaultTransport
+	http.DefaultTransport = server.Client().Transport
+	defer func() { http.DefaultTransport = original }()
+	if err := SaveConfig(Config{Current: "fixture", Profiles: map[string]Profile{"fixture": {Origin: server.URL}}}); err != nil {
+		t.Fatal(err)
+	}
+	if err := StoreCredential(Credential{Origin: server.URL, Kind: "human", Token: "acl_fixture", CSRF: "csrf"}); err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(t.TempDir(), "survey.xlsx")
+	var out, stderr bytes.Buffer
+	code := Run([]string{"invoke", "admin.exportSurveySubmissions", "--param", "questionnaire_id=7", "--output", path}, strings.NewReader(""), &out, &stderr)
+	got, err := os.ReadFile(path)
+	if code != 0 || err != nil || calls != 1 || !bytes.Equal(got, payload) {
+		t.Fatalf("code=%d calls=%d err=%v out=%s", code, calls, err, out.String())
+	}
+	out.Reset()
+	if code = Run([]string{"invoke", "admin.exportSurveySubmissions", "--param", "questionnaire_id=7", "--output", path}, strings.NewReader(""), &out, &stderr); code != 1 || calls != 1 {
+		t.Fatal("existing export was overwritten or requested again")
+	}
+}
