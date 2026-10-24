@@ -8259,7 +8259,15 @@
       "version": 1,
       "responses": {
         "200": {
-          "description": "Audited streamed CSV export"
+          "content": {
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
+              "schema": {
+                "format": "binary",
+                "type": "string"
+              }
+            }
+          },
+          "description": "Audited XLSX with complete answers grouped by submitted definition version"
         }
       },
       "prerequisites": [
