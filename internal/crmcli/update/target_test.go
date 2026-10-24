@@ -173,6 +173,17 @@ func TestNativeTargetReplacementVersionRaceAndReadback(t *testing.T) {
 			if e != nil || v.Version != "1.2.0" {
 				t.Fatalf("legacy update %+v %v", v, e)
 			}
+			state, e := Status(target)
+			if e != nil || state["status"] != "installed" {
+				t.Fatalf("legacy status %v %v", state, e)
+			}
+			if _, e = Rollback(target); e != nil {
+				t.Fatal(e)
+			}
+			restored, e := os.ReadFile(target)
+			if e != nil || !bytes.Equal(restored, b) {
+				t.Fatal("legacy rollback did not restore exact original")
+			}
 		})
 	}
 }

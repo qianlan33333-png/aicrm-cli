@@ -2,7 +2,7 @@
   "schema_version": 1,
   "cli_repository": "https://github.com/qianlan33333-png/aicrm-cli.git",
   "source_repository": "https://github.com/qianlan33333-png/AI-CRM-v4.git",
-  "payload_sha256": "070984e95e2699aafa968ccf2ca6c99e15ae733f9d31d34294cae38eb5b90f84",
+  "payload_sha256": "aae895569670ca3ea6a8c31b910d6c02c82ed0dda2921f37d88520bed6e0f137",
   "files": [
     {
       "source": "cmd/aicrm-cli/main.go",
@@ -37,7 +37,7 @@
     {
       "source": "docs/cli/update-and-sync.md",
       "destination": "docs/crm/update-and-sync.md",
-      "sha256": "578386dc9dbbb431373ca2db01f5390da840d146c6c75c195eff425acd9c4382"
+      "sha256": "dc207d5d5093f745f39df686cc490e8178f15c974befa0311c71d67d15d6d151"
     },
     {
       "source": "docs/cli/README.md",
@@ -172,22 +172,22 @@
     {
       "source": "internal/crmcli/update/check.go",
       "destination": "internal/crmcli/update/check.go",
-      "sha256": "4c3d5b13ab72417691947711f4442ae4b144cb06b27931a11ddd613f73c48bf6"
+      "sha256": "174bcad5c6dac7f2b450161be5bfaac7e760f6b703bb477515f78f621dfd977c"
     },
     {
       "source": "internal/crmcli/update/check_test.go",
       "destination": "internal/crmcli/update/check_test.go",
-      "sha256": "e7332cad8d51345bfce52f69b3bced83c8c53f54b505dc760a5415013e658194"
+      "sha256": "bae662f472dd1965a871176bd847d472444e7478ffa7bdc9307bc248f1cc406c"
     },
     {
       "source": "internal/crmcli/update/install.go",
       "destination": "internal/crmcli/update/install.go",
-      "sha256": "9221b2f3163560a0a229e140641e8cced598366080af9ca3a8213d23065ed8c0"
+      "sha256": "f354dc5e76c40d62a7ddd10c4f712cf45c5c6eac7fa6708e186da83ed2e2afef"
     },
     {
       "source": "internal/crmcli/update/install_test.go",
       "destination": "internal/crmcli/update/install_test.go",
-      "sha256": "3b4b749a5ef0ee468dda7222308c793a412f6b553d3efda06fe52a4e235811b6"
+      "sha256": "e4047a2b11eb2d9ddcc793fd72d311e6701bd4bae3a663a4ad3a5cfd62b6ac4f"
     },
     {
       "source": "internal/crmcli/update/lock_unix.go",
@@ -207,7 +207,7 @@
     {
       "source": "internal/crmcli/update/target_test.go",
       "destination": "internal/crmcli/update/target_test.go",
-      "sha256": "7fb43fa2c54272bcb3efbe3fbc1fb5fabb33f8275057cf763288d2046c513251"
+      "sha256": "7370e5948bdf03638941fcff27c169e0b93173a0896ec4f57b985acc2c65d1c0"
     },
     {
       "source": "internal/crmcli/update/target_unix_test.go",
@@ -237,12 +237,12 @@
     {
       "source": "internal/crmcli/update_preflight_test.go",
       "destination": "internal/crmcli/update_preflight_test.go",
-      "sha256": "758abf9876508884cda818c43873950e2e2ca4d3f3078973f0e7eb8d17fa465a"
+      "sha256": "73a4994daa9971b5a7f2564d46f3c30af8829010e2fba1266f1e508a01055d98"
     },
     {
       "source": "internal/crmcli/updates.go",
       "destination": "internal/crmcli/updates.go",
-      "sha256": "3749fc64435c919fa884314aa8447d0bc4b861bfeb2d1b1303fdfec5c0b4f31e"
+      "sha256": "a37394bf6abd8f6729557b019ac9faefe53e1f860fb6a0f03f71060b9fb2460b"
     },
     {
       "source": "internal/crmcli/updates_test.go",
@@ -340,6 +340,6 @@
       "sha256": "6021b275fd61655a7265ec75195b410db950aa9808bc54edcae857b6a020f693"
     }
   ],
-  "source_head": "d09a3a9377990e2475dfd5a8780c345db177c8f0",
-  "source_tree": "b3170d3b15a27b2ca3cd04b7f1b73c5417e62723"
+  "source_head": "79261c510fbe75f1b3fac67667f84fe8e770bdb7",
+  "source_tree": "571d4f666c278eacd0ed083489752bb99bb2b9d5"
 }

@@ -14,9 +14,9 @@ aicrm-cli upgrade rollback
 
 普通交互终端成功执行命令后，至多每六小时检查一次固定仓库 `qianlan33333-png/aicrm-cli` 的 stable Release。发现新版本时只在 stderr 提示，默认选择不更新；输入 `y` 才安装。输入、stdout 或 stderr 被重定向，显式 JSON/NDJSON、stdin 业务输入、认证及更新命令不会出现自动提示。`AICRM_CLI_NO_UPDATE_NOTIFIER=1` 关闭自动检查；显式命令仍可使用。离线、超时及 GitHub 拒绝只影响更新检查，不改变原业务结果或退出码。
 
-stable 排除草稿和预发布。仅显式 `--channel prerelease` 选择包括预发布在内的最高 SemVer 版本；不会因时间顺序或字符串排序误降级。`upgrade --download-only` 只下载并校验当前平台归档。
+stable 使用一次公开 `HEAD https://github.com/qianlan33333-png/aicrm-cli/releases/latest` 的重定向获取稳定版，只比较 SemVer，不跟随跳转、不解析 HTML、不使用 GitHub REST API，也不自动降级。`--channel prerelease` 仍被识别，但在网络和文件操作前明确报错；不再自动挑选预发布，也不会静默回退到 stable。预发布需从发布页手工下载、解压和替换；`upgrade --target` 安装的是稳定版，不是把当前下载的预发布程序复制过去。`upgrade --download-only` 只下载并校验当前平台归档。
 
-安装校验 `checksums.txt` 中的 SHA-256，以及 GitHub 返回时的资产 digest。仅接受固定仓库及指定 GitHub 下载域，不附带 CRM token、Cookie 或密钥环凭据。五种发行平台为 Darwin arm64/amd64、Linux arm64/amd64、Windows amd64。不支持的平台明确报错。
+校验文件和平台归档直接从同一已选 tag 的 `releases/download/<tag>/` 下载，不查询资产列表；即使下载期间发布新版也不切换 tag。安装必须匹配 `checksums.txt` 中的 SHA-256，保留下载和解压大小限制。`update check` 保留现有结果结构，`release.assets` 为兼容保留为空数组，不提供 REST 资产 Size/digest。仅接受固定仓库及指定 GitHub 下载域，不附带 CRM token、Cookie 或密钥环凭据。五种发行平台为 Darwin arm64/amd64、Linux arm64/amd64、Windows amd64。不支持的平台明确报错。
 
 二进制在原目录准备、备份和原子替换，随后独立计算文件摘要。失败保留原文件或回滚备份；`upgrade status` 根据实际摘要读回，未知结果停止下一次覆盖。`upgrade rollback` 只恢复该次收据对应、摘要匹配的备份，拒绝覆盖其他安装器改写的文件。不会迁移用户配置、登录状态或服务端数据，也不提权。安装目录无写权限或 Windows 正在运行的文件被锁定时，保留已校验归档并报告失败；可退出程序后按原安装方式替换。Windows 实际运行文件替换应在 Windows 上另行验证。
 
@@ -24,7 +24,7 @@ stable 排除草稿和预发布。仅显式 `--channel prerelease` 选择包括�
 
 仅显式 `--context codex` 对在线业务、认证及 doctor 在执行前查询一次固定 GitHub 仓库的最新稳定 Release。1.5 秒超时、不重试、不复用六小时缓存；只比较 SemVer，本地更高或预发布版不降级。help、version、docs、schema、profile、离线 capabilities、completion、update 和 upgrade（含 status/rollback）免查，按解析后的命令路径判断，参数中的 version/auth 不影响分类。JSON、管道与非交互调用仍检查。开发构建 dev 不查询公开稳定渠道。
 
-查询失败只在 stderr 提示，继续当前业务；不称已是最新。发现新版时，当前进程不读取业务 stdin、不获取凭据修改锁、不发 CRM 请求。macOS/Linux 原位安装并读取版本；Windows 仅准备已校验归档，退出后由 Codex 从临时新版更新原入口。结果退出码 9、error.code=update_required、result.business_executed=false；target、status、verified_archive 等字段说明实际结果。安装失败或状态不明也退出 9，不能据此直接重放。
+查询失败只在 stderr 提示，继续当前业务；不称已是最新。不使用 GET、REST 或其他信息源回退。公开网页和下载仍可能受网络、网站限流影响，这不是无限额度承诺。发现新版时，当前进程不读取业务 stdin、不获取凭据修改锁、不发 CRM 请求。macOS/Linux 原位安装并读取版本；Windows 仅准备已校验归档，退出后由 Codex 从临时新版更新原入口。结果退出码 9、error.code=update_required、result.business_executed=false；target、status、verified_archive 等字段说明实际结果。安装失败或状态不明也退出 9，不能据此直接重放。
 
 Codex 只在明确收到上述未执行业务结果，且已通过原入口 version 确认达到目标版本后，最多重新调用原业务命令一次。第二次仍要求升级则停止。管道生产者、流式或一次性 stdin 不自动重跑，不缓存秘密输入；升级后重新提供输入。普通文件输入可重新读取。其他失败、超时及业务结果未知不得触发重放。CLI 不接力启动业务进程、不转交 stdin 或信号。
 

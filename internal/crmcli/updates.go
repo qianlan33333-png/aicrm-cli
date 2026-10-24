@@ -60,13 +60,13 @@ func addUpdateCommands(root *cobra.Command, o *Options) {
 	channel := "stable"
 	refresh := false
 	check := &cobra.Command{Use: "check", Args: cobra.NoArgs, Short: "check a trusted release without changing the executable", RunE: func(cmd *cobra.Command, _ []string) error {
-		r, e := (updater.Checker{}).Check(cmd.Context(), clientVersion(), channel, refresh)
+		r, e := o.checker().Check(cmd.Context(), clientVersion(), channel, refresh)
 		if e != nil {
 			return updateFailure(e, nil)
 		}
 		return o.print(r)
 	}}
-	check.Flags().StringVar(&channel, "channel", "stable", "stable or explicitly selected prerelease")
+	check.Flags().StringVar(&channel, "channel", "stable", "stable; prerelease automatic selection is no longer supported")
 	check.Flags().BoolVar(&refresh, "refresh", false, "refresh the public metadata cache")
 	update := &cobra.Command{Use: "update", Short: "public release metadata"}
 	update.AddCommand(check)
@@ -92,7 +92,7 @@ func addUpdateCommands(root *cobra.Command, o *Options) {
 		return o.print(v)
 	}}
 	upgrade.PersistentFlags().StringVar(&target, "target", "", "existing partner CLI entry to replace, inspect or roll back")
-	upgrade.Flags().StringVar(&upgradeChannel, "channel", "stable", "stable or explicitly selected prerelease")
+	upgrade.Flags().StringVar(&upgradeChannel, "channel", "stable", "stable; prerelease automatic selection is no longer supported")
 	upgrade.Flags().BoolVar(&downloadOnly, "download-only", false, "retain a verified archive without installing (also for locked Windows executables)")
 	upgrade.AddCommand(&cobra.Command{Use: "status", Args: cobra.NoArgs, RunE: func(*cobra.Command, []string) error {
 		r, e := updater.Status(target)

@@ -16,34 +16,48 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
+      - name: Download checksum-verified real legacy executables
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib, io, os, pathlib, platform, tarfile, urllib.request, zipfile
+          system = {'Darwin':'darwin','Linux':'linux','Windows':'windows'}[platform.system()]
+          arch = 'arm64' if platform.machine().lower() in ('arm64','aarch64') else 'amd64'
+          binaries = []
+          for version in ('0.3.0','0.4.0','0.5.0'):
+              directory = pathlib.Path(os.environ['RUNNER_TEMP']) / ('legacy-' + version)
+              directory.mkdir(parents=True, exist_ok=True)
+              extension = '.zip' if system == 'windows' else '.tar.gz'
+              name = f'aicrm-cli_{version}_{system}_{arch}{extension}'
+              base = f'https://github.com/qianlan33333-png/aicrm-cli/releases/download/v{version}'
+              def read(asset):
+                  with urllib.request.urlopen(base + '/' + asset, timeout=90) as response:
+                      return response.read()
+              checksums = read('checksums.txt').decode().splitlines()
+              expected = [line.split()[0] for line in checksums if len(line.split()) == 2 and line.split()[1].lstrip('*') == name]
+              archive = read(name)
+              if len(expected) != 1 or hashlib.sha256(archive).hexdigest() != expected[0]:
+                  raise RuntimeError('Legacy archive checksum mismatch')
+              executable = 'aicrm-cli.exe' if system == 'windows' else 'aicrm-cli'
+              if system == 'windows':
+                  with zipfile.ZipFile(io.BytesIO(archive)) as package:
+                      binary = package.read(executable)
+              else:
+                  with tarfile.open(fileobj=io.BytesIO(archive), mode='r:gz') as package:
+                      binary = package.extractfile(executable).read()
+              target = directory / executable
+              target.write_bytes(binary)
+              target.chmod(0o755)
+              binaries.append(str(target))
+          with open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8') as env:
+              env.write('AICRM_TEST_LEGACY_BINARIES=' + os.pathsep.join(binaries) + '\n')
+          PY
       - name: Native installer and command boundary contracts
         shell: bash
         run: |
           set -euo pipefail
           go test -json ./internal/crmcli/update > native-update.json
-          go test -json ./internal/crmcli -run '^Test(CLICodexPreflight.*|CLICodexUpdateBeforeCredentialAndRequest|CLIUpgradeExplicitTargetEvenWhenBootstrapIsLatest)$' > preflight.json
-      - name: Actual legacy executable replacement on Windows
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = 'Stop'
-          $bins = @()
-          foreach ($version in @('0.3.0','0.4.0')) {
-            $dir = Join-Path $env:RUNNER_TEMP "legacy-$version"
-            New-Item -ItemType Directory -Force $dir | Out-Null
-            $base = "https://github.com/qianlan33333-png/aicrm-cli/releases/download/v$version"
-            $name = "aicrm-cli_${version}_windows_amd64.zip"
-            $archive = Join-Path $dir $name
-            Invoke-WebRequest "$base/$name" -OutFile $archive
-            Invoke-WebRequest "$base/checksums.txt" -OutFile (Join-Path $dir 'checksums.txt')
-            $expected = ((Get-Content (Join-Path $dir 'checksums.txt') | Where-Object { $_ -match "\s+$([regex]::Escape($name))$" }) -split '\s+')[0]
-            if ((Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne $expected) { throw 'Legacy archive checksum mismatch' }
-            Expand-Archive $archive -DestinationPath $dir -Force
-            $bins += Join-Path $dir 'aicrm-cli.exe'
-          }
-          $env:AICRM_TEST_LEGACY_BINARIES = $bins -join [IO.Path]::PathSeparator
-          go test -json ./internal/crmcli/update -run '^TestNativeTargetReplacementVersionRaceAndReadback$' -count=1 > legacy-update.json
-          if ($LASTEXITCODE -ne 0) { throw 'Legacy replacement failed' }
+          go test -json ./internal/crmcli -run '^Test(CLICodexPreflight.*|CLICodexUpdateBeforeCredentialAndRequest|CLIUpgradeExplicitTargetEvenWhenBootstrapIsLatest|CLIStableUpdateCommandsWithoutREST|CLIPrereleaseRejectedBeforeInputAndInstall)$' > preflight.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -51,4 +65,3 @@ jobs:
           path: |
             native-update.json
             preflight.json
-            legacy-update.json
