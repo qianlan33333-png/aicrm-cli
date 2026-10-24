@@ -125,6 +125,16 @@ func TestCLIUpgradeAlreadyCurrentCleansPreviousReceipt(t *testing.T) {
 		return updater.InstallResult{}, nil
 	}
 	root := NewCommand(o)
+	root.SetArgs([]string{"upgrade", "--download-only"})
+	if e := root.Execute(); e != nil {
+		t.Fatal(e)
+	}
+	if _, e := os.Stat(backup); e != nil {
+		t.Fatal("download-only command removed backup")
+	}
+	out.Reset()
+	calls = 0
+	root = NewCommand(o)
 	root.SetArgs([]string{"upgrade"})
 	if e := root.Execute(); e != nil {
 		t.Fatal(e)

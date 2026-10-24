@@ -80,6 +80,9 @@ func addUpdateCommands(root *cobra.Command, o *Options) {
 			return updateFailure(e, nil)
 		}
 		if !r.Available && target == "" {
+			if downloadOnly {
+				return o.print(map[string]any{"status": "up_to_date", "version": clientVersion(), "channel": upgradeChannel})
+			}
 			entry := o.updateExecutable
 			if entry == "" {
 				entry, e = os.Executable()
