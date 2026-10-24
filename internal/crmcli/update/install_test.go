@@ -59,9 +59,9 @@ func installFixtureVersion(t *testing.T, payload []byte, system, tag string) (Re
 	name := archiveName(r, system, "amd64")
 	sums := []byte(checksum(payload) + "  " + name + "\n")
 	urlFor := func(n string) string { return RepositoryURL + "/releases/download/" + r.Tag + "/" + n }
-	r.Assets = []Asset{{Name: name, URL: urlFor(name), Size: int64(len(payload)), Digest: "sha256:" + checksum(payload)}, {Name: "checksums.txt", URL: urlFor("checksums.txt"), Size: int64(len(sums)), Digest: "sha256:" + checksum(sums)}}
+	r.Assets = []Asset{}
 	h := &http.Client{Transport: roundTrip(func(req *http.Request) (*http.Response, error) {
-		if req.Header.Get("Authorization") != "" || req.Header.Get("Cookie") != "" {
+		if req.Method != http.MethodGet || req.Header.Get("Authorization") != "" || req.Header.Get("Cookie") != "" {
 			t.Error("credentials attached to release download")
 		}
 		var b []byte
@@ -281,13 +281,9 @@ func TestInstallDownloadInterruptionAndPermissionsPreserveExecutable(t *testing.
 			t.Fatal("permission failure changed executable")
 		}
 	})
-	// checksums.txt remains mandatory even when older GitHub API responses omit
-	// the optional per-asset digest field.
-	t.Run("checksum_file_without_api_digest", func(t *testing.T) {
+	// Public downloads require checksums without a REST asset list.
+	t.Run("checksum_file_without_rest_metadata", func(t *testing.T) {
 		r, o, _ := installFixture(t, b, "linux")
-		for i := range r.Assets {
-			r.Assets[i].Digest = ""
-		}
 		v, e := Install(context.Background(), r, o)
 		if e != nil || v.Status != "installed" {
 			t.Fatalf("checksums %+v %v", v, e)
@@ -325,29 +321,30 @@ func TestInstallRejectsChecksumUntrustedAndMaliciousArchive(t *testing.T) {
 		name, body string
 		kind       byte
 	}{{"aicrm-cli", "new executable", tar.TypeReg}})
-	t.Run("digest", func(t *testing.T) {
+	t.Run("checksum_mismatch", func(t *testing.T) {
 		r, o, target := installFixture(t, b, "linux")
-		r.Assets[0].Digest = "sha256:" + strings.Repeat("0", 64)
+		original := o.Client.Transport
+		o.Client.Transport = roundTrip(func(req *http.Request) (*http.Response, error) {
+			resp, e := original.RoundTrip(req)
+			if e == nil && strings.HasSuffix(req.URL.Path, "/checksums.txt") {
+				resp.Body.Close()
+				resp.Body = io.NopCloser(strings.NewReader(strings.Repeat("0", 64) + "  " + archiveName(r, "linux", "amd64") + "\n"))
+			}
+			return resp, e
+		})
 		if _, e := Install(context.Background(), r, o); e == nil {
-			t.Fatal("digest mismatch accepted")
+			t.Fatal("checksum mismatch accepted")
 		}
 		actual, _ := os.ReadFile(target)
 		if string(actual) != "original executable" {
-			t.Fatal("digest failure modified original")
+			t.Fatal("checksum failure changed target")
 		}
 	})
-	t.Run("source", func(t *testing.T) {
+	t.Run("legacy_asset_metadata_ignored", func(t *testing.T) {
 		r, o, _ := installFixture(t, b, "linux")
-		r.Assets[1].URL = "https://evil.example/checksums.txt"
-		if _, e := Install(context.Background(), r, o); e == nil {
-			t.Fatal("untrusted source accepted")
-		}
-	})
-	t.Run("duplicate_asset", func(t *testing.T) {
-		r, o, _ := installFixture(t, b, "linux")
-		r.Assets = append(r.Assets, r.Assets[0])
-		if _, e := Install(context.Background(), r, o); e == nil {
-			t.Fatal("ambiguous archive accepted")
+		r.Assets = []Asset{{Name: "checksums.txt", URL: "https://evil.example/checksums.txt", Size: -1, Digest: "invalid"}}
+		if v, e := Install(context.Background(), r, o); e != nil || v.Status != "installed" {
+			t.Fatalf("legacy metadata used %+v %v", v, e)
 		}
 	})
 
@@ -389,12 +386,103 @@ func TestDownloadDoesNotFollowUntrustedRedirect(t *testing.T) {
 	r := release("v1.2.0")
 	a := Asset{Name: "checksums.txt", URL: RepositoryURL + "/releases/download/v1.2.0/checksums.txt"}
 	calls := 0
-	h := apiClient(&http.Client{Transport: roundTrip(func(*http.Request) (*http.Response, error) {
+	h := releaseClient(&http.Client{Transport: roundTrip(func(*http.Request) (*http.Response, error) {
 		calls++
 		return &http.Response{StatusCode: 302, Header: http.Header{"Location": []string{"https://evil.example/asset"}}, Body: io.NopCloser(strings.NewReader(""))}, nil
 	})}, true)
 	var out bytes.Buffer
 	if _, e := download(context.Background(), h, r, a, &out, 128); e == nil || calls != 1 {
 		t.Fatal("untrusted download redirect followed")
+	}
+}
+
+func TestInstallPinsPublicDownloadsWithoutREST(t *testing.T) {
+	for _, system := range []string{"linux", "windows"} {
+		t.Run(system, func(t *testing.T) {
+			var payload []byte
+			if system == "windows" {
+				var b bytes.Buffer
+				z := zip.NewWriter(&b)
+				f, e := z.Create("aicrm-cli.exe")
+				if e != nil {
+					t.Fatal(e)
+				}
+				f.Write([]byte("new binary"))
+				z.Close()
+				payload = b.Bytes()
+			} else {
+				payload = tarArchive(t, []struct {
+					name, body string
+					kind       byte
+				}{{"aicrm-cli", "new binary", tar.TypeReg}})
+			}
+			_, opt, target := installFixture(t, payload, system)
+			original := opt.Client.Transport
+			heads, gets := 0, 0
+			opt.Client.Transport = roundTrip(func(req *http.Request) (*http.Response, error) {
+				if req.URL.Host == "api.github.com" {
+					t.Fatal("REST request in update flow")
+				}
+				if req.Method == http.MethodHead {
+					heads++
+					publicHEAD(t, req)
+					// A second version lookup would observe a newer release.
+					if heads > 1 {
+						return latestResponse("v9.0.0"), nil
+					}
+					return latestResponse("v1.2.0"), nil
+				}
+				gets++
+				if !strings.HasPrefix(req.URL.String(), RepositoryURL+"/releases/download/v1.2.0/") {
+					t.Fatal("download changed release")
+				}
+				return original.RoundTrip(req)
+			})
+			r, e := (Checker{Client: opt.Client}).Latest(context.Background(), "1.0.0")
+			if e != nil || !r.Available || len(r.Release.Assets) != 0 {
+				t.Fatalf("check %+v %v", r, e)
+			}
+			opt.DownloadOnly = system == "windows"
+			got, e := Install(context.Background(), r.Release, opt)
+			if e != nil || heads != 1 || gets != 2 {
+				t.Fatalf("flow %+v %v HEAD=%d GET=%d", got, e, heads, gets)
+			}
+			actual, _ := os.ReadFile(target)
+			if system == "windows" {
+				if got.Status != "downloaded_verified" || string(actual) != "original executable" {
+					t.Fatal("Windows preparation changed target")
+				}
+			} else if got.Status != "installed" || string(actual) != "new binary" {
+				t.Fatal("original entry not installed")
+			}
+		})
+	}
+}
+func TestInstallPublicDownloadFailurePreservesTarget(t *testing.T) {
+	payload := tarArchive(t, []struct {
+		name, body string
+		kind       byte
+	}{{"aicrm-cli", "new binary", tar.TypeReg}})
+	for _, suffix := range []string{"checksums.txt", ".tar.gz"} {
+		t.Run(suffix, func(t *testing.T) {
+			r, opt, target := installFixture(t, payload, "linux")
+			original := opt.Client.Transport
+			opt.Client.Transport = roundTrip(func(req *http.Request) (*http.Response, error) {
+				if strings.HasSuffix(req.URL.Path, suffix) {
+					rsp := response(nil)
+					rsp.StatusCode = http.StatusNotFound
+					return rsp, nil
+				}
+				return original.RoundTrip(req)
+			})
+			got, e := Install(context.Background(), r, opt)
+			if e == nil || got.Status != "not_installed" {
+				t.Fatalf("unexpected success %+v %v", got, e)
+			}
+			actual, _ := os.ReadFile(target)
+			if string(actual) != "original executable" {
+				t.Fatal("failed download changed original")
+			}
+		})
 	}
 }

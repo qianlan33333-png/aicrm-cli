@@ -24,14 +24,13 @@ func (i *untouchedInput) Read([]byte) (int, error) { i.reads++; return 0, io.EOF
 func releaseChecker(t *testing.T, tag string, calls *int, offline bool) *updater.Checker {
 	return &updater.Checker{CacheDir: t.TempDir(), Client: &http.Client{Transport: updateTransport(func(r *http.Request) (*http.Response, error) {
 		*calls++
-		if r.URL.String() != "https://api.github.com/repos/"+updater.Repository+"/releases/latest" || r.Header.Get("Authorization") != "" || r.Header.Get("Cookie") != "" {
+		if r.Method != http.MethodHead || r.URL.String() != updater.RepositoryURL+"/releases/latest" || r.Header.Get("Authorization") != "" || r.Header.Get("Cookie") != "" {
 			t.Fatal("wrong source or credentials")
 		}
 		if offline {
 			return nil, errors.New("offline secret-must-not-escape")
 		}
-		b, _ := json.Marshal(updater.Release{Tag: tag, URL: updater.RepositoryURL + "/releases/tag/" + tag})
-		return &http.Response{StatusCode: 200, Header: make(http.Header), Body: io.NopCloser(bytes.NewReader(b))}, nil
+		return &http.Response{StatusCode: http.StatusFound, Header: http.Header{"Location": []string{updater.RepositoryURL + "/releases/tag/" + tag}}, Body: io.NopCloser(strings.NewReader(""))}, nil
 	})}}
 }
 func releasedVersion(t *testing.T) {
@@ -160,6 +159,73 @@ func TestCLICodexUpdateBeforeCredentialAndRequest(t *testing.T) {
 		var failure *Failure
 		if e := root.Execute(); !errors.As(e, &failure) || failure.Exit != 9 || calls != 1 || in.reads != 0 {
 			t.Fatalf("side effect before update %v %d %d", e, calls, in.reads)
+		}
+	}
+}
+
+func TestCLIStableUpdateCommandsWithoutREST(t *testing.T) {
+	releasedVersion(t)
+	for _, args := range [][]string{{"update", "check", "--refresh"}, {"upgrade", "--download-only", "--target", "old-entry"}} {
+		calls, installs := 0, 0
+		var out, stderr bytes.Buffer
+		o := &Options{In: strings.NewReader(""), Out: &out, Err: &stderr, updateCheck: releaseChecker(t, "v1.2.0", &calls, false)}
+		o.updateInstall = func(_ context.Context, r updater.Release, opt updater.InstallOptions) (updater.InstallResult, error) {
+			installs++
+			if len(r.Assets) != 0 || r.Tag != "v1.2.0" || !opt.DownloadOnly {
+				t.Fatal("REST metadata or wrong install")
+			}
+			return updater.InstallResult{Status: "downloaded_verified", Target: opt.Executable}, nil
+		}
+		root := NewCommand(o)
+		root.SetArgs(args)
+		if e := root.Execute(); e != nil || calls != 1 {
+			t.Fatalf("stable command %v calls=%d", e, calls)
+		}
+		if (args[0] == "upgrade") != (installs == 1) {
+			t.Fatal("wrong install dispatch")
+		}
+	}
+}
+func TestCLIPrereleaseRejectedBeforeInputAndInstall(t *testing.T) {
+	releasedVersion(t)
+	for _, args := range [][]string{{"update", "check", "--channel", "prerelease"}, {"upgrade", "--channel", "prerelease", "--target", "old-entry"}} {
+		calls, installs := 0, 0
+		var out, stderr bytes.Buffer
+		in := &untouchedInput{}
+		o := &Options{In: in, Out: &out, Err: &stderr, updateCheck: releaseChecker(t, "v1.2.0", &calls, false)}
+		o.updateInstall = func(context.Context, updater.Release, updater.InstallOptions) (updater.InstallResult, error) {
+			installs++
+			return updater.InstallResult{}, nil
+		}
+		root := NewCommand(o)
+		root.SetArgs(args)
+		var failure *Failure
+		if e := root.Execute(); !errors.As(e, &failure) || failure.Code != "update" || failure.Exit != 1 || !strings.Contains(failure.Message, "no longer supported") {
+			t.Fatalf("channel error %v", e)
+		}
+		if calls != 0 || installs != 0 || in.reads != 0 {
+			t.Fatal("disabled channel had side effects")
+		}
+	}
+}
+func TestCLICodexPreflightHTTPFailuresContinueOnce(t *testing.T) {
+	releasedVersion(t)
+	for _, status := range []int{200, 403, 429} {
+		calls, business := 0, 0
+		var out, stderr bytes.Buffer
+		checker := &updater.Checker{Client: &http.Client{Transport: updateTransport(func(r *http.Request) (*http.Response, error) {
+			calls++
+			if r.Method != http.MethodHead || r.URL.String() != updater.RepositoryURL+"/releases/latest" {
+				t.Fatal("REST or fallback request")
+			}
+			return &http.Response{StatusCode: status, Header: make(http.Header), Body: io.NopCloser(strings.NewReader("invalid response"))}, nil
+		})}}
+		o := &Options{In: strings.NewReader(""), Out: &out, Err: &stderr, updateCheck: checker}
+		root := NewCommand(o)
+		root.AddCommand(&cobra.Command{Use: "probe", RunE: func(*cobra.Command, []string) error { business++; return nil }})
+		root.SetArgs([]string{"--context", "codex", "probe"})
+		if e := root.Execute(); e != nil || calls != 1 || business != 1 || stderr.Len() == 0 {
+			t.Fatalf("failure handling %v calls=%d business=%d", e, calls, business)
 		}
 	}
 }

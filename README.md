@@ -2,6 +2,8 @@
 
 **v0.4.0：企业微信扫码登录。** 执行 `aicrm-cli auth login --wecom`，在浏览器核对终端码与授权账号后确认，CLI 保存凭据并读回身份。远程终端使用 `--no-browser`，无系统钥匙串时显式指定 `--secret-output NEW_FILE`。需要服务器已安装对应认证能力，客户端更新不授予账号权限；真实手机扫码与技术安装分开验收。完整步骤见[登录手册](docs/authentication.md)。
 
+**v0.5.1：更新不再依赖 GitHub REST API。** 每次 Codex 在线调用前通过公开 `releases/latest` 查询稳定版，按同一 tag 下载校验文件和归档，复用原入口替换及回滚。查询失败仍提示后继续；确认新版则先升级，业务未执行。预发布自动选版已移除，旧参数会明确报错。
+
 **v0.5.0：Codex 独立授权与原入口更新。** 显式 `--context codex` 隔离配置/钥匙串，并在在线命令前用 1.5 秒查询一次最新稳定版版本号。发现新版则先更新、返回退出码 9（业务尚未执行）；Codex 读回原入口版本后最多接续一次。普通旧调用保持兼容。完整步骤见 [Codex 授权](docs/crm/codex-auth.md) 和[更新接续约定](docs/crm/update-and-sync.md#codex-业务前检查与接续)。公开下载以 [GitHub Releases](https://github.com/qianlan33333-png/aicrm-cli/releases) 为准。
 
 旧 v0.3.0 首次需下载新版，再执行 `/path/to/new/aicrm-cli upgrade --target /path/to/partner/aicrm-cli`，从原入口读回 version 后移除临时下载。不要让伙伴入口和固定程序物理共用同一个文件；不扫描或删除其他安装。
@@ -46,7 +48,7 @@ aicrm-cli group-ops webhook send --input groupops-request.json --event-id YOUR_S
 从 [GitHub Release](https://github.com/qianlan33333-png/aicrm-cli/releases/latest) 下载适合系统的压缩包，解压后将 `aicrm-cli` 放入 PATH。也可以从源码安装（Go 1.26.9 或更高）：
 
 ```sh
-go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.4.0
+go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.5.1
 aicrm-cli profile add staging https://your-staging-origin.example
 aicrm-cli profile use staging
 ```

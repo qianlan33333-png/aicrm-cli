@@ -75,9 +75,6 @@ func download(ctx context.Context, h *http.Client, r Release, a Asset, dst io.Wr
 	if e := assetURL(r, a); e != nil {
 		return "", e
 	}
-	if a.Size > limit || a.Size < 0 {
-		return "", errors.New("release asset exceeds download budget")
-	}
 	req, e := http.NewRequestWithContext(ctx, http.MethodGet, a.URL, nil)
 	if e != nil {
 		return "", e
@@ -96,28 +93,14 @@ func download(ctx context.Context, h *http.Client, r Release, a Asset, dst io.Wr
 	if e != nil {
 		return "", errors.New("release download interrupted")
 	}
-	if n > limit || a.Size > 0 && n != a.Size {
+	if n > limit {
 		return "", errors.New("release download size mismatch")
 	}
 	digest := hex.EncodeToString(hash.Sum(nil))
-	if a.Digest != "" && a.Digest != "sha256:"+digest {
-		return "", errors.New("release asset digest mismatch")
-	}
 	return digest, nil
 }
-func assetNamed(r Release, name string) (Asset, error) {
-	var found Asset
-	count := 0
-	for _, a := range r.Assets {
-		if a.Name == name {
-			found = a
-			count++
-		}
-	}
-	if count != 1 {
-		return Asset{}, errors.New("release requires exactly one platform archive and checksum asset")
-	}
-	return found, nil
+func releaseAsset(r Release, name string) Asset {
+	return Asset{Name: name, URL: RepositoryURL + "/releases/download/" + url.PathEscape(r.Tag) + "/" + url.PathEscape(name)}
 }
 func expectedChecksum(raw, name string) (string, error) {
 	digest := ""
@@ -301,7 +284,7 @@ func priorOutcomeKnown(target, actual string) error {
 // remains available for replacement after the running program has exited.
 func Install(ctx context.Context, r Release, o InstallOptions) (result InstallResult, err error) {
 	result = InstallResult{Version: r.Tag, Status: "not_installed", ServerCompatibility: "updater needs no new server API; business routes remain server-authorized"}
-	if !releaseValid(r, "prerelease") {
+	if !releaseValid(r) {
 		return result, errors.New("release identity invalid")
 	}
 	// Snapshot before the download. An unversioned v0.3 may be replaced only
@@ -333,15 +316,9 @@ func Install(ctx context.Context, r Release, o InstallOptions) (result InstallRe
 	default:
 		return result, errors.New("no published archive for this platform")
 	}
-	asset, e := assetNamed(r, archiveName(r, system, arch))
-	if e != nil {
-		return result, e
-	}
-	checksums, e := assetNamed(r, "checksums.txt")
-	if e != nil {
-		return result, e
-	}
-	h := apiClient(o.Client, true)
+	asset := releaseAsset(r, archiveName(r, system, arch))
+	checksums := releaseAsset(r, "checksums.txt")
+	h := releaseClient(o.Client, true)
 	var sums strings.Builder
 	if _, e = download(ctx, h, r, checksums, &sums, 256<<10); e != nil {
 		return result, e
