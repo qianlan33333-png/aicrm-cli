@@ -20,6 +20,25 @@ stable 排除草稿和预发布。仅显式 `--channel prerelease` 选择包括�
 
 二进制在原目录准备、备份和原子替换，随后独立计算文件摘要。失败保留原文件或回滚备份；`upgrade status` 根据实际摘要读回，未知结果停止下一次覆盖。`upgrade rollback` 只恢复该次收据对应、摘要匹配的备份，拒绝覆盖其他安装器改写的文件。不会迁移用户配置、登录状态或服务端数据，也不提权。安装目录无写权限或 Windows 正在运行的文件被锁定时，保留已校验归档并报告失败；可退出程序后按原安装方式替换。Windows 实际运行文件替换应在 Windows 上另行验证。
 
+## Codex 业务前检查与接续
+
+仅显式 `--context codex` 对在线业务、认证及 doctor 在执行前查询一次固定 GitHub 仓库的最新稳定 Release。1.5 秒超时、不重试、不复用六小时缓存；只比较 SemVer，本地更高或预发布版不降级。help、version、docs、schema、profile、离线 capabilities、completion、update 和 upgrade（含 status/rollback）免查，按解析后的命令路径判断，参数中的 version/auth 不影响分类。JSON、管道与非交互调用仍检查。开发构建 dev 不查询公开稳定渠道。
+
+查询失败只在 stderr 提示，继续当前业务；不称已是最新。发现新版时，当前进程不读取业务 stdin、不获取凭据修改锁、不发 CRM 请求。macOS/Linux 原位安装并读取版本；Windows 仅准备已校验归档，退出后由 Codex 从临时新版更新原入口。结果退出码 9、error.code=update_required、result.business_executed=false；target、status、verified_archive 等字段说明实际结果。安装失败或状态不明也退出 9，不能据此直接重放。
+
+Codex 只在明确收到上述未执行业务结果，且已通过原入口 version 确认达到目标版本后，最多重新调用原业务命令一次。第二次仍要求升级则停止。管道生产者、流式或一次性 stdin 不自动重跑，不缓存秘密输入；升级后重新提供输入。普通文件输入可重新读取。其他失败、超时及业务结果未知不得触发重放。CLI 不接力启动业务进程、不转交 stdin 或信号。
+
+首次 v0.3 升级需下载新版；新版自身已最新也会处理指定旧目标：
+
+```sh
+/path/to/downloaded/aicrm-cli upgrade --target /path/to/partner/aicrm-cli
+/path/to/partner/aicrm-cli version
+/path/to/downloaded/aicrm-cli upgrade status --target /path/to/partner/aicrm-cli
+/path/to/downloaded/aicrm-cli upgrade rollback --target /path/to/partner/aicrm-cli
+```
+
+目标符号链接首次解析到真实文件，后续不改写链接、不跟随新的链接指向。安装锁内重读目标版本，已相同或更高则不覆盖；未知版本目标下载期间变化则停止。Windows 从校验归档解压临时新版，在原进程退出后执行同一 --target 命令；仍被占用则报告失败，不使用自重命名恢复器。完成后从原入口读版本并删除本次临时下载，避免第二个长期入口。只操作指定入口，不扫描其他 PATH 安装，不修改 profile、钥匙串或登录状态。固定程序和伙伴入口物理共用一个文件时，首次接入先分开。
+
 ## 维护两个仓库
 
 共享 CLI 源码、目录和服务端合同文档由 V4 拥有。独立仓库原有离线资料、企微签名 Webhook 和 README 由独立仓库保留，使用一个分发扩展入口。不要复制其他旧 CRM 仓库。
@@ -30,4 +49,4 @@ stable 排除草稿和预发布。仅显式 `--channel prerelease` 选择包括�
 4. `python3 scripts/cli_sync.py record-pushed --cli-repo /path/to/aicrm-cli-worktree --ref refs/heads/codex/WORK_ITEM` 通过已配置的固定仓库读取准确 ref，生成 `docs/cli-sync.json`。把收据提交回 V4；有效载荷摘要不会因提交收据而改变。
 5. V4 handoff 校验该收据与当前 CLI 有效载荷匹配。实际改动共享 CLI、目录、CLI 文档、CLI 环境或客户端依赖时才要求同步；其他服务器变动不新增远端依赖。独立仓库推送、公开 Release、stable 切换和 CRM 安装分别记录，不能互相代替。
 
-本轮候选只在本地及原预发队列验收，不创建公开 Release，不改变 stable，不自动晋升生产。GitHub 连接失败时继续本地候选及测试，远端身份与推送收据保持待验证。
+本批用户已授权将 Codex 授权隔离与更新能力合并发行一个稳定版；沿原 PR #2 与原队列交付，准确源码和构件由唯一发布工作台绑定。不独立发行旧候选、不安装 CRM 应用、不迁移数据库。真实扫码、桌面钥匙串及各 OS 原生安装验收分别记录。

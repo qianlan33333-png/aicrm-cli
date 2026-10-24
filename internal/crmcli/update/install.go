@@ -304,6 +304,23 @@ func Install(ctx context.Context, r Release, o InstallOptions) (result InstallRe
 	if !releaseValid(r, "prerelease") {
 		return result, errors.New("release identity invalid")
 	}
+	// Snapshot before the download. An unversioned v0.3 may be replaced only
+	// if this exact file survives until we acquire the installation lock.
+	entry := o.Executable
+	if entry == "" {
+		entry, _ = os.Executable()
+	}
+	result.Target, _ = filepath.Abs(entry)
+	target, e := ResolveTarget(entry)
+	if e != nil {
+		return result, e
+	}
+	result.Target = target
+	snapshot, e := fileSHA(target)
+	if e != nil {
+		return result, e
+	}
+
 	system, arch := o.GOOS, o.GOARCH
 	if system == "" {
 		system = runtime.GOOS
@@ -375,18 +392,6 @@ func Install(ctx context.Context, r Release, o InstallOptions) (result InstallRe
 		result.Status = "downloaded_verified"
 		return result, nil
 	}
-	target := o.Executable
-	if target == "" {
-		target, e = os.Executable()
-		if e != nil {
-			return result, e
-		}
-	}
-	target, e = filepath.Abs(target)
-	if e != nil {
-		return result, e
-	}
-	result.Target = target
 	info, e := regularTarget(target)
 	if e != nil {
 		return result, e
@@ -404,6 +409,24 @@ func Install(ctx context.Context, r Release, o InstallOptions) (result InstallRe
 	old, e := fileSHA(target)
 	if e != nil {
 		return result, e
+	}
+	version, versionErr := ReadVersion(ctx, target)
+	if versionErr == nil {
+		cmp, compareErr := Compare(version, r.Tag)
+		if compareErr != nil {
+			return result, compareErr
+		}
+		if cmp >= 0 {
+			result.Status = "up_to_date"
+			result.Version = version
+			result.BinarySHA256 = old
+			os.Remove(archive)
+			keep = false
+			result.Download = ""
+			return result, nil
+		}
+	} else if old != snapshot || o.Executable == "" {
+		return result, errors.New("target changed while downloading and its version is unknown; no replacement performed")
 	}
 	if e = priorOutcomeKnown(target, old); e != nil {
 		result.Status = "outcome_unknown"
@@ -504,14 +527,7 @@ func Install(ctx context.Context, r Release, o InstallOptions) (result InstallRe
 	return result, nil
 }
 func Status(target string) (map[string]any, error) {
-	if target == "" {
-		var e error
-		target, e = os.Executable()
-		if e != nil {
-			return nil, e
-		}
-	}
-	target, e := filepath.Abs(target)
+	target, e := ResolveTarget(target)
 	if e != nil {
 		return nil, e
 	}
@@ -533,14 +549,7 @@ func Status(target string) (map[string]any, error) {
 	return map[string]any{"status": state, "receipt_status": r.Status, "target": target, "binary_sha256": actual, "version": r.Version, "rollback_backup": r.Backup}, nil
 }
 func Rollback(target string) (map[string]any, error) {
-	if target == "" {
-		var e error
-		target, e = os.Executable()
-		if e != nil {
-			return nil, e
-		}
-	}
-	target, e := filepath.Abs(target)
+	target, e := ResolveTarget(target)
 	if e != nil {
 		return nil, e
 	}

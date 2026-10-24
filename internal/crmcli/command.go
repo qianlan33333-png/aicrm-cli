@@ -17,19 +17,23 @@ import (
 	"time"
 
 	catalog "github.com/qianlan33333-png/aicrm-cli/internal/clicatalog/port"
+	updater "github.com/qianlan33333-png/aicrm-cli/internal/crmcli/update"
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
 )
 
 type Options struct {
 	// OS directory resolver seam keeps desktop-keyring tests off real profiles.
-	userConfigDir   func() (string, error)
-	OpenBrowser     func(context.Context, string) error
-	Profile, Format string
-	Context         string
-	Timeout         time.Duration
-	In              io.Reader
-	Out, Err        io.Writer
+	userConfigDir                func() (string, error)
+	updateCheck                  *updater.Checker
+	updateInstall                func(context.Context, updater.Release, updater.InstallOptions) (updater.InstallResult, error)
+	updateExecutable, updateGOOS string
+	OpenBrowser                  func(context.Context, string) error
+	Profile, Format              string
+	Context                      string
+	Timeout                      time.Duration
+	In                           io.Reader
+	Out, Err                     io.Writer
 }
 
 func (o *Options) client() (*Client, error) {
@@ -113,7 +117,9 @@ func Run(args []string, in io.Reader, out, stderr io.Writer) int {
 		_ = json.NewEncoder(out).Encode(value)
 		return f.Exit
 	}
-	maybeNotifyUpdate(args, in, out, stderr)
+	if o.Context != "codex" {
+		maybeNotifyUpdate(args, in, out, stderr)
+	}
 	return 0
 }
 func NewCommand(o *Options) *cobra.Command {
@@ -133,7 +139,7 @@ func NewCommand(o *Options) *cobra.Command {
 		if o.Timeout <= 0 {
 			return fail("validation", "request timeout must be positive", 2)
 		}
-		return nil
+		return o.preflightUpdate(cmd)
 	}
 	root.PersistentFlags().StringVar(&o.Context, "context", "", "codex for isolated desktop credentials; omit for legacy behavior")
 	root.PersistentFlags().StringVar(&o.Profile, "profile", "", "configured server profile")

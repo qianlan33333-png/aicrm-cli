@@ -272,3 +272,26 @@ func atomicJSON(path string, value any) error {
 	}
 	return replaceFile(tmp, path)
 }
+
+// Latest checks exactly once without consulting or writing the notifier cache.
+func (c Checker) Latest(ctx context.Context, current string) (Result, error) {
+	r := Result{Current: current, Channel: "stable"}
+	if _, err := parseVersion(current); err != nil {
+		return r, errors.New("development build has no release version")
+	}
+	ctx, cancel := context.WithTimeout(ctx, CheckTimeout)
+	defer cancel()
+	release, err := c.fetch(ctx, "stable")
+	if err != nil {
+		return r, err
+	}
+	cmp, err := Compare(release.Tag, current)
+	if err != nil {
+		return r, err
+	}
+	r.Release = release
+	r.Latest = release.Tag
+	r.Available = cmp > 0
+	r.CheckedAt = c.now()
+	return r, nil
+}

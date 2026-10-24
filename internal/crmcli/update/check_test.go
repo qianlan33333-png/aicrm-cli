@@ -146,3 +146,32 @@ func TestStableRejectsPrereleaseDraftAndRedirect(t *testing.T) {
 		t.Fatal("metadata followed redirect")
 	}
 }
+
+func TestLatestAlwaysChecksOnceWithoutCache(t *testing.T) {
+	calls := 0
+	c := Checker{CacheDir: t.TempDir(), Client: &http.Client{Transport: roundTrip(func(r *http.Request) (*http.Response, error) {
+		calls++
+		if r.Header.Get("Authorization") != "" || r.Header.Get("Cookie") != "" {
+			t.Fatal("CRM credential leaked")
+		}
+		return response(release("v1.2.0")), nil
+	})}}
+	for _, current := range []string{"1.0.0", "1.2.0", "2.0.0", "2.0.0-rc.1"} {
+		r, e := c.Latest(context.Background(), current)
+		if e != nil || r.Cached || r.Available != (current == "1.0.0") {
+			t.Fatalf("latest %+v %v", r, e)
+		}
+	}
+	if calls != 4 {
+		t.Fatalf("queries=%d", calls)
+	}
+	c.Client = &http.Client{Transport: roundTrip(func(r *http.Request) (*http.Response, error) {
+		calls++
+		<-r.Context().Done()
+		return nil, r.Context().Err()
+	})}
+	start := time.Now()
+	if _, e := c.Latest(context.Background(), "1.0.0"); e == nil || time.Since(start) > 2*time.Second || calls != 5 {
+		t.Fatal("fresh lookup unbounded, retried or cached")
+	}
+}
