@@ -9,10 +9,8 @@ func ManagedMachineScope(op Operation) (string, bool) {
 	if op.BlockedReason != "" || op.Binding == nil || op.Binding.Auth != "human" || !strings.HasPrefix(op.Binding.Path, "/api/") {
 		return "", false
 	}
-	if op.Binding.Method == "GET" || op.Binding.Method == "HEAD" {
-		return "read", true
-	}
-	return "write", true
+	scope := op.Binding.EffectiveScope()
+	return scope, scope != ""
 }
 
 // DelegatedOperation describes an existing Owner route callable with an
@@ -46,4 +44,20 @@ func DelegatedOperations(authorized bool, scopes []string) []DelegatedOperation 
 		items = append(items, DelegatedOperation{OperationID: op.ID, Command: "aicrm-cli " + op.Group + " " + op.Command, Method: op.Binding.Method, Path: op.Binding.Path, RequiredScope: scope, Capability: "cli.admin.execute", IdempotencyRequired: op.Binding.IdempotencyRequired})
 	}
 	return items
+}
+
+// EffectiveScope describes human Owner transport exceptions. Native machine
+// scope remains an authorization grant, not a change to its legacy HTTP behavior.
+// Unannotated human bindings preserve their method defaults.
+func (b Binding) EffectiveScope() string {
+	if b.Auth == "human" && b.Scope != "" {
+		if b.Scope == "read" || b.Scope == "write" {
+			return b.Scope
+		}
+		return ""
+	}
+	if b.Method == "GET" || b.Method == "HEAD" {
+		return "read"
+	}
+	return "write"
 }

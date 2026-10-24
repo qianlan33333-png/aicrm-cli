@@ -2,7 +2,7 @@
   "schema_version": 1,
   "cli_repository": "https://github.com/qianlan33333-png/aicrm-cli.git",
   "source_repository": "https://github.com/qianlan33333-png/AI-CRM-v4.git",
-  "payload_sha256": "cd9d4ef32f5b45c8c7534b656dce6f4664967a432bdea75e0f44603ab5a84306",
+  "payload_sha256": "a0047ff690834445bb635892d8442dd89ba19c2db537227a1663ed92d6e50c1f",
   "files": [
     {
       "source": "cmd/aicrm-cli/main.go",
@@ -12,12 +12,22 @@
     {
       "source": "docs/cli/capability-index.md",
       "destination": "docs/capability-index.md",
-      "sha256": "8b73757920854ef7390ebcee81b3239888e9247135bce8974dbbde34f00e138c"
+      "sha256": "3f17b1f4a4ccd2a2da4c4b08f727fffd1d1d97b5110e2c55176fb550c22b1b3d"
     },
     {
       "source": "docs/cli/PRD.md",
       "destination": "docs/crm/PRD.md",
       "sha256": "66e3f30a73820241b2a1abfc2e1cae1003f6c724fb83d0d177d7cf141b165cb0"
+    },
+    {
+      "source": "docs/cli/capability-completion.json",
+      "destination": "docs/crm/capability-completion.json",
+      "sha256": "5ad3e719a4ba6504ce2528dd0d5180560ca46eb1b87695f52340627f76300268"
+    },
+    {
+      "source": "docs/cli/capability-completion.md",
+      "destination": "docs/crm/capability-completion.md",
+      "sha256": "9bf16f76f716b087ed8ff0a7b99eb6d212b1baff589b6372f6d5c2b5351c03f4"
     },
     {
       "source": "docs/cli/codex-auth.md",
@@ -42,7 +52,7 @@
     {
       "source": "docs/cli/README.md",
       "destination": "docs/server-cli.md",
-      "sha256": "130ca0134db3595cc9e539acb9b7ed12fd16662c6ab3923cd4ae9d727ac1f84f"
+      "sha256": "7bef002602a36241f7eced628e2cbebf96ff672bc3a7f386b6693ae59b39bfcf"
     },
     {
       "source": "derived:current-v4-client-dependencies",
@@ -57,17 +67,17 @@
     {
       "source": "internal/clicatalog/port/catalog.go",
       "destination": "internal/clicatalog/port/catalog.go",
-      "sha256": "096b2d3875c6af0a9971f6e5d7b4e7b7376b6866d5b970e30897c11e0fc1c922"
+      "sha256": "36ceb48f32329b00d7bbdc47fb9d2d999a81290f77c6b779eeb7cc124eb95960"
     },
     {
       "source": "internal/clicatalog/port/catalog.json",
       "destination": "internal/clicatalog/port/catalog.json",
-      "sha256": "5b01abc2bfe0401f7c7609f92beda50803dc7b9e059404194fdf77c00fe4d6f4"
+      "sha256": "39aa3bd0bbb8aa9bd832fe35329cbd73912ce1483625f92741269403818830ca"
     },
     {
       "source": "internal/clicatalog/port/machine.go",
       "destination": "internal/clicatalog/port/machine.go",
-      "sha256": "387c380d8c31cd3c583cc261d53983283700a9c670ba45d0729145bac0c1b670"
+      "sha256": "498d9c82dcb77fd6266a4e2472063c5f79f5b48736f258904fa3628876eacd83"
     },
     {
       "source": "internal/platform/config/cli.go",
@@ -85,6 +95,11 @@
       "sha256": "864b84919bed5e5fc3066a9ee7fa0d10adb84a1d3f6c9e41d0e3256960ce8445"
     },
     {
+      "source": "internal/crmcli/capability_completion_test.go",
+      "destination": "internal/crmcli/capability_completion_test.go",
+      "sha256": "adeb1dedd88d9dc83f3bddaef0397aae76b9b8c5b9c31e3c747e17760f79fbb7"
+    },
+    {
       "source": "internal/crmcli/cli_auth_test.go",
       "destination": "internal/crmcli/cli_auth_test.go",
       "sha256": "64e3cc41bbc3d686ba06db2f9148586cdc906076c3358a157bb979aa8ab459c7"
@@ -92,7 +107,7 @@
     {
       "source": "internal/crmcli/client.go",
       "destination": "internal/crmcli/client.go",
-      "sha256": "6d3899129161b5186df9cbef980062743c1e25cd3cd0027bfaf0429ec02df447"
+      "sha256": "88ccc4d9c75cdb755cc3607a2f5c2fa849c28b0a2d4fa1b2acbbcf8fdd0c7b2e"
     },
     {
       "source": "internal/crmcli/client_test.go",
@@ -102,7 +117,7 @@
     {
       "source": "internal/crmcli/command.go",
       "destination": "internal/crmcli/command.go",
-      "sha256": "2794d43d7abe577d751d5b1b624047061e992037f10c80933f199e31d1077c27"
+      "sha256": "8d75836778c9250a43b86e66f07f3652605b483104cc6a04fef703e4177993f5"
     },
     {
       "source": "internal/crmcli/context.go",
@@ -143,6 +158,11 @@
       "source": "internal/crmcli/journey_test.go",
       "destination": "internal/crmcli/journey_test.go",
       "sha256": "e1e6aef46d0ab71f74612e5480820e02376f4cdcd1e280ebd2f015ba0a7ace31"
+    },
+    {
+      "source": "internal/crmcli/legacy_binary_compat_test.go",
+      "destination": "internal/crmcli/legacy_binary_compat_test.go",
+      "sha256": "146e66fee653328660b3210c761e9fab6ae4dfe5b9a704e1945eb84e58113adc"
     },
     {
       "source": "internal/crmcli/machine_admin_test.go",
@@ -355,6 +375,6 @@
       "sha256": "6021b275fd61655a7265ec75195b410db950aa9808bc54edcae857b6a020f693"
     }
   ],
-  "source_head": "7ef9bef1ae7ca245a2620cb682b8eedb46ff5f19",
-  "source_tree": "80049992e3f293a49ad3db9118a5c618d65060b5"
+  "source_head": "273b6f4b3f15b6e969e42e6fa9d041dbd3f32fc5",
+  "source_tree": "95e96e5e48b27d17579dfc07b9e144749e486b6f"
 }

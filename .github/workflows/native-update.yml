@@ -58,6 +58,27 @@ jobs:
           set -euo pipefail
           go test -json ./internal/crmcli/update > native-update.json
           go test -json ./internal/crmcli -run '^Test(CLICodexPreflight.*|CLICodexUpdateBeforeCredentialAndRequest|CLIUpgradeExplicitTargetEvenWhenBootstrapIsLatest|CLIStableUpdateCommandsWithoutREST|CLIPrereleaseRejectedBeforeInputAndInstall|UpdateNoticeMachineAndExplicitCommands|UpdateOfferRequiresChoiceAndKeepsFailureOnStderr|UpdateOfferReportsAutomaticBackupCleanup|CLIUpgradeAlreadyCurrentCleansPreviousReceipt)$' > preflight.json
+      - name: New CLI boundaries and isolated legacy business compatibility
+        shell: bash
+        run: |
+          go test -json ./internal/crmcli -run '^Test(CLICompletion.*|CLITagKeys.*|CLIInvitationSave.*|CLIQRDownload.*|CLIWriteGET.*|CLILegacyNative.*)$' > capability-completion.json
+      - name: Real legacy business compatibility on Linux
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          go test -json -tags legacy_compat ./internal/crmcli -run '^TestCLICompletionRealLegacyBinaryCompatibility$' > legacy-compatibility.json
+      - name: Remove temporary legacy executables
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PYTHON'
+          import os, pathlib, shutil
+          root = pathlib.Path(os.environ['RUNNER_TEMP']).resolve()
+          for version in ('0.3.0','0.4.0','0.5.0','0.5.1'):
+              directory = root / ('legacy-' + version)
+              if directory.exists() and directory.resolve().parent == root:
+                  shutil.rmtree(directory)
+          PYTHON
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -65,3 +86,5 @@ jobs:
           path: |
             native-update.json
             preflight.json
+            capability-completion.json
+            legacy-compatibility.json

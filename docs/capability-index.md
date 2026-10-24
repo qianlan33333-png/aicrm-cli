@@ -17,6 +17,7 @@
 
 | 操作 ID | CLI 命令 | 身份 / 执行状态 | Owner | 源码证据 |
 |---|---|---|---|---|
+| admin.acceptCustomerTagCommand | aicrm-cli customers accept-customer-tag-command invoke | human | customer | source_contract_only |
 | admin.confirmOneIDMerge | aicrm-cli identity one-idmerge confirm | human | identity | source_contract_only |
 | admin.createCustomerSyncRun | aicrm-cli customers customer-sync-run create | human | customer | source_contract_only |
 | admin.getCustomer360 | aicrm-cli customers customer360 get | human | customer | source_contract_only |
@@ -30,10 +31,12 @@
 | admin.getOneIDCustomer | aicrm-cli identity one-idcustomer get | human | identity | source_contract_only |
 | admin.ignoreOneIDSourceConflict | aicrm-cli identity ignore-one-idsource-conflict invoke | human | identity | source_contract_only |
 | admin.listCustomerSyncRuns | aicrm-cli customers customer-sync-runs list | human | customer | source_contract_only |
+| admin.listCustomerTagCommands | aicrm-cli customers customer-tag-commands list | human | customer | source_contract_only |
 | admin.listCustomers | aicrm-cli customers customers list | human | customer | source_contract_only |
 | admin.listOneIDConflicts | aicrm-cli identity one-idconflicts list | human | identity | source_contract_only |
 | admin.listOneIDMergeCandidates | aicrm-cli identity one-idmerge-candidates list | human | identity | source_contract_only |
 | admin.listOneIDSourceConflicts | aicrm-cli identity one-idsource-conflicts list | human | identity | source_contract_only |
+| admin.previewCustomerTagCommand | aicrm-cli customers customer-tag-command preview | human | customer | source_contract_only |
 | admin.resolveOneID | aicrm-cli identity one-id resolve | human | identity | source_contract_only |
 | admin.revealCustomerContact | aicrm-cli customers reveal-customer-contact invoke | human | customer | source_contract_only |
 | admin.revealCustomerPhone | aicrm-cli customers reveal-customer-phone invoke | human | customer | source_contract_only |
@@ -100,6 +103,7 @@
 | admin.requestLegacyWecomTagSync | aicrm-cli wecom legacy-wecom-tag-sync request | human | wecom | source_contract_only |
 | admin.requestLegacyWecomTagSyncDue | aicrm-cli wecom legacy-wecom-tag-sync-due request | human | wecom | source_contract_only |
 | admin.retryWeComCallbackReceipt | aicrm-cli wecom retry-we-com-callback-receipt invoke | human | wecom | source_contract_only |
+| admin.retryWeComTagMutation | aicrm-cli wecom retry-we-com-tag-mutation invoke | human | wecom | source_contract_only |
 | admin.scheduleWeComContactDescriptionReadback | aicrm-cli wecom schedule-we-com-contact-description-readback invoke | human | wecom | source_contract_only |
 | admin.updateLegacyWecomTagGroupPatch | aicrm-cli wecom legacy-wecom-tag-group-patch update | human | wecom | source_contract_only |
 | admin.updateLegacyWecomTagGroupPut | aicrm-cli wecom legacy-wecom-tag-group-put update | human | wecom | source_contract_only |
@@ -205,6 +209,7 @@
 | admin.getAutomationRun | aicrm-cli automation automation-run get | human | automation | source_contract_only |
 | admin.getAutomationRunEffectReconciliationCandidate | aicrm-cli automation automation-run-effect-reconciliation-candidate get | human | automation | source_contract_only |
 | admin.listAutomationAgents | aicrm-cli automation automation-agents list | human | automation | source_contract_only |
+| admin.listAutomationGenerationItems | aicrm-cli automation automation-generation-items list | human | automation | source_contract_only |
 | admin.listAutomationPolicies | aicrm-cli automation automation-policies list | human | automation | source_contract_only |
 | admin.listAutomationRunRecipients | aicrm-cli automation automation-run-recipients list | human | automation | source_contract_only |
 | admin.listAutomationRuns | aicrm-cli automation automation-runs list | human | automation | source_contract_only |
@@ -252,6 +257,7 @@
 
 | 操作 ID | CLI 命令 | 身份 / 执行状态 | Owner | 源码证据 |
 |---|---|---|---|---|
+| admin.acceptGroupOpsBroadcast | aicrm-cli group-ops accept-group-ops-broadcast invoke | human | groupops | source_contract_only |
 | admin.acceptGroupOpsRunDue | aicrm-cli group-ops accept-group-ops-run-due invoke | human | groupops | source_contract_only |
 | admin.activateGroupOpsPlan | aicrm-cli group-ops group-ops-plan activate | human | groupops | source_contract_only |
 | admin.addGroupOpsPlanGroup | aicrm-cli group-ops group-ops-plan-group add | human | groupops | source_contract_only |
@@ -317,8 +323,17 @@
 |---|---|---|---|---|
 | admin.archiveMediaGroupInvite | aicrm-cli group-invitations media-group-invite archive | human | groupinvitation | source_contract_only |
 | admin.createMediaGroupInvite | aicrm-cli group-invitations media-group-invite create | human | groupinvitation | source_contract_only |
+| admin.downloadGroupInvitationQRCode | aicrm-cli group-invitations group-invitation-qrcode download | human | media | source_contract_only |
+| admin.getGroupDirectoryEntry | aicrm-cli group-invitations group-directory-entry get | human | media | source_contract_only |
+| admin.getGroupDirectoryStatus | aicrm-cli group-invitations group-directory-status get | human | media | source_contract_only |
+| admin.getGroupInvitationPlan | aicrm-cli group-invitations group-invitation-plan get | human | media | source_contract_only |
 | admin.getMediaGroupInvite | aicrm-cli group-invitations media-group-invite get | human | groupinvitation | source_contract_only |
+| admin.listGroupDirectory | aicrm-cli group-invitations group-directory list | human | media | source_contract_only |
+| admin.listGroupInvitationHistory | aicrm-cli group-invitations group-invitation-history list | human | media | source_contract_only |
+| admin.listGroupInvitationPlans | aicrm-cli group-invitations group-invitation-plans list | human | media | source_contract_only |
 | admin.listMediaGroupInvites | aicrm-cli group-invitations media-group-invites list | human | groupinvitation | source_contract_only |
+| admin.refreshGroupDirectory | aicrm-cli group-invitations group-directory refresh | human | media | source_contract_only |
+| admin.saveGroupInvitationPlan | aicrm-cli group-invitations group-invitation-plan save | human | media | source_contract_only |
 | admin.updateMediaGroupInvite | aicrm-cli group-invitations media-group-invite update | human | groupinvitation | source_contract_only |
 
 ## 运营 / 渠道码中心
@@ -411,18 +426,22 @@
 |---|---|---|---|---|
 | admin.copyLocalWechatPayProduct | aicrm-cli products local-wechat-pay-product copy | human | product | source_contract_only |
 | admin.createOrdinaryProductSalesSource | aicrm-cli products ordinary-product-sales-source create | human | product | source_contract_only |
+| admin.createProduct | aicrm-cli products product create | human | product | source_contract_only |
 | admin.deleteLocalWechatPayProduct | aicrm-cli products local-wechat-pay-product delete | human | product | source_contract_only |
 | admin.disableLocalWechatPayProduct | aicrm-cli products local-wechat-pay-product disable | human | product | source_contract_only |
 | admin.enableLocalWechatPayProduct | aicrm-cli products local-wechat-pay-product enable | human | product | source_contract_only |
+| admin.getProduct | aicrm-cli products product get | human | product | source_contract_only |
 | admin.getWeChatShopProductRefreshStatus | aicrm-cli products we-chat-shop-product-refresh-status get | human | product | source_contract_only |
 | admin.getWechatPayProductExternalPush | aicrm-cli products wechat-pay-product-external-push get | human | product | source_contract_only |
 | admin.listOrdinaryProductSalesSources | aicrm-cli products ordinary-product-sales-sources list | human | product | source_contract_only |
+| admin.listProducts | aicrm-cli products products list | human | product | source_contract_only |
 | admin.previewWechatPayProductExternalPush | aicrm-cli products wechat-pay-product-external-push preview | human | product | source_contract_only |
 | admin.queueWechatPayProductExternalPushTest | aicrm-cli products queue-wechat-pay-product-external-push-test invoke | human | product | source_contract_only |
 | admin.refreshWeChatShopProducts | aicrm-cli products we-chat-shop-products refresh | human | product | source_contract_only |
 | admin.renameOrdinaryProductSalesSource | aicrm-cli products rename-ordinary-product-sales-source invoke | human | product | source_contract_only |
 | admin.saveWechatPayProductExternalPush | aicrm-cli products wechat-pay-product-external-push save | human | product | source_contract_only |
 | admin.shareLocalWechatPayProduct | aicrm-cli products share-local-wechat-pay-product invoke | human | product | source_contract_only |
+| admin.updateProduct | aicrm-cli products product update | human | product | source_contract_only |
 
 ## 交易 / 周期商品管理
 
@@ -433,8 +452,12 @@
 | admin.archiveServicePeriodProduct | aicrm-cli period-products service-period-product archive | human | serviceperiod | source_contract_only |
 | admin.copyServicePeriodProduct | aicrm-cli period-products service-period-product copy | human | serviceperiod | source_contract_only |
 | admin.createPeriodicProductSalesSource | aicrm-cli period-products periodic-product-sales-source create | human | serviceperiod | source_contract_only |
+| admin.createServicePeriodMemberCollaborator | aicrm-cli period-products service-period-member-collaborator create | human | serviceperiod | source_contract_only |
+| admin.createServicePeriodMemberView | aicrm-cli period-products service-period-member-view create | human | serviceperiod | source_contract_only |
 | admin.createServicePeriodProduct | aicrm-cli period-products service-period-product create | human | serviceperiod | source_contract_only |
 | admin.deleteProductWorkspaceShares | aicrm-cli period-products product-workspace-shares delete | human | serviceperiod | source_contract_only |
+| admin.deleteServicePeriodMemberCollaborator | aicrm-cli period-products service-period-member-collaborator delete | human | serviceperiod | source_contract_only |
+| admin.deleteServicePeriodMemberView | aicrm-cli period-products service-period-member-view delete | human | serviceperiod | source_contract_only |
 | admin.disableServicePeriodProduct | aicrm-cli period-products service-period-product disable | human | serviceperiod | source_contract_only |
 | admin.enableServicePeriodProduct | aicrm-cli period-products service-period-product enable | human | serviceperiod | source_contract_only |
 | admin.getProductWorkspaceShares | aicrm-cli period-products product-workspace-shares get | human | serviceperiod | source_contract_only |
@@ -444,16 +467,21 @@
 | admin.getServicePeriodProduct | aicrm-cli period-products service-period-product get | human | serviceperiod | source_contract_only |
 | admin.getServicePeriodProductExternalPush | aicrm-cli period-products service-period-product-external-push get | human | serviceperiod | source_contract_only |
 | admin.listPeriodicProductSalesSources | aicrm-cli period-products periodic-product-sales-sources list | human | serviceperiod | source_contract_only |
+| admin.listServicePeriodMemberStaff | aicrm-cli period-products service-period-member-staff list | human | serviceperiod | source_contract_only |
 | admin.listServicePeriodMemberViewsCompatibility | aicrm-cli period-products service-period-member-views-compatibility list | human | serviceperiod | source_contract_only |
 | admin.listServicePeriodMembersCompatibility | aicrm-cli period-products service-period-members-compatibility list | human | serviceperiod | source_contract_only |
 | admin.listServicePeriodProducts | aicrm-cli period-products service-period-products list | human | serviceperiod | source_contract_only |
 | admin.postProductWorkspaceShares | aicrm-cli period-products post-product-workspace-shares invoke | human | serviceperiod | source_contract_only |
 | admin.previewServicePeriodProductExternalPush | aicrm-cli period-products service-period-product-external-push preview | human | serviceperiod | source_contract_only |
+| admin.queryServicePeriodMemberGrid | aicrm-cli period-products query-service-period-member-grid invoke | human | serviceperiod | source_contract_only |
 | admin.queueServicePeriodProductExternalPushTest | aicrm-cli period-products queue-service-period-product-external-push-test invoke | human | serviceperiod | source_contract_only |
 | admin.renamePeriodicProductSalesSource | aicrm-cli period-products rename-periodic-product-sales-source invoke | human | serviceperiod | source_contract_only |
 | admin.saveServicePeriodProductExternalPush | aicrm-cli period-products service-period-product-external-push save | human | serviceperiod | source_contract_only |
 | admin.shareServicePeriodProduct | aicrm-cli period-products share-service-period-product invoke | human | serviceperiod | source_contract_only |
 | admin.updateServicePeriodMemberAlliance | aicrm-cli period-products service-period-member-alliance update | human | serviceperiod | source_contract_only |
+| admin.updateServicePeriodMemberCollaborator | aicrm-cli period-products service-period-member-collaborator update | human | serviceperiod | source_contract_only |
+| admin.updateServicePeriodMemberRemark | aicrm-cli period-products service-period-member-remark update | human | serviceperiod | source_contract_only |
+| admin.updateServicePeriodMemberView | aicrm-cli period-products service-period-member-view update | human | serviceperiod | source_contract_only |
 | admin.updateServicePeriodProduct | aicrm-cli period-products service-period-product update | human | serviceperiod | source_contract_only |
 | candidate.period-products.manual-renewal | aicrm-cli period-products manual-renewal invoke | 不可执行：No verified business write contract; ordinary field edits cannot implement this action | period-products | research_only |
 
@@ -468,6 +496,8 @@
 | admin.copyCouponRule | aicrm-cli coupons coupon-rule copy | human | coupon | source_contract_only |
 | admin.createCouponRule | aicrm-cli coupons coupon-rule create | human | coupon | source_contract_only |
 | admin.getCouponRule | aicrm-cli coupons coupon-rule get | human | coupon | source_contract_only |
+| admin.getCouponShare | aicrm-cli coupons coupon-share get | human | coupon | source_contract_only |
+| admin.listCouponClaims | aicrm-cli coupons coupon-claims list | human | coupon | source_contract_only |
 | admin.listCouponProductOptions | aicrm-cli coupons coupon-product-options list | human | coupon | source_contract_only |
 | admin.listCouponRules | aicrm-cli coupons coupon-rules list | human | coupon | source_contract_only |
 | admin.publishCouponRule | aicrm-cli coupons coupon-rule publish | human | coupon | source_contract_only |
@@ -500,6 +530,7 @@
 
 | 操作 ID | CLI 命令 | 身份 / 执行状态 | Owner | 源码证据 |
 |---|---|---|---|---|
+| admin.updateReferralCampaignPosterLayouts | aicrm-cli referral referral-campaign-poster-layouts update | human | referral | source_contract_only |
 | owner.referral.create-campaign | aicrm-cli referral campaign create | human | referral | source_handler_only |
 | owner.referral.create-reward | aicrm-cli referral reward create | human | referral | source_handler_only |
 | owner.referral.create-team | aicrm-cli referral team create | human | referral | source_handler_only |
@@ -588,12 +619,18 @@
 | 操作 ID | CLI 命令 | 身份 / 执行状态 | Owner | 源码证据 |
 |---|---|---|---|---|
 | admin.completeMediaAttachmentMultipartUpload | aicrm-cli materials complete-media-attachment-multipart-upload invoke | human | media | source_contract_only |
+| admin.createAttachmentMaterialGroup | aicrm-cli materials attachment-material-group create | human | media | source_contract_only |
+| admin.createImageMaterialGroup | aicrm-cli materials image-material-group create | human | media | source_contract_only |
 | admin.createMediaAttachment | aicrm-cli materials media-attachment create | human | media | source_contract_only |
 | admin.createMediaImage | aicrm-cli materials media-image create | human | media | source_contract_only |
 | admin.createMediaMiniProgram | aicrm-cli materials media-mini-program create | human | media | source_contract_only |
+| admin.createMiniprogramMaterialGroup | aicrm-cli materials miniprogram-material-group create | human | media | source_contract_only |
+| admin.deleteAttachmentMaterialGroup | aicrm-cli materials attachment-material-group delete | human | media | source_contract_only |
+| admin.deleteImageMaterialGroup | aicrm-cli materials image-material-group delete | human | media | source_contract_only |
 | admin.deleteMediaAttachment | aicrm-cli materials media-attachment delete | human | media | source_contract_only |
 | admin.deleteMediaImage | aicrm-cli materials media-image delete | human | media | source_contract_only |
 | admin.deleteMediaMiniProgram | aicrm-cli materials media-mini-program delete | human | media | source_contract_only |
+| admin.deleteMiniprogramMaterialGroup | aicrm-cli materials miniprogram-material-group delete | human | media | source_contract_only |
 | admin.downloadMediaAttachment | aicrm-cli materials media-attachment download | human | media | source_contract_only |
 | admin.getMediaAttachment | aicrm-cli materials media-attachment get | human | media | source_contract_only |
 | admin.getMediaImage | aicrm-cli materials media-image get | human | media | source_contract_only |
@@ -602,15 +639,23 @@
 | admin.getMediaPreparationRefreshRound | aicrm-cli materials media-preparation-refresh-round get | human | media | source_contract_only |
 | admin.initiateMediaAttachmentMultipartUpload | aicrm-cli materials initiate-media-attachment-multipart-upload invoke | human | media | source_contract_only |
 | admin.listAttachmentGroups | aicrm-cli materials attachment-groups list | human | media | source_contract_only |
+| admin.listImageMaterialGroupMembers | aicrm-cli materials image-material-group-members list | human | media | source_contract_only |
+| admin.listImageMaterialGroups | aicrm-cli materials image-material-groups list | human | media | source_contract_only |
 | admin.listMediaAttachments | aicrm-cli materials media-attachments list | human | media | source_contract_only |
 | admin.listMediaImageFacets | aicrm-cli materials media-image-facets list | human | media | source_contract_only |
 | admin.listMediaImages | aicrm-cli materials media-images list | human | media | source_contract_only |
 | admin.listMediaMiniPrograms | aicrm-cli materials media-mini-programs list | human | media | source_contract_only |
 | admin.listMediaPreparations | aicrm-cli materials media-preparations list | human | media | source_contract_only |
 | admin.listMiniProgramGroups | aicrm-cli materials mini-program-groups list | human | media | source_contract_only |
+| admin.moveAttachmentMaterialGroupItems | aicrm-cli materials move-attachment-material-group-items invoke | human | media | source_contract_only |
+| admin.moveImageMaterialGroupItems | aicrm-cli materials move-image-material-group-items invoke | human | media | source_contract_only |
+| admin.moveMiniprogramMaterialGroupItems | aicrm-cli materials move-miniprogram-material-group-items invoke | human | media | source_contract_only |
 | admin.prepareMediaPreparation | aicrm-cli materials prepare-media-preparation invoke | human | media | source_contract_only |
 | admin.putMediaAttachmentMultipartPart | aicrm-cli materials put-media-attachment-multipart-part invoke | human | media | source_contract_only |
 | admin.refreshMediaPreparationRound | aicrm-cli materials media-preparation-round refresh | human | media | source_contract_only |
+| admin.renameAttachmentMaterialGroup | aicrm-cli materials rename-attachment-material-group invoke | human | media | source_contract_only |
+| admin.renameImageMaterialGroup | aicrm-cli materials rename-image-material-group invoke | human | media | source_contract_only |
+| admin.renameMiniprogramMaterialGroup | aicrm-cli materials rename-miniprogram-material-group invoke | human | media | source_contract_only |
 | admin.resolveLocalMiniProgramThumbnail | aicrm-cli materials local-mini-program-thumbnail resolve | human | media | source_contract_only |
 | admin.setAttachmentGroup | aicrm-cli materials attachment-group set | human | media | source_contract_only |
 | admin.setMiniProgramGroup | aicrm-cli materials mini-program-group set | human | media | source_contract_only |
@@ -702,6 +747,7 @@
 | admin.getLegacyAppSettings | aicrm-cli config legacy-app-settings get | human | config | source_contract_only |
 | admin.getOpenPlatformClient | aicrm-cli access open-platform-client get | human | access | source_contract_only |
 | admin.getRuntimeConfigRelease | aicrm-cli config runtime-config-release get | human | config | source_contract_only |
+| admin.getRuntimeConfigurationCatalog | aicrm-cli config runtime-configuration-catalog get | human | config | source_contract_only |
 | admin.getSetupWizard | aicrm-cli config setup-wizard get | human | config | source_contract_only |
 | admin.listAccessEnterpriseEmployees | aicrm-cli access access-enterprise-employees list | human | access | source_contract_only |
 | admin.listAdminAccessMembers | aicrm-cli access access-members list | human | access | source_contract_only |

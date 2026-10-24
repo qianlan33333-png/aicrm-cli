@@ -1,0 +1,336 @@
+{
+  "base": "d48d441363ed791b621258e5a2906875ad57f145",
+  "new_bindings": [
+    {
+      "method": "GET",
+      "path": "/api/v1/products",
+      "operation_id": "admin.listProducts",
+      "classification": "new_binding"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/products",
+      "operation_id": "admin.createProduct",
+      "classification": "new_binding"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/products/{product_id}",
+      "operation_id": "admin.getProduct",
+      "classification": "new_binding"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/products/{product_id}",
+      "operation_id": "admin.updateProduct",
+      "classification": "new_binding"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/customer-tag-commands",
+      "operation_id": "admin.acceptCustomerTagCommand",
+      "classification": "new_binding"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/customer-tag-commands/preview",
+      "operation_id": "admin.previewCustomerTagCommand",
+      "classification": "new_binding"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/customers/{customer_id}/tag-commands",
+      "operation_id": "admin.listCustomerTagCommands",
+      "classification": "new_binding"
+    },
+    {
+      "method": "POST",
+      "path": "/api/automation/group-ops/broadcast",
+      "operation_id": "admin.acceptGroupOpsBroadcast",
+      "classification": "new_binding"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/group-invitations",
+      "operation_id": "admin.listGroupInvitationPlans",
+      "classification": "new_binding"
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/group-invitations",
+      "operation_id": "admin.saveGroupInvitationPlan",
+      "classification": "new_binding"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/group-invitations/{id}",
+      "operation_id": "admin.getGroupInvitationPlan",
+      "classification": "new_binding"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/group-invitations/{id}/history",
+      "operation_id": "admin.listGroupInvitationHistory",
+      "classification": "new_binding"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/group-invitations/{id}/qr-download",
+      "operation_id": "admin.downloadGroupInvitationQRCode",
+      "classification": "new_binding"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/group-directory",
+      "operation_id": "admin.listGroupDirectory",
+      "classification": "new_binding"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/group-directory/status",
+      "operation_id": "admin.getGroupDirectoryStatus",
+      "classification": "new_binding"
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/group-directory/refresh",
+      "operation_id": "admin.refreshGroupDirectory",
+      "classification": "new_binding"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/group-directory/{chat_id}",
+      "operation_id": "admin.getGroupDirectoryEntry",
+      "classification": "new_binding"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/admin/service-period-products/{service_product_id}/members/{member_ref}/remark",
+      "operation_id": "admin.updateServicePeriodMemberRemark",
+      "classification": "new_binding"
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/service-period-products/{service_product_id}/member-grid/query",
+      "operation_id": "admin.queryServicePeriodMemberGrid",
+      "classification": "new_binding"
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/service-period-products/{service_product_id}/member-views",
+      "operation_id": "admin.createServicePeriodMemberView",
+      "classification": "new_binding"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/admin/service-period-products/{service_product_id}/member-views/{view_id}",
+      "operation_id": "admin.updateServicePeriodMemberView",
+      "classification": "new_binding"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/admin/service-period-products/{service_product_id}/member-views/{view_id}",
+      "operation_id": "admin.deleteServicePeriodMemberView",
+      "classification": "new_binding"
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/service-period-products/{service_product_id}/member-grid/collaborators",
+      "operation_id": "admin.createServicePeriodMemberCollaborator",
+      "classification": "new_binding"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/admin/service-period-products/{service_product_id}/member-grid/collaborators/{collaborator_id}",
+      "operation_id": "admin.updateServicePeriodMemberCollaborator",
+      "classification": "new_binding"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/admin/service-period-products/{service_product_id}/member-grid/collaborators/{collaborator_id}",
+      "operation_id": "admin.deleteServicePeriodMemberCollaborator",
+      "classification": "new_binding"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/service-period-products/{service_product_id}/member-grid/staff",
+      "operation_id": "admin.listServicePeriodMemberStaff",
+      "classification": "new_binding"
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/image-library/groups",
+      "operation_id": "admin.createImageMaterialGroup",
+      "classification": "new_binding"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/admin/image-library/groups/{group_id}",
+      "operation_id": "admin.renameImageMaterialGroup",
+      "classification": "new_binding"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/admin/image-library/groups/{group_id}",
+      "operation_id": "admin.deleteImageMaterialGroup",
+      "classification": "new_binding"
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/image-library/group-moves",
+      "operation_id": "admin.moveImageMaterialGroupItems",
+      "classification": "new_binding"
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/attachment-library/groups",
+      "operation_id": "admin.createAttachmentMaterialGroup",
+      "classification": "new_binding"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/admin/attachment-library/groups/{group_id}",
+      "operation_id": "admin.renameAttachmentMaterialGroup",
+      "classification": "new_binding"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/admin/attachment-library/groups/{group_id}",
+      "operation_id": "admin.deleteAttachmentMaterialGroup",
+      "classification": "new_binding"
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/attachment-library/group-moves",
+      "operation_id": "admin.moveAttachmentMaterialGroupItems",
+      "classification": "new_binding"
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/miniprogram-library/groups",
+      "operation_id": "admin.createMiniprogramMaterialGroup",
+      "classification": "new_binding"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/admin/miniprogram-library/groups/{group_id}",
+      "operation_id": "admin.renameMiniprogramMaterialGroup",
+      "classification": "new_binding"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/admin/miniprogram-library/groups/{group_id}",
+      "operation_id": "admin.deleteMiniprogramMaterialGroup",
+      "classification": "new_binding"
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/miniprogram-library/group-moves",
+      "operation_id": "admin.moveMiniprogramMaterialGroupItems",
+      "classification": "new_binding"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/image-library/group-members",
+      "operation_id": "admin.listImageMaterialGroupMembers",
+      "classification": "new_binding"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/image-library/groups",
+      "operation_id": "admin.listImageMaterialGroups",
+      "classification": "new_binding"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/coupons/{coupon_id}/share",
+      "operation_id": "admin.getCouponShare",
+      "classification": "new_binding"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/coupons/{coupon_id}/claims",
+      "operation_id": "admin.listCouponClaims",
+      "classification": "new_binding"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/admin/referral/campaigns/{id}/poster-layouts",
+      "operation_id": "admin.updateReferralCampaignPosterLayouts",
+      "classification": "new_binding"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/config/runtime-catalog",
+      "operation_id": "admin.getRuntimeConfigurationCatalog",
+      "classification": "new_binding"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/automation-runs/{run_id}/generation-items",
+      "operation_id": "admin.listAutomationGenerationItems",
+      "classification": "new_binding"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/order-deliveries/{order_ref}",
+      "operation_id": "admin.listOrderProviderDeliveries",
+      "classification": "new_binding"
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/wecom/tags/mutations/{mutation_id}/retry",
+      "operation_id": "admin.retryWeComTagMutation",
+      "classification": "new_binding"
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/wechat-pay/profit-sharing/receivers/{reference}/recover",
+      "operation_id": "admin.recoverProfitSharingReceiver",
+      "classification": "new_binding"
+    }
+  ],
+  "equivalents": [
+    {
+      "route": "PUT /api/v1/customers/{customer_id}/tags/{tag_id}",
+      "classification": "existing_equivalent",
+      "reason": "Batch tag command accepts one customer"
+    },
+    {
+      "route": "DELETE /api/v1/customers/{customer_id}/tags/{tag_id}",
+      "classification": "existing_equivalent",
+      "reason": "Batch tag command accepts one customer"
+    },
+    {
+      "route": "GET /api/admin/attachment-library/group-members",
+      "classification": "existing_equivalent",
+      "reason": "Attachment detail contains version"
+    },
+    {
+      "route": "GET /api/admin/miniprogram-library/group-members",
+      "classification": "existing_equivalent",
+      "reason": "Miniprogram detail contains version"
+    },
+    {
+      "route": "GET /api/admin/ai-audience/core/product-options",
+      "classification": "existing_equivalent",
+      "reason": "owner.referral.list-product-options"
+    },
+    {
+      "route": "GET /api/admin/ai-audience/packages/{package_id}/owner-references",
+      "classification": "native_input",
+      "reason": "Use original owner_staff_ids"
+    }
+  ],
+  "excluded": [
+    {
+      "classification": "independent_identity",
+      "surfaces": [
+        "sidebar",
+        "H5",
+        "callbacks",
+        "RPA device protocol"
+      ]
+    }
+  ]
+}
