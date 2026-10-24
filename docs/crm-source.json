@@ -2,7 +2,7 @@
   "schema_version": 1,
   "cli_repository": "https://github.com/qianlan33333-png/aicrm-cli.git",
   "source_repository": "https://github.com/qianlan33333-png/AI-CRM-v4.git",
-  "payload_sha256": "8d9aa9da29b858fdde909f24761b1a6ca9d7e883c565c698d1d514e6e0025168",
+  "payload_sha256": "745f8918becdb88c42ea6e6f490b5e21f7909f4ac7235d47b1ee0e3a7accfe85",
   "files": [
     {
       "source": "cmd/aicrm-cli/main.go",
@@ -182,12 +182,12 @@
     {
       "source": "internal/crmcli/update/cleanup.go",
       "destination": "internal/crmcli/update/cleanup.go",
-      "sha256": "d55667394e7f7b391ad77aae65d51c748071987d33f251a530e5711a28534f30"
+      "sha256": "43baea0a020d4bd292cb51bcec91087b22ed2553048c50650e21bb925da6269b"
     },
     {
       "source": "internal/crmcli/update/cleanup_test.go",
       "destination": "internal/crmcli/update/cleanup_test.go",
-      "sha256": "52142e8acb0c540cdb74368e05ac2c2ba15e7cbc92dd4baa8bda993e67d9bab0"
+      "sha256": "61d575f69515c512ee6f1f4f29f85627639fbaeed5d4c6e4ea197d9930e2d29a"
     },
     {
       "source": "internal/crmcli/update/cleanup_unix_test.go",
@@ -197,7 +197,7 @@
     {
       "source": "internal/crmcli/update/install.go",
       "destination": "internal/crmcli/update/install.go",
-      "sha256": "43b46602e8842e74273586d8e1c4917e9946e9731376721ae20303f9f85e310d"
+      "sha256": "cff7e71329e6156ed9057fbe765731fba25c2c4cc286d6d9f94c9bde878095a2"
     },
     {
       "source": "internal/crmcli/update/install_test.go",
@@ -217,7 +217,7 @@
     {
       "source": "internal/crmcli/update/target.go",
       "destination": "internal/crmcli/update/target.go",
-      "sha256": "c9df6370ada47f8c67d152eedde68f916c405af3b764e008d3b9af50752e24bd"
+      "sha256": "875ff7716c93521cfc6ce37309396efd294e6020427a1be261a792a34b8d8eeb"
     },
     {
       "source": "internal/crmcli/update/target_test.go",
@@ -355,6 +355,6 @@
       "sha256": "6021b275fd61655a7265ec75195b410db950aa9808bc54edcae857b6a020f693"
     }
   ],
-  "source_head": "c64ad9195a3ee9c4bd5bd392c66964deef5f28e3",
-  "source_tree": "a35be6e318b081ea1a39cd28292ab0bf9f86f666"
+  "source_head": "ebae431fbcb709922fdb3b634d142bb2056f42c3",
+  "source_tree": "961bf4cd2fad6f4646e7b185f3a501eaae233e63"
 }
