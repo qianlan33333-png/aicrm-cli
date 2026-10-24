@@ -17,17 +17,23 @@ import (
 	"time"
 
 	catalog "github.com/qianlan33333-png/aicrm-cli/internal/clicatalog/port"
-	platformconfig "github.com/qianlan33333-png/aicrm-cli/internal/clientconfig"
+	updater "github.com/qianlan33333-png/aicrm-cli/internal/crmcli/update"
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
 )
 
 type Options struct {
-	OpenBrowser     func(context.Context, string) error
-	Profile, Format string
-	Timeout         time.Duration
-	In              io.Reader
-	Out, Err        io.Writer
+	// OS directory resolver seam keeps desktop-keyring tests off real profiles.
+	userConfigDir                func() (string, error)
+	updateCheck                  *updater.Checker
+	updateInstall                func(context.Context, updater.Release, updater.InstallOptions) (updater.InstallResult, error)
+	updateExecutable, updateGOOS string
+	OpenBrowser                  func(context.Context, string) error
+	Profile, Format              string
+	Context                      string
+	Timeout                      time.Duration
+	In                           io.Reader
+	Out, Err                     io.Writer
 }
 
 func (o *Options) client() (*Client, error) {
@@ -35,14 +41,19 @@ func (o *Options) client() (*Client, error) {
 	if e != nil {
 		return nil, e
 	}
-	credential, e := LoadCredential(origin)
+	return o.clientForOrigin(origin)
+}
+
+// Credential mutations must use the origin they already resolved and locked.
+func (o *Options) clientForOrigin(origin string) (*Client, error) {
+	credential, e := o.loadCredential(origin)
 	if e != nil {
 		return nil, e
 	}
 	return NewClient(origin, credential, o.Timeout)
 }
 func (o *Options) origin() (string, error) {
-	cfg, e := LoadConfig()
+	cfg, e := o.loadConfig()
 	if e != nil {
 		return "", e
 	}
@@ -106,20 +117,31 @@ func Run(args []string, in io.Reader, out, stderr io.Writer) int {
 		_ = json.NewEncoder(out).Encode(value)
 		return f.Exit
 	}
-	maybeNotifyUpdate(args, in, out, stderr)
+	if o.Context != "codex" {
+		maybeNotifyUpdate(args, in, out, stderr)
+	}
 	return 0
 }
 func NewCommand(o *Options) *cobra.Command {
 	root := &cobra.Command{Use: "aicrm-cli", Version: clientVersion(), Short: "CRM business operations; human and machine authorization remain independent", SilenceUsage: true, SilenceErrors: true}
-	root.PersistentPreRunE = func(*cobra.Command, []string) error {
+	root.PersistentPreRunE = func(cmd *cobra.Command, _ []string) error {
+		if o.Context != "" && o.Context != "codex" {
+			return fail("validation", "context must be codex or omitted for legacy behavior", 2)
+		}
+		// The distribution extension owns a separate signed identity. It must
+		// never inherit or mutate that legacy identity in the Codex space.
+		if o.Context == "codex" && (cmd.CommandPath() == "aicrm-cli group-ops webhook" || strings.HasPrefix(cmd.CommandPath(), "aicrm-cli group-ops webhook ")) {
+			return fail("unavailable", "signed webhook commands are not supported in the Codex context", 4)
+		}
 		if o.Format != "json" && o.Format != "table" && o.Format != "ndjson" {
 			return fail("validation", "format must be json, table or ndjson", 2)
 		}
 		if o.Timeout <= 0 {
 			return fail("validation", "request timeout must be positive", 2)
 		}
-		return nil
+		return o.preflightUpdate(cmd)
 	}
+	root.PersistentFlags().StringVar(&o.Context, "context", "", "codex for isolated desktop credentials; omit for legacy behavior")
 	root.PersistentFlags().StringVar(&o.Profile, "profile", "", "configured server profile")
 	root.PersistentFlags().StringVar(&o.Format, "format", "json", "json, ndjson or table")
 	root.PersistentFlags().DurationVar(&o.Timeout, "timeout", 30*time.Second, "client request timeout")
@@ -624,7 +646,7 @@ func (o *Options) read(ctx context.Context, c *Client, path string) error {
 func profileCommands(o *Options) *cobra.Command {
 	root := &cobra.Command{Use: "profile"}
 	root.AddCommand(&cobra.Command{Use: "list", Args: cobra.NoArgs, RunE: func(*cobra.Command, []string) error {
-		c, e := LoadConfig()
+		c, e := o.loadConfig()
 		if e != nil {
 			return e
 		}
@@ -635,7 +657,7 @@ func profileCommands(o *Options) *cobra.Command {
 		if e != nil {
 			return e
 		}
-		c, e := LoadConfig()
+		c, e := o.loadConfig()
 		if e != nil {
 			return e
 		}
@@ -646,13 +668,13 @@ func profileCommands(o *Options) *cobra.Command {
 		if c.Current == "" {
 			c.Current = args[0]
 		}
-		if e = SaveConfig(c); e != nil {
+		if e = o.saveConfig(c); e != nil {
 			return e
 		}
 		return o.print(map[string]any{"profile": args[0], "origin": origin})
 	}})
 	root.AddCommand(&cobra.Command{Use: "use NAME", Args: cobra.ExactArgs(1), RunE: func(_ *cobra.Command, args []string) error {
-		c, e := LoadConfig()
+		c, e := o.loadConfig()
 		if e != nil {
 			return e
 		}
@@ -660,12 +682,12 @@ func profileCommands(o *Options) *cobra.Command {
 			return fail("configuration", "unknown profile", 2)
 		}
 		c.Current = args[0]
-		return SaveConfig(c)
+		return o.saveConfig(c)
 	}})
 	return root
 }
 func secretInput(o *Options, stdin bool, env string) (string, error) {
-	environment := platformconfig.LoadCLIEnvironment()
+	environment := o.authEnvironment()
 	v := environment.Password
 	if env == "AICRM_CLI_CLIENT_SECRET" {
 		v = environment.ClientSecret
@@ -691,13 +713,16 @@ func authCommands(o *Options) *cobra.Command {
 	var username, clientID, scope, credentialOutput string
 	var stdin, wecomLogin, noBrowser bool
 	login := &cobra.Command{Use: "login", Args: cobra.NoArgs, RunE: func(cmd *cobra.Command, _ []string) error {
+		if o.Context == "codex" && credentialOutput != "" {
+			return fail("validation", "Codex login requires the system keyring; --secret-output is only supported in legacy mode", 2)
+		}
 		if credentialOutput != "" && clientID != "" {
 			return fail("validation", "headless credential export requires an account CLI login", 2)
 		}
 		if username != "" && clientID != "" {
 			return fail("validation", "select either a human username or a machine client ID", 2)
 		}
-		cfg, e := LoadConfig()
+		cfg, e := o.loadConfig()
 		if e != nil {
 			return e
 		}
@@ -713,6 +738,11 @@ func authCommands(o *Options) *cobra.Command {
 		if e != nil {
 			return e
 		}
+		unlock, e := o.lockCredential(c.Origin)
+		if e != nil {
+			return e
+		}
+		defer unlock()
 		if wecomLogin {
 			if username != "" || clientID != "" || stdin || cmd.Flags().Changed("scope") {
 				return fail("validation", "--wecom cannot be combined with password or machine login flags", 2)
@@ -775,7 +805,7 @@ func authCommands(o *Options) *cobra.Command {
 			}
 			return o.print(map[string]any{"authenticated": true, "origin": c.Origin, "kind": credential.Kind, "credential_file": credentialOutput, "automatic_renewal": false})
 		}
-		if e = StoreCredential(credential); e != nil {
+		if e = o.storeCredential(credential); e != nil {
 			return fail("credential_storage", "system keyring unavailable; no plaintext credential was saved", 1)
 		}
 		return o.print(map[string]any{"authenticated": true, "origin": c.Origin, "kind": credential.Kind, "credential_storage": "system_keyring"})
@@ -802,11 +832,20 @@ func authCommands(o *Options) *cobra.Command {
 		}})
 	}
 	root.AddCommand(&cobra.Command{Use: "logout", RunE: func(cmd *cobra.Command, _ []string) error {
-		c, e := o.client()
+		origin, e := o.origin()
 		if e != nil {
 			return e
 		}
-		if platformconfig.LoadCLIEnvironment().Token != "" {
+		unlock, e := o.lockCredential(origin)
+		if e != nil {
+			return e
+		}
+		defer unlock()
+		c, e := o.clientForOrigin(origin)
+		if e != nil {
+			return e
+		}
+		if o.authEnvironment().Token != "" {
 			return o.print(map[string]any{"environment_token_requires_external_removal": true, "server_token_revoked": false})
 		}
 		var revokeErr error
@@ -822,10 +861,10 @@ func authCommands(o *Options) *cobra.Command {
 				resp.Body.Close()
 			}
 		}
-		if file := platformconfig.LoadCLIEnvironment().CredentialFile; file != "" {
+		if file := o.authEnvironment().CredentialFile; file != "" {
 			e = os.Remove(file)
 		} else {
-			e = DeleteCredential(c.Origin)
+			e = o.deleteCredential(c.Origin)
 		}
 		if e != nil {
 			return e

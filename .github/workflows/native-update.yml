@@ -1,0 +1,54 @@
+name: CLI native update acceptance
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-update:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Native installer and command boundary contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          go test -json ./internal/crmcli/update > native-update.json
+          go test -json ./internal/crmcli -run '^Test(CLICodexPreflight.*|CLICodexUpdateBeforeCredentialAndRequest|CLIUpgradeExplicitTargetEvenWhenBootstrapIsLatest)$' > preflight.json
+      - name: Actual legacy executable replacement on Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $bins = @()
+          foreach ($version in @('0.3.0','0.4.0')) {
+            $dir = Join-Path $env:RUNNER_TEMP "legacy-$version"
+            New-Item -ItemType Directory -Force $dir | Out-Null
+            $base = "https://github.com/qianlan33333-png/aicrm-cli/releases/download/v$version"
+            $name = "aicrm-cli_${version}_windows_amd64.zip"
+            $archive = Join-Path $dir $name
+            Invoke-WebRequest "$base/$name" -OutFile $archive
+            Invoke-WebRequest "$base/checksums.txt" -OutFile (Join-Path $dir 'checksums.txt')
+            $expected = ((Get-Content (Join-Path $dir 'checksums.txt') | Where-Object { $_ -match "\s+$([regex]::Escape($name))$" }) -split '\s+')[0]
+            if ((Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne $expected) { throw 'Legacy archive checksum mismatch' }
+            Expand-Archive $archive -DestinationPath $dir -Force
+            $bins += Join-Path $dir 'aicrm-cli.exe'
+          }
+          $env:AICRM_TEST_LEGACY_BINARIES = $bins -join [IO.Path]::PathSeparator
+          go test -json ./internal/crmcli/update -run '^TestNativeTargetReplacementVersionRaceAndReadback$' -count=1 > legacy-update.json
+          if ($LASTEXITCODE -ne 0) { throw 'Legacy replacement failed' }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-update-${{ runner.os }}
+          path: |
+            native-update.json
+            preflight.json
+            legacy-update.json

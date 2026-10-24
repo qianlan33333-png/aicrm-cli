@@ -343,3 +343,38 @@ func TestWebhookSchemaIsDiscoverableWithoutSecretsOrNetwork(t *testing.T) {
 		t.Fatal(code, out)
 	}
 }
+
+func TestCodexContextRejectsActualSignedWebhookCommands(t *testing.T) {
+	isolateContextHome(t)
+	keyring.MockInit()
+	origin := "https://crm.example"
+	if err := SaveConfig(Config{Current: "fixed", Profiles: map[string]Profile{"fixed": {Origin: origin}}}); err != nil {
+		t.Fatal(err)
+	}
+	raw, _ := json.Marshal(webhookCredential{Origin: origin, Secret: webhookFixtureSecret})
+	if err := keyring.Set(webhookKeyringService, key(origin), string(raw)); err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv("AICRM_CLI_GROUP_OPS_WEBHOOK_SECRET", webhookFixtureSecret)
+	t.Setenv("AICRM_CLI_GROUP_OPS_WEBHOOK_ORIGIN", origin)
+	for _, action := range []string{"configure", "status", "forget", "send", "push"} {
+		var out, stderr bytes.Buffer
+		code := Run([]string{"--context", "codex", "group-ops", "webhook", action}, strings.NewReader(""), &out, &stderr)
+		if code != 4 || !strings.Contains(out.String(), `"code":"unavailable"`) {
+			t.Fatalf("action %s not rejected before secret/input access: %s", action, out.String())
+		}
+		if strings.Contains(out.String()+stderr.String(), webhookFixtureSecret) {
+			t.Fatal("secret leaked")
+		}
+	}
+	got, err := keyring.Get(webhookKeyringService, key(origin))
+	if err != nil || got != string(raw) {
+		t.Fatal("legacy signing secret changed")
+	}
+	if code, text := executeContext("--context", "codex", "schema", "webhook"); code != 0 {
+		t.Fatal("offline schema blocked", text)
+	}
+	if code, text := executeContext("group-ops", "webhook", "status"); code != 0 || !strings.Contains(text, `"configured":true`) {
+		t.Fatal("legacy signing capability lost", text)
+	}
+}

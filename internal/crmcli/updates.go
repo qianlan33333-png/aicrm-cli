@@ -73,31 +73,36 @@ func addUpdateCommands(root *cobra.Command, o *Options) {
 	root.AddCommand(update)
 	upgradeChannel := "stable"
 	downloadOnly := false
+	target := ""
 	upgrade := &cobra.Command{Use: "upgrade", Args: cobra.NoArgs, Short: "explicitly install a checksum-verified release; preserves rollback", RunE: func(cmd *cobra.Command, _ []string) error {
-		r, e := (updater.Checker{}).Check(cmd.Context(), clientVersion(), upgradeChannel, true)
+		r, e := o.checker().Check(cmd.Context(), clientVersion(), upgradeChannel, true)
 		if e != nil {
 			return updateFailure(e, nil)
 		}
-		if !r.Available {
+		if !r.Available && target == "" {
 			return o.print(map[string]any{"status": "up_to_date", "version": clientVersion(), "channel": upgradeChannel})
 		}
-		v, e := updater.Install(cmd.Context(), r.Release, updater.InstallOptions{DownloadOnly: downloadOnly})
+		v, e := o.installUpdate(cmd.Context(), r.Release, updater.InstallOptions{Executable: target, DownloadOnly: downloadOnly})
+		if e == nil {
+			v, e = updater.VerifyInstalled(cmd.Context(), v)
+		}
 		if e != nil {
 			return updateFailure(e, v)
 		}
 		return o.print(v)
 	}}
+	upgrade.PersistentFlags().StringVar(&target, "target", "", "existing partner CLI entry to replace, inspect or roll back")
 	upgrade.Flags().StringVar(&upgradeChannel, "channel", "stable", "stable or explicitly selected prerelease")
 	upgrade.Flags().BoolVar(&downloadOnly, "download-only", false, "retain a verified archive without installing (also for locked Windows executables)")
 	upgrade.AddCommand(&cobra.Command{Use: "status", Args: cobra.NoArgs, RunE: func(*cobra.Command, []string) error {
-		r, e := updater.Status("")
+		r, e := updater.Status(target)
 		if e != nil {
 			return updateFailure(e, nil)
 		}
 		return o.print(r)
 	}})
 	upgrade.AddCommand(&cobra.Command{Use: "rollback", Args: cobra.NoArgs, Short: "restore the exact previous executable if current and backup digests match", RunE: func(*cobra.Command, []string) error {
-		r, e := updater.Rollback("")
+		r, e := updater.Rollback(target)
 		if e != nil {
 			return updateFailure(e, nil)
 		}
