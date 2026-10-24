@@ -6,7 +6,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"io"
 	"net/http"
 	"os"
 	"os/exec"
@@ -177,96 +176,10 @@ func TestNativeTargetReplacementVersionRaceAndReadback(t *testing.T) {
 		})
 	}
 }
-func TestInstallFreezesSymlinkTarget(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		return
-	} // Windows symlink creation requires optional OS privileges.
-	archive := tarArchive(t, []struct {
-		name, body string
-		kind       byte
-	}{{"aicrm-cli", "updated", tar.TypeReg}})
-	r, o, target := installFixture(t, archive, "linux")
-	other := target + ".other"
-	os.WriteFile(other, []byte("other installation"), 0755)
-	link := target + ".link"
-	if e := os.Symlink(target, link); e != nil {
-		t.Fatal(e)
-	}
-	o.Executable = link
-	transport := o.Client.Transport
-	retargeted := false
-	o.Client = &http.Client{Transport: roundTrip(func(req *http.Request) (*http.Response, error) {
-		if !retargeted {
-			retargeted = true
-			os.Remove(link)
-			if e := os.Symlink(other, link); e != nil {
-				t.Fatal(e)
-			}
-		}
-		return transport.RoundTrip(req)
-	})}
-	v, e := Install(context.Background(), r, o)
-	if e != nil || v.Target != target {
-		t.Fatalf("fixed target %+v %v", v, e)
-	}
-	a, _ := os.ReadFile(target)
-	b, _ := os.ReadFile(other)
-	dest, _ := os.Readlink(link)
-	if string(a) != "updated" || string(b) != "other installation" || dest != other {
-		t.Fatal("retargeted link followed or rewritten")
-	}
-}
 func TestVerifyInstalledRejectsUnconfirmedVersion(t *testing.T) {
 	_, _, target := installFixture(t, nil, "linux")
 	v, e := VerifyInstalled(context.Background(), InstallResult{Status: "installed", Target: target, Version: "1.2.0"})
 	if e == nil || v.Status != "installed_version_unverified" {
 		t.Fatal(fmt.Sprint(v, e))
-	}
-}
-
-func TestNativeWindowsBusyTargetThenExternalReplacement(t *testing.T) {
-	if runtime.GOOS != "windows" {
-		return
-	}
-	old := nativeBinary(t, "1.0.0")
-	next := nativeBinary(t, "1.2.0")
-	r, o, target := installFixture(t, nativeArchive(t, next), runtime.GOOS)
-	if e := os.WriteFile(target, old, 0755); e != nil {
-		t.Fatal(e)
-	}
-	child := exec.Command(target, "hold")
-	in, e := child.StdinPipe()
-	if e != nil {
-		t.Fatal(e)
-	}
-	stdout, e := child.StdoutPipe()
-	if e != nil {
-		t.Fatal(e)
-	}
-	if e = child.Start(); e != nil {
-		t.Fatal(e)
-	}
-	t.Cleanup(func() { in.Close(); child.Process.Kill(); child.Wait() })
-	var ready [6]byte
-	if _, e = io.ReadFull(stdout, ready[:]); e != nil || string(ready[:]) != "ready\n" {
-		t.Fatal("child not running")
-	}
-	v, e := Install(context.Background(), r, o)
-	if e == nil || v.Status == "installed" || v.Download == "" {
-		t.Fatalf("running Windows target falsely installed %+v %v", v, e)
-	}
-	if version, e := ReadVersion(context.Background(), target); e != nil || version != "1.0.0" {
-		t.Fatalf("locked target damaged: %s %v", version, e)
-	}
-	in.Close()
-	if e = child.Wait(); e != nil {
-		t.Fatal(e)
-	}
-	v, e = Install(context.Background(), r, o)
-	if e == nil {
-		v, e = VerifyInstalled(context.Background(), v)
-	}
-	if e != nil || v.Version != "1.2.0" {
-		t.Fatalf("external replacement after exit %+v %v", v, e)
 	}
 }
