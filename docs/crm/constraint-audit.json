@@ -1,0 +1,4434 @@
+{
+  "modules": [
+    "ai",
+    "api",
+    "audience",
+    "automation",
+    "channels",
+    "config",
+    "coupons",
+    "customers",
+    "cycles",
+    "dashboard",
+    "distribution",
+    "group-invitations",
+    "group-ops",
+    "materials",
+    "ops",
+    "orders",
+    "overview",
+    "owners",
+    "period-products",
+    "products",
+    "questionnaires",
+    "radar",
+    "referral",
+    "schema",
+    "wecom"
+  ],
+  "operations": [
+    {
+      "operation": "admin.abandonInvalidLegacyCheckout",
+      "owner": "payment",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.acceptCustomerTagCommand",
+      "owner": "customer",
+      "status": "contract_extracted",
+      "constraints": 14,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.acceptGroupOpsBroadcast",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.acceptGroupOpsRunDue",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.activateAutomationAgent",
+      "owner": "automation",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.activateGroupOpsPlan",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 10,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.activateOpenPlatformClient",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 9,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.addGroupOpsPlanGroup",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 14,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.addGroupOpsPlanGroupAsset",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 14,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.addGroupOpsPlanMember",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 12,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.addGroupOpsPlanNode",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 28,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.allowReviewedLegacyCheckoutRestart",
+      "owner": "payment",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.approveAIAssistantPlan",
+      "owner": "aiplan",
+      "status": "contract_extracted",
+      "constraints": 12,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.approveExcelOperationBatch",
+      "owner": "operationcycle",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.archiveAIAudiencePackage",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 9,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.archiveAutomationAgent",
+      "owner": "automation",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.archiveCouponRule",
+      "owner": "coupon",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.archiveCouponRuleLegacy",
+      "owner": "coupon",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.archiveGroupOpsPlan",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 10,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.archiveLegacyWecomTag",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 9,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.archiveLegacyWecomTagGroup",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 9,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.archiveMediaGroupInvite",
+      "owner": "groupinvitation",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.archiveServicePeriodProduct",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.archiveSurveyQuestionnaire",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 10,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.attributeOpsGovernanceEpisode",
+      "owner": "operations",
+      "status": "contract_extracted",
+      "constraints": 24,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.bindAccessUserWeComID",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 10,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.bindAccessUserWeComIDCompatibility",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 10,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.bindGroupOpsContentPackage",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 19,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.cancelAutomationRun",
+      "owner": "automation",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.cancelExternalEffect",
+      "owner": "externaleffects",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.cancelPushCenterJob",
+      "owner": "pushcenter",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.captureOpsCPUProfile",
+      "owner": "operations",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.changeAdminCoreAssignment",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 10,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.checkConfigCategory",
+      "owner": "config",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.completeMediaAttachmentMultipartUpload",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.confirmCustomerOwnerHandoff",
+      "owner": "customer",
+      "status": "contract_extracted",
+      "constraints": 13,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.confirmOneIDMerge",
+      "owner": "identity",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.copyAIAudiencePackage",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.copyAutomationAgent",
+      "owner": "automation",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.copyCouponRule",
+      "owner": "coupon",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.copyLocalWechatPayProduct",
+      "owner": "product",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.copyServicePeriodProduct",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createAIAssistantPlan",
+      "owner": "aiplan",
+      "status": "contract_extracted",
+      "constraints": 46,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createAIAudiencePackage",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 12,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createAIAudiencePackageGroup",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 11,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createAIAudienceRefresh",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createAIAudienceRefreshRun",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createAlipayRefundIntent",
+      "owner": "payment",
+      "status": "contract_extracted",
+      "constraints": 22,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createAttachmentMaterialGroup",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 9,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createAudienceRun",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 18,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createAutomationAgent",
+      "owner": "automation",
+      "status": "contract_extracted",
+      "constraints": 28,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createAutomationPolicy",
+      "owner": "automation",
+      "status": "contract_extracted",
+      "constraints": 33,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createChannel",
+      "owner": "channel",
+      "status": "contract_extracted",
+      "constraints": 51,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createCouponRule",
+      "owner": "coupon",
+      "status": "contract_extracted",
+      "constraints": 22,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createCustomerSyncRun",
+      "owner": "customer",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createGroupOpsContentPackage",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 16,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createGroupOpsContentPackageVersion",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 20,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createGroupOpsPlan",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createHXCDashboardRefresh",
+      "owner": "hxc",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createImageMaterialGroup",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 9,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createLegacyAIAssistantReviewPlan",
+      "owner": "aiplan",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "route requires an independent authentication protocol; human sessions cannot execute it; use the independently authorized machine V1 ai.review_plan.create operation"
+    },
+    {
+      "operation": "admin.createLegacyOrderExport",
+      "owner": "order",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createLegacyWechatOrderExport",
+      "owner": "order",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createLegacyWechatRefundIntent",
+      "owner": "order",
+      "status": "contract_extracted",
+      "constraints": 22,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createLegacyWecomTag",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 18,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createLegacyWecomTagGroup",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 16,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createMediaAttachment",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createMediaGroupInvite",
+      "owner": "groupinvitation",
+      "status": "contract_extracted",
+      "constraints": 12,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createMediaImage",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 15,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createMediaMiniProgram",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 24,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createMiniprogramMaterialGroup",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 9,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createOpenPlatformClient",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 19,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createOperationCycleStrategy",
+      "owner": "operationcycle",
+      "status": "contract_extracted",
+      "constraints": 34,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createOrdinaryProductSalesSource",
+      "owner": "product",
+      "status": "contract_extracted",
+      "constraints": 10,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createPeriodicProductSalesSource",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 10,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createProduct",
+      "owner": "product",
+      "status": "contract_extracted",
+      "constraints": 56,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createRadarLinkV3",
+      "owner": "radar",
+      "status": "contract_extracted",
+      "constraints": 18,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createRuntimeConfigReleaseDraft",
+      "owner": "config",
+      "status": "contract_extracted",
+      "constraints": 22,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createServicePeriodMemberCollaborator",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 11,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createServicePeriodMemberView",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 28,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createServicePeriodProduct",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 50,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createSurveyExternalPushTest",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createSurveyQuestionnaire",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createSurveySubmissionExternalPush",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createWeComContactDescriptionBackfill",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createWeComCustomerAcquisitionLink",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 17,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createWeComUnionIDRefreshRun",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.createWechatShopRefundIntent",
+      "owner": "refund",
+      "status": "contract_extracted",
+      "constraints": 28,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.decideOperationCycleStrategyChangeProposal",
+      "owner": "operationcycle",
+      "status": "contract_extracted",
+      "constraints": 2,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.deleteAIAudienceAutomationBinding",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 9,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.deleteAIAudiencePackageGroup",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 9,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.deleteAttachmentMaterialGroup",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 10,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.deleteChannelContactWay",
+      "owner": "channel",
+      "status": "contract_extracted",
+      "constraints": 9,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.deleteGroupOpsPlan",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 10,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.deleteHXCWorkspaceShares",
+      "owner": "hxc",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.deleteHXCWorkspaceViews",
+      "owner": "hxc",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.deleteImageMaterialGroup",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 10,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.deleteLocalWechatPayProduct",
+      "owner": "product",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.deleteMediaAttachment",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.deleteMediaImage",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.deleteMediaMiniProgram",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.deleteMiniprogramMaterialGroup",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 10,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.deleteProductWorkspaceShares",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 9,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.deleteServicePeriodMemberCollaborator",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 12,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.deleteServicePeriodMemberView",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 12,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.deleteWeComCustomerAcquisitionLink",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.disableAccessUserCompatibility",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.disableGroupOpsPlan",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 10,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.disableLocalWechatPayProduct",
+      "owner": "product",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.disableOpenPlatformClient",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.disablePublicSurveyDefinition",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.disableRadarLinkV3",
+      "owner": "radar",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.disableServicePeriodProduct",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.disableSurveyQuestionnaire",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.downloadChannelQRCode",
+      "owner": "channel",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.downloadCurrentOpenAPI",
+      "owner": "config",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.downloadGroupInvitationQRCode",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.downloadMediaAttachment",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.downloadOpsCPUProfile",
+      "owner": "operations",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.downloadSurveyRedemptionTemplate",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.duplicateSurveyQuestionnaire",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.enableGroupOpsPlan",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 10,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.enableLocalWechatPayProduct",
+      "owner": "product",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.enableOpenPlatformClient",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.enableRadarLinkV3",
+      "owner": "radar",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.enableServicePeriodProduct",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.enableSurveyQuestionnaire",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.executeOrderOnlyHistoryImport",
+      "owner": "order",
+      "status": "contract_extracted",
+      "constraints": 11,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.exportRadarEventsV3",
+      "owner": "radar",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.exportRadarVisitorsV3",
+      "owner": "radar",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.exportSurveySubmissions",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.findRefundRecoveryReceipt",
+      "owner": "refund",
+      "status": "contract_extracted",
+      "constraints": 10,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.generateChannelQRCode",
+      "owner": "channel",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getAIAssistantPlan",
+      "owner": "aiplan",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getAIAssistantRecipient",
+      "owner": "aiplan",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getAIAssistantRecipientControl",
+      "owner": "aiplan",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getAIAudienceAutomationBinding",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getAIAudienceConfigurationVersion",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getAIAudiencePackage",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getAIAudiencePackageSenders",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getAIAudienceRefreshRun",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getAccessCLIPolicy",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getAdminCoreMemberOperations",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getAdminCoreOperatingPrompt",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getAdminCoreRecommendation",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getAdminOverview",
+      "owner": "customer",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getAutomationAgent",
+      "owner": "automation",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getAutomationPolicy",
+      "owner": "automation",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getAutomationRun",
+      "owner": "automation",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getAutomationRunEffectReconciliationCandidate",
+      "owner": "automation",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getChannel",
+      "owner": "channel",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getChannelAcquisitionAsset",
+      "owner": "channel",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getConfigCategory",
+      "owner": "config",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getConfiguredAIModel",
+      "owner": "config",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getCouponRule",
+      "owner": "coupon",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getCouponShare",
+      "owner": "coupon",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getCustomer360",
+      "owner": "customer",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getCustomerChatActivity",
+      "owner": "customer",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getCustomerDirectoryDetail",
+      "owner": "customer",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getCustomerMessageArchiveMedia",
+      "owner": "messagearchive",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getCustomerOwnerHandoffBatch",
+      "owner": "customer",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getCustomerOwnerHandoffPreview",
+      "owner": "customer",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getCustomerOwners",
+      "owner": "customer",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getCustomerSurveyAnswers",
+      "owner": "customer",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getCustomerSyncRun",
+      "owner": "customer",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getCustomerTags",
+      "owner": "customer",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getCustomerTimeline",
+      "owner": "customer",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getExcelOperationBatch",
+      "owner": "operationcycle",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getExcelOperationBatchReport",
+      "owner": "operationcycle",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getExcelOperationCover",
+      "owner": "operationcycle",
+      "status": "contract_extracted",
+      "constraints": 2,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getExternalEffect",
+      "owner": "externaleffects",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getExternalEffectDiagnostics",
+      "owner": "externaleffects",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getGlobalAccessCLIPolicy",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getGroupDirectoryEntry",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 2,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getGroupDirectoryStatus",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getGroupInvitationPlan",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getGroupOpsContentPackageBinding",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getGroupOpsPlan",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getGroupOpsWebhook",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getGroupOpsWebhookDescriptor",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getHXCDashboardRefresh",
+      "owner": "hxc",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getHXCDashboardSummary",
+      "owner": "hxc",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getHXCWorkspaceShares",
+      "owner": "hxc",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getHXCWorkspaceViews",
+      "owner": "hxc",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getHistoricalPayment",
+      "owner": "payment",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getInvoiceCardConfiguration",
+      "owner": "config",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getLegacyAppSettings",
+      "owner": "config",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getLegacyOrder",
+      "owner": "order",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getLegacyOrderItems",
+      "owner": "order",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getLegacyWecomTag",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getLegacyWecomTagExecutionGate",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getLegacyWecomTagGroup",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getLegacyWecomTagSyncStatus",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getMediaAttachment",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getMediaGroupInvite",
+      "owner": "groupinvitation",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getMediaImage",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getMediaImageVariant",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getMediaMiniProgram",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getMediaPreparationRefreshRound",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getOneIDCustomer",
+      "owner": "identity",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getOpenPlatformClient",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getOperationCycleActionResult",
+      "owner": "operationcycle",
+      "status": "contract_extracted",
+      "constraints": 2,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getOperationCycleCurrentAction",
+      "owner": "operationcycle",
+      "status": "contract_extracted",
+      "constraints": 2,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getOperationCycleRun",
+      "owner": "operationcycle",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getOperationCycleRunByStableOrdinal",
+      "owner": "operationcycle",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getOperationCycleStrategy",
+      "owner": "operationcycle",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getOwnerHandoffContext",
+      "owner": "customer",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getProduct",
+      "owner": "product",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getProductWorkspaceShares",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getPushCenterJob",
+      "owner": "pushcenter",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getPushCenterJobReconciliation",
+      "owner": "pushcenter",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getPushCenterSections",
+      "owner": "pushcenter",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getPushCenterStats",
+      "owner": "pushcenter",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getRadarLinkV3",
+      "owner": "radar",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getRadarOptionsV3",
+      "owner": "radar",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getRadarShareV3",
+      "owner": "radar",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getRadarStatsV3",
+      "owner": "radar",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getRpaPackage",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getRuntimeConfigRelease",
+      "owner": "config",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getRuntimeConfigurationCatalog",
+      "owner": "config",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getServicePeriodMemberGridAccessCompatibility",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getServicePeriodMemberGridSchemaCompatibility",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getServicePeriodMemberGridShareSettingsCompatibility",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getServicePeriodProduct",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getServicePeriodProductExternalPush",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getSetupWizard",
+      "owner": "config",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getSurveyAnalysis",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getSurveyOperations",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getSurveyPreflight",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getSurveyPublicAnalytics",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getSurveyQuestionnaire",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getSurveyResults",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getSurveySubmission",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getSurveySubmissionExternalPush",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getSurveyUnresolvedHistory",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getWeChatShopProductRefreshStatus",
+      "owner": "product",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getWeComCallbackReceipt",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getWeComContactDescriptionBackfill",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getWeComContactDescriptionReadbackStatus",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getWeComCustomerAcquisitionLink",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getWeComCustomerProfile",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getWeComCustomerTagHistoryStatistics",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.getWechatPayProductExternalPush",
+      "owner": "product",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.ignoreOneIDSourceConflict",
+      "owner": "identity",
+      "status": "contract_extracted",
+      "constraints": 12,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.importSurveyRedemptionCodes",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 9,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.initiateMediaAttachmentMultipartUpload",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 16,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listAIAssistantEffects",
+      "owner": "aiplan",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listAIAssistantExecutionReceipts",
+      "owner": "aiplan",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listAIAssistantPlans",
+      "owner": "aiplan",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listAIAssistantRecipients",
+      "owner": "aiplan",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listAIAudiencePackageGroups",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listAIAudiencePackageMembers",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listAIAudiencePackages",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listAIAudienceTemplates",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listAccessEnterpriseEmployees",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listAdminAccessMembers",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listAdminCoreMemberHistory",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listAdminCoreOperatingProducts",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listAdminCorePromptHistory",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listAdminDiagnostics",
+      "owner": "config",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listAdminOverviewPaidRecords",
+      "owner": "customer",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listAdminUsers",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listAttachmentGroups",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listAutomationAgents",
+      "owner": "automation",
+      "status": "contract_extracted",
+      "constraints": 2,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listAutomationGenerationItems",
+      "owner": "automation",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listAutomationPolicies",
+      "owner": "automation",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listAutomationRunRecipients",
+      "owner": "automation",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listAutomationRuns",
+      "owner": "automation",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listChannelAcquisitionAssets",
+      "owner": "channel",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listChannelAcquisitionStaff",
+      "owner": "channel",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listChannelAssignees",
+      "owner": "channel",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listChannelContacts",
+      "owner": "channel",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listChannelHistory",
+      "owner": "channel",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listChannels",
+      "owner": "channel",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listConfigCategories",
+      "owner": "config",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listCouponClaims",
+      "owner": "coupon",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listCouponProductOptions",
+      "owner": "coupon",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listCouponRules",
+      "owner": "coupon",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listCustomerMessageArchive",
+      "owner": "messagearchive",
+      "status": "contract_extracted",
+      "constraints": 10,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listCustomerMessageArchiveStaff",
+      "owner": "messagearchive",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listCustomerSyncRuns",
+      "owner": "customer",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listCustomerTagCommands",
+      "owner": "customer",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listCustomers",
+      "owner": "customer",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listExcelOperationBatches",
+      "owner": "operationcycle",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listExternalEffectJobs",
+      "owner": "externaleffects",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listExternalEffects",
+      "owner": "externaleffects",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listGroupDirectory",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listGroupInvitationHistory",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listGroupInvitationPlans",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listGroupOpsDirectoryGroups",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listGroupOpsExecutions",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listGroupOpsGroupPicker",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listGroupOpsHistoryDirectory",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listGroupOpsHistoryGroups",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listGroupOpsHistoryNodes",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listGroupOpsHistoryPlans",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listGroupOpsOperationMembers",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listGroupOpsPlanGroupAssets",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listGroupOpsPlanGroups",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listGroupOpsPlanMembers",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listGroupOpsPlanNodes",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listGroupOpsPlans",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listImageMaterialGroupMembers",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listImageMaterialGroups",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listLegacyAlipayTransactions",
+      "owner": "payment",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listLegacyOrders",
+      "owner": "order",
+      "status": "contract_extracted",
+      "constraints": 10,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listLegacyRefunds",
+      "owner": "refund",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listLegacyWechatOrderExternalEffects",
+      "owner": "order",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listLegacyWechatTransactions",
+      "owner": "order",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listLegacyWecomTagGroups",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listLegacyWecomTags",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listMediaAttachments",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listMediaGroupInvites",
+      "owner": "groupinvitation",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listMediaImageFacets",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listMediaImages",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listMediaMiniPrograms",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listMediaPreparations",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listMiniProgramGroups",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listOneIDConflicts",
+      "owner": "identity",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listOneIDMergeCandidates",
+      "owner": "identity",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listOneIDSourceConflicts",
+      "owner": "identity",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listOpenPlatformClientAudit",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listOpenPlatformClients",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listOpenPlatformRoutes",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listOperationCycleRunVersions",
+      "owner": "operationcycle",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listOperationCycleRuns",
+      "owner": "operationcycle",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listOperationCycleStrategies",
+      "owner": "operationcycle",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listOperationCycleStrategyChangeProposals",
+      "owner": "operationcycle",
+      "status": "contract_extracted",
+      "constraints": 2,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listOperationCycleStrategyVersions",
+      "owner": "operationcycle",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listOperationExcelBatchStrategySummaries",
+      "owner": "operationcycle",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listOrderProviderDeliveries",
+      "owner": "route-owner",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listOrdinaryProductSalesSources",
+      "owner": "product",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listPeriodicProductSalesSources",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listProducts",
+      "owner": "product",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listPushCapabilities",
+      "owner": "config",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listPushCenterJobs",
+      "owner": "pushcenter",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listRadarEventsV3",
+      "owner": "radar",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listRadarLinksV3",
+      "owner": "radar",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listRadarVisitorsV3",
+      "owner": "radar",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listReleaseProjections",
+      "owner": "config",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listRuntimeConfigReleaseUsage",
+      "owner": "config",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listRuntimeConfigReleases",
+      "owner": "config",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listServicePeriodMemberStaff",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listServicePeriodMemberViewsCompatibility",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listServicePeriodMembersCompatibility",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listServicePeriodProducts",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listSurveyQuestionnaires",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listSurveyRedemptionCodes",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listSurveySubmissions",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listSurveyUnresolvedAnswers",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listSurveyUnresolvedHistory",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listUnassignedChannelEntrantReceipts",
+      "owner": "channel",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listWeComCallbackReceipts",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listWeComCustomerAcquisitionLinks",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.listWeComCustomerTagHistory",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.materializeAIAudienceConfiguration",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 13,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.moveAttachmentMaterialGroupItems",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 16,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.moveImageMaterialGroupItems",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 16,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.moveMiniprogramMaterialGroupItems",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 16,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.opsCPUProfile",
+      "owner": "operations",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.opsCPUProfiles",
+      "owner": "operations",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.opsDiagnosticClientEvent",
+      "owner": "operations",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.opsDiagnostics",
+      "owner": "operations",
+      "status": "contract_extracted",
+      "constraints": 2,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.opsGovernanceEpisode",
+      "owner": "operations",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.opsGovernanceEpisodes",
+      "owner": "operations",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.opsGovernanceOutcomes",
+      "owner": "operations",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.opsInspectionCatalog",
+      "owner": "operations",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.opsInspectionCommandDetail",
+      "owner": "operations",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.opsInspectionFailure",
+      "owner": "operations",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.opsInspectionFailureDisposition",
+      "owner": "operations",
+      "status": "contract_extracted",
+      "constraints": 15,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.opsInspectionIssueUpdate",
+      "owner": "operations",
+      "status": "contract_extracted",
+      "constraints": 12,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.opsInspectionOverview",
+      "owner": "operations",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.opsInspectionReports",
+      "owner": "operations",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.opsInspectionRun",
+      "owner": "operations",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.opsInspectionRunDetail",
+      "owner": "operations",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.opsRetentionPolicies",
+      "owner": "operations",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.opsRetentionPreview",
+      "owner": "operations",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.opsRetentionResources",
+      "owner": "operations",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.opsRetentionRuns",
+      "owner": "operations",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.patchGroupOpsContentPackage",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 20,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.patchOpenPlatformClient",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 13,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.pauseAutomationAgent",
+      "owner": "automation",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.pauseGroupOpsPlan",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 10,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.postHXCWorkspaceShares",
+      "owner": "hxc",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.postHXCWorkspaceViews",
+      "owner": "hxc",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.postProductWorkspaceShares",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 9,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.precheckAIAudiencePackage",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.precheckAutomationAgent",
+      "owner": "automation",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.prepareLegacyRuntimeConfigRecovery",
+      "owner": "config",
+      "status": "contract_extracted",
+      "constraints": 12,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.prepareMediaPreparation",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.previewAIAssistantPlanApproval",
+      "owner": "aiplan",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.previewAIAudienceConfiguration",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.previewAudienceBroadcast",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.previewChannelAcquisition",
+      "owner": "channel",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.previewCustomerOwnerHandoff",
+      "owner": "customer",
+      "status": "contract_extracted",
+      "constraints": 17,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.previewCustomerTagCommand",
+      "owner": "customer",
+      "status": "contract_extracted",
+      "constraints": 12,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.previewGroupOpsContentPackage",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 12,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.previewGroupOpsPlanContent",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.previewGroupOpsRunDue",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.previewLegacyOrderExport",
+      "owner": "order",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.previewServicePeriodProductExternalPush",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 19,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.previewSurveyExport",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.previewWechatPayProductExternalPush",
+      "owner": "product",
+      "status": "contract_extracted",
+      "constraints": 19,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.provisionAccessEnterpriseEmployee",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 11,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.publishAutomationAgent",
+      "owner": "automation",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.publishChannelAcquisitionAsset",
+      "owner": "channel",
+      "status": "contract_extracted",
+      "constraints": 10,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.publishCouponRule",
+      "owner": "coupon",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.publishRuntimeConfigRelease",
+      "owner": "config",
+      "status": "contract_extracted",
+      "constraints": 16,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.publishSurveyDefinition",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.putAIAudienceAutomationBinding",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 16,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.putAIAudienceConfigurationVersion",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 18,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.putGroupOpsPlan",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 13,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.putGroupOpsPlanNode",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 30,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.putGroupOpsWebhookDescriptor",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 12,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.putMediaAttachmentMultipartPart",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 12,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.queryHXCDashboard",
+      "owner": "hxc",
+      "status": "contract_extracted",
+      "constraints": 31,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.queryServicePeriodMemberGrid",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 25,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.queueServicePeriodProductExternalPushTest",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.queueWechatPayProductExternalPushTest",
+      "owner": "product",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.readGroupOpsExecutionDelivery",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.readGroupOpsPlanExecutionDelivery",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 9,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.readSurveyAnswerAttachment",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.reconcileAIAssistantEffect",
+      "owner": "aiplan",
+      "status": "contract_extracted",
+      "constraints": 17,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.reconcileAIAssistantRecipientDelivery",
+      "owner": "aiplan",
+      "status": "contract_extracted",
+      "constraints": 14,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.reconcileAutomationRunEffect",
+      "owner": "automation",
+      "status": "contract_extracted",
+      "constraints": 19,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.reconcileChannelAcquisitionAsset",
+      "owner": "channel",
+      "status": "contract_extracted",
+      "constraints": 14,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.reconcileChannelEntrantReceipt",
+      "owner": "channel",
+      "status": "contract_extracted",
+      "constraints": 15,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.reconcileExternalEffect",
+      "owner": "externaleffects",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.reconcileGroupOpsExecution",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 15,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.reconcileGroupOpsPlanExecution",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 17,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.reconcileSurveySubmissionExternalPush",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.reconcileWeComCustomerAcquisitionLink",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 15,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.reconcileWechatPayPayment",
+      "owner": "payment",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.reconcileWechatPayRefund",
+      "owner": "refund",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.reconcileWechatShopRefund",
+      "owner": "refund",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.recordAdminCorePush",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 24,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.recoverProfitSharingReceiver",
+      "owner": "route-owner",
+      "status": "contract_extracted",
+      "constraints": 9,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.refreshAccessStaffDirectory",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.refreshAccessStaffNames",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.refreshCustomerOwnerHandoffTransferResult",
+      "owner": "customer",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.refreshGroupDirectory",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.refreshMediaPreparationRound",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.refreshWeChatShopProducts",
+      "owner": "product",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.refreshWeComGroupMembership",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.rejectAIAssistantPlan",
+      "owner": "aiplan",
+      "status": "contract_extracted",
+      "constraints": 13,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.removeGroupOpsPlanGroup",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 14,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.removeGroupOpsPlanGroupAsset",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 14,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.removeGroupOpsPlanMember",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 12,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.removeGroupOpsPlanNode",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 12,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.renameAttachmentMaterialGroup",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 13,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.renameImageMaterialGroup",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 13,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.renameMiniprogramMaterialGroup",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 13,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.renameOrdinaryProductSalesSource",
+      "owner": "product",
+      "status": "contract_extracted",
+      "constraints": 12,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.renamePeriodicProductSalesSource",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 12,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.replaceAIAudiencePackageSenders",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 15,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.replaceSurveyQuestionnaire",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.requestAdminCoreRecommendations",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.requestLegacyWecomTagSync",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.requestLegacyWecomTagSyncDue",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.requestWechatPaymentRefund",
+      "owner": "payment",
+      "status": "contract_extracted",
+      "constraints": 18,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.resetAccessUserPassword",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 11,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.resetAccessUserPasswordCompatibility",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 11,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.resolveLocalMiniProgramThumbnail",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.resolveOneID",
+      "owner": "identity",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.retryExternalEffect",
+      "owner": "externaleffects",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.retryPushCenterJob",
+      "owner": "pushcenter",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.retryWeComCallbackReceipt",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 13,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.retryWeComTagMutation",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.revealCustomerContact",
+      "owner": "customer",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.revealCustomerPhone",
+      "owner": "customer",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.reverseOneIDMerge",
+      "owner": "identity",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.reviewAIAssistantRecipient",
+      "owner": "aiplan",
+      "status": "contract_extracted",
+      "constraints": 15,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.rollbackRuntimeConfigRelease",
+      "owner": "config",
+      "status": "contract_extracted",
+      "constraints": 14,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.rotateOpenPlatformClient",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 4,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.saveAdminAccessMembers",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 13,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.saveAdminCoreOperatingProduct",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 10,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.saveAdminCoreOperatingPrompt",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.saveAutomationAgentFixedContent",
+      "owner": "automation",
+      "status": "contract_extracted",
+      "constraints": 22,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.saveConfigCategorySettings",
+      "owner": "config",
+      "status": "contract_extracted",
+      "constraints": 12,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.saveConfiguredAIModel",
+      "owner": "config",
+      "status": "contract_extracted",
+      "constraints": 10,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.saveGroupInvitationPlan",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 30,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.saveLegacyAppSettings",
+      "owner": "config",
+      "status": "contract_extracted",
+      "constraints": 12,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.saveRpaPackage",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.saveServicePeriodProductExternalPush",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 31,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.saveSetupWizard",
+      "owner": "config",
+      "status": "contract_extracted",
+      "constraints": 23,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.saveSurveyCompletionOperation",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 35,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.saveSurveyExternalPushOperation",
+      "owner": "survey",
+      "status": "contract_extracted",
+      "constraints": 21,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.saveWechatPayProductExternalPush",
+      "owner": "product",
+      "status": "contract_extracted",
+      "constraints": 31,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.scheduleWeComContactDescriptionReadback",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.setAccessAccountCLIDelegation",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.setAccessCLIPolicy",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.setAccessUserLoginEnabled",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 9,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.setAccessUserRole",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 10,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.setAccessUserRoleCompatibility",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 12,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.setAttachmentGroup",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 11,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.setConfigCategoryEnabled",
+      "owner": "config",
+      "status": "contract_extracted",
+      "constraints": 11,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.setGlobalAccessCLIPolicy",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.setMiniProgramGroup",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 11,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.shareLocalWechatPayProduct",
+      "owner": "product",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.shareServicePeriodProduct",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.stageInvoiceAPIv3Key",
+      "owner": "config",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.startOperationCycleAction",
+      "owner": "operationcycle",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.stopAIAssistantRecipient",
+      "owner": "aiplan",
+      "status": "contract_extracted",
+      "constraints": 14,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.stopCouponRule",
+      "owner": "coupon",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.submitInvoiceCardConfiguration",
+      "owner": "config",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.syncGroupOpsDirectoryGroups",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 11,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.syncGroupOpsDirectoryGroupsAlias",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 11,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.syncGroupOpsGroupPicker",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 11,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.syncGroupOpsOperationMembers",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 10,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.transferAccessSuperAdmin",
+      "owner": "access",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.transitionAIAudiencePackage",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 12,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.transitionAutomationPolicy",
+      "owner": "automation",
+      "status": "contract_extracted",
+      "constraints": 12,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.transitionOperationCycleStrategy",
+      "owner": "operationcycle",
+      "status": "contract_extracted",
+      "constraints": 12,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateAIAssistantRecipientContent",
+      "owner": "aiplan",
+      "status": "contract_extracted",
+      "constraints": 31,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateAIAudiencePackage",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 13,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateAIAudiencePackageGroup",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 13,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateAutomationAgent",
+      "owner": "automation",
+      "status": "contract_extracted",
+      "constraints": 25,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateAutomationPolicy",
+      "owner": "automation",
+      "status": "contract_extracted",
+      "constraints": 35,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateChannel",
+      "owner": "channel",
+      "status": "contract_extracted",
+      "constraints": 55,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateChannelContactWay",
+      "owner": "channel",
+      "status": "contract_extracted",
+      "constraints": 10,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateDraftCouponRule",
+      "owner": "coupon",
+      "status": "contract_extracted",
+      "constraints": 24,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateGroupOpsContentPackage",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 20,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateGroupOpsPlan",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 13,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateGroupOpsPlanNode",
+      "owner": "groupops",
+      "status": "contract_extracted",
+      "constraints": 30,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateLegacyWecomTagGroupPatch",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 15,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateLegacyWecomTagGroupPut",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 15,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateLegacyWecomTagPatch",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 15,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateLegacyWecomTagPut",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 15,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateMediaAttachment",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 12,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateMediaGroupInvite",
+      "owner": "groupinvitation",
+      "status": "contract_extracted",
+      "constraints": 11,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateMediaImage",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 12,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateMediaMiniProgram",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 14,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateOperationCycleStrategy",
+      "owner": "operationcycle",
+      "status": "contract_extracted",
+      "constraints": 36,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateProduct",
+      "owner": "product",
+      "status": "contract_extracted",
+      "constraints": 58,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateRadarLinkV3",
+      "owner": "radar",
+      "status": "contract_extracted",
+      "constraints": 20,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateReferralCampaignPosterLayouts",
+      "owner": "referral",
+      "status": "contract_extracted",
+      "constraints": 19,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateServicePeriodMemberAlliance",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 14,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateServicePeriodMemberCollaborator",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 14,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateServicePeriodMemberRemark",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 14,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateServicePeriodMemberView",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 30,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateServicePeriodProduct",
+      "owner": "serviceperiod",
+      "status": "contract_extracted",
+      "constraints": 51,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.updateWeComCustomerAcquisitionLink",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 20,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.uploadExcelOperationCover",
+      "owner": "operationcycle",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.uploadLegacyMediaAttachment",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 7,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.uploadLegacyMediaImage",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 8,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "admin.validateRuntimeConfigRelease",
+      "owner": "config",
+      "status": "contract_extracted",
+      "constraints": 12,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "ai.review_plan.create",
+      "owner": "ai",
+      "status": "contract_extracted",
+      "constraints": 73,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "archive.facts.export",
+      "owner": "customers",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "audience.core_products.list",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "audience.member.history.list",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "audience.member.operations.get",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "audience.members.list",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "audience.push.record",
+      "owner": "audience",
+      "status": "contract_extracted",
+      "constraints": 22,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "candidate.distribution.payout",
+      "owner": "distribution",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "No verified business write contract; ordinary field edits cannot implement this action"
+    },
+    {
+      "operation": "candidate.period-products.manual-renewal",
+      "owner": "period-products",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "No verified business write contract; ordinary field edits cannot implement this action"
+    },
+    {
+      "operation": "candidate.wecom.acquisition-customers",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.acquisition-quota",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.acquisition-statistics",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.broadcast-remind-cancel",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.broadcast-results",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.client-actions",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.contact-statistics",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.contact-ways",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.customer-broadcast",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.customer-strategies",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.customer-welcome",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.group-broadcast",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.group-id-conversion",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.group-statistics",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.group-welcome",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.intercept-rules",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.join-ways",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.moment-records",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.moment-strategies",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.moments",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.on-job-customer-transfer",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.on-job-group-transfer",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.product-albums",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.resigned-customer-transfer",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.resigned-group-transfer",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.resigned-members",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.staff-external-profile",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.strategy-tags",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "candidate.wecom.subscription-messages",
+      "owner": "wecom/outbound",
+      "status": "blocked",
+      "constraints": 0,
+      "runtime": "Candidate capability; verify existing owner implementation and current Provider requirements before registering execution"
+    },
+    {
+      "operation": "chat.records.list",
+      "owner": "wecom",
+      "status": "contract_extracted",
+      "constraints": 14,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "customer.activities.list",
+      "owner": "customers",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "customer.context.get",
+      "owner": "customers",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "customer.detail.get",
+      "owner": "customers",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "customer.list",
+      "owner": "customers",
+      "status": "contract_extracted",
+      "constraints": 5,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "customer.resolve",
+      "owner": "customers",
+      "status": "contract_extracted",
+      "constraints": 12,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "identity.get",
+      "owner": "identity",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "operation.get",
+      "owner": "operations",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "order.get",
+      "owner": "orders",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "order.list",
+      "owner": "orders",
+      "status": "contract_extracted",
+      "constraints": 17,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.distribution.disable-distributor",
+      "owner": "distribution",
+      "status": "contract_extracted",
+      "constraints": 2,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.distribution.distributor-orders",
+      "owner": "distribution",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.distribution.enable-distributor",
+      "owner": "distribution",
+      "status": "contract_extracted",
+      "constraints": 2,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.distribution.get-distributors",
+      "owner": "distribution",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.distribution.get-exceptions",
+      "owner": "distribution",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.distribution.get-orders",
+      "owner": "distribution",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.distribution.list-distributors",
+      "owner": "distribution",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.distribution.list-exceptions",
+      "owner": "distribution",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.distribution.list-orders",
+      "owner": "distribution",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.distribution.merchant-liabilities",
+      "owner": "distribution",
+      "status": "contract_extracted",
+      "constraints": 2,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.distribution.reconcile",
+      "owner": "distribution",
+      "status": "contract_extracted",
+      "constraints": 2,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.distribution.recoveries",
+      "owner": "distribution",
+      "status": "contract_extracted",
+      "constraints": 2,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.referral.create-campaign",
+      "owner": "referral",
+      "status": "contract_extracted",
+      "constraints": 2,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.referral.create-reward",
+      "owner": "referral",
+      "status": "contract_extracted",
+      "constraints": 2,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.referral.create-team",
+      "owner": "referral",
+      "status": "contract_extracted",
+      "constraints": 2,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.referral.export-campaign",
+      "owner": "referral",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.referral.get-campaign",
+      "owner": "referral",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.referral.list-campaigns",
+      "owner": "referral",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.referral.list-invitations",
+      "owner": "referral",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.referral.list-participants",
+      "owner": "referral",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.referral.list-product-options",
+      "owner": "referral",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.referral.list-referrals",
+      "owner": "referral",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.referral.list-relationship-history",
+      "owner": "referral",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.referral.list-rewards",
+      "owner": "referral",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.referral.participant-invitations",
+      "owner": "referral",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.referral.reverse-participation",
+      "owner": "referral",
+      "status": "contract_extracted",
+      "constraints": 2,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.referral.revoke-invitation",
+      "owner": "referral",
+      "status": "contract_extracted",
+      "constraints": 2,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.referral.set-posters",
+      "owner": "referral",
+      "status": "contract_extracted",
+      "constraints": 2,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.referral.set-state",
+      "owner": "referral",
+      "status": "contract_extracted",
+      "constraints": 2,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "owner.referral.update-campaign",
+      "owner": "referral",
+      "status": "contract_extracted",
+      "constraints": 2,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "platform.capabilities.list",
+      "owner": "capabilities",
+      "status": "contract_extracted",
+      "constraints": 1,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "questionnaire.submissions.list",
+      "owner": "questionnaires",
+      "status": "contract_extracted",
+      "constraints": 9,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "radar.clicks.list",
+      "owner": "radar",
+      "status": "contract_extracted",
+      "constraints": 10,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
+      "operation": "radar.links.list",
+      "owner": "radar",
+      "status": "contract_extracted",
+      "constraints": 6,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    }
+  ],
+  "schema_version": 1,
+  "scope": "all_compiled_operations_plus_global_local_commands",
+  "unverified": [
+    "外部工作台 Token 缓存实现与真实送达未验收",
+    "未将 schema_length 统一推断为运行时 UTF-8 字节；具体 Owner 编码差异需继续核对",
+    "未对所有数值上限完成资源容量压测"
+  ]
+}

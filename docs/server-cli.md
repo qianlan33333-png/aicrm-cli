@@ -10,6 +10,8 @@
 
 新增能力的最小调用说明见 [v0.6.0 能力补齐](capability-completion.md)。
 
+[限制与错误说明书](crm/limits-and-errors.md) 从同一目录生成；`schema get <操作ID>` 的 `guidance` 和独立分发的 `docs operation <操作ID>` 展示对应规则、原因与恢复方法。运行配置可能不同于离线默认值，以实际错误细节为准。
+
 ## 构建与环境
 
 在当前 V4 checkout 中：

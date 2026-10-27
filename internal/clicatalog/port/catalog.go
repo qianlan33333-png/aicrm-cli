@@ -22,6 +22,8 @@ type Binding struct {
 }
 
 type Operation struct {
+	Constraints    []Constraint   `json:"constraints,omitempty"`
+	ErrorReasons   []string       `json:"error_reasons,omitempty"`
 	ID             string         `json:"id"`
 	Group          string         `json:"group"`
 	Module         string         `json:"module"`
@@ -46,11 +48,13 @@ type Module struct {
 }
 
 type Catalog struct {
-	Version     int            `json:"version"`
-	Modules     []Module       `json:"modules"`
-	Operations  []Operation    `json:"operations"`
-	Schemas     map[string]any `json:"schemas"`
-	CLIContract map[string]any `json:"cli_contract"`
+	ErrorReasons      []ErrorReason  `json:"error_reasons,omitempty"`
+	GlobalConstraints []Constraint   `json:"global_constraints,omitempty"`
+	Version           int            `json:"version"`
+	Modules           []Module       `json:"modules"`
+	Operations        []Operation    `json:"operations"`
+	Schemas           map[string]any `json:"schemas"`
+	CLIContract       map[string]any `json:"cli_contract"`
 }
 
 //go:embed catalog.json

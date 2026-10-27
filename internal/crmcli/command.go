@@ -172,7 +172,7 @@ func NewCommand(o *Options) *cobra.Command {
 		if op.ID == "admin.saveRpaPackage" || op.ID == "admin.getRpaPackage" {
 			definitions = referencedDefinitions(op, definitions)
 		}
-		return o.print(map[string]any{"operation": op, "definitions": definitions})
+		return o.print(map[string]any{"operation": op, "definitions": definitions, "guidance": catalog.Guidance(op)})
 	}})
 	root.AddCommand(schema)
 	invoke := &cobra.Command{Use: "invoke OPERATION_ID", Args: cobra.ExactArgs(1)}
@@ -265,7 +265,13 @@ func NewCommand(o *Options) *cobra.Command {
 				return &Failure{Code: "environment_mismatch", Message: "server configured origin differs from profile; inspect environment before business writes", Exit: 4, Result: map[string]any{"origin": c.Origin, "server_origin": reported}}
 			}
 		}
-		return o.print(map[string]any{"origin": c.Origin, "server_origin": serverOrigin, "environment_binding": binding, "identity_kind": c.Credential.Kind, "authentication": "verified", "provider_readiness": "not_proven_by_authentication"})
+		result := map[string]any{"origin": c.Origin, "server_origin": serverOrigin, "environment_binding": binding, "identity_kind": c.Credential.Kind, "authentication": "verified", "provider_readiness": "not_proven_by_authentication"}
+		for _, key := range []string{"actor_id", "subject_admin_user_id", "authority_admin_user_id", "credential_kind", "authorization_source"} {
+			if value, exists := self[key]; exists {
+				result[key] = value
+			}
+		}
+		return o.print(result)
 	}})
 	for _, extend := range distributionCommands {
 		extend(root, o)

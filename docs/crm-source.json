@@ -2,7 +2,7 @@
   "schema_version": 1,
   "cli_repository": "https://github.com/qianlan33333-png/aicrm-cli.git",
   "source_repository": "https://github.com/qianlan33333-png/AI-CRM-v4.git",
-  "payload_sha256": "483eb7ab4034d15375de06a3cc078516bab58b249e859ada836eae49be207b20",
+  "payload_sha256": "eddcb609a42fffca3dd222afeaace7a79c4e308a9759b60e82528c322fd80f4e",
   "files": [
     {
       "source": "cmd/aicrm-cli/main.go",
@@ -35,6 +35,21 @@
       "sha256": "496546494d4e842d0d388d399479c38476cbbdcfbe2142519037087a7c6eddbd"
     },
     {
+      "source": "docs/cli/compatibility-and-recovery.md",
+      "destination": "docs/crm/compatibility-and-recovery.md",
+      "sha256": "00aa5c9909623696c2335b66531a8ea524507173b572b60510603cee015fd434"
+    },
+    {
+      "source": "docs/cli/constraint-audit.json",
+      "destination": "docs/crm/constraint-audit.json",
+      "sha256": "f4179670eb21cd1ccf8759d2c8368cc7f5f88873cb36834b3e891bebbb581fb7"
+    },
+    {
+      "source": "docs/cli/limits-and-errors.md",
+      "destination": "docs/crm/limits-and-errors.md",
+      "sha256": "885d62d1e10ca983676ac94c67be3b23aa84557bb66e04a69afb48e5dd9fff8c"
+    },
+    {
       "source": "docs/cli/rpa-packages.md",
       "destination": "docs/crm/rpa-packages.md",
       "sha256": "c8be112f34933fc65fa7c68687fb1693876a167fca65b031494e1563b7cdbb23"
@@ -52,27 +67,42 @@
     {
       "source": "docs/cli/README.md",
       "destination": "docs/server-cli.md",
-      "sha256": "7bef002602a36241f7eced628e2cbebf96ff672bc3a7f386b6693ae59b39bfcf"
+      "sha256": "909a39d370fa75274b3dcd07999aabe5dee94706ea47573034aab09a45e86bfe"
     },
     {
       "source": "derived:current-v4-client-dependencies",
       "destination": "go.mod",
-      "sha256": "e4916a812ed8e1adf9b8b617e299457177a1f058a2394b51c1a66fc3e82e614e"
+      "sha256": "7a5cb4b9df598da732390817274c350b23516639fb5cf20bcf245b94b8d2349d"
     },
     {
       "source": "derived:current-v4-client-dependencies",
       "destination": "go.sum",
-      "sha256": "11b9d0d8f6240e18a67a55c4ec5e1ed231fe5925ddfdce1ea9be00aed2c8c87f"
+      "sha256": "a6d8dd3769e4e1162eb1b3a1e152f22e45fd5483bec4bc45f86bee5e31545026"
     },
     {
       "source": "internal/clicatalog/port/catalog.go",
       "destination": "internal/clicatalog/port/catalog.go",
-      "sha256": "36ceb48f32329b00d7bbdc47fb9d2d999a81290f77c6b779eeb7cc124eb95960"
+      "sha256": "33c25b054168e2a4880159157e2ed6866c53611d9365868780fcc907e804d4d6"
     },
     {
       "source": "internal/clicatalog/port/catalog.json",
       "destination": "internal/clicatalog/port/catalog.json",
-      "sha256": "e03de119a8f4e02fee2a11a001e1d7596de4345649b1e310aba17771a6d0eb6c"
+      "sha256": "f656063c729f62c5a4152b4710f4e1f312f79229f0e04c0d2129ef29c5cf67ad"
+    },
+    {
+      "source": "internal/clicatalog/port/constraint_docs.go",
+      "destination": "internal/clicatalog/port/constraint_docs.go",
+      "sha256": "33d8b6a596e500eb568a4653e1f83cf5425b191e414ba8e87327bf6c711f695d"
+    },
+    {
+      "source": "internal/clicatalog/port/constraint_docs_test.go",
+      "destination": "internal/clicatalog/port/constraint_docs_test.go",
+      "sha256": "db6509f2c7fa1e632c21239a84088bc695817184b6b605063f8803167f4155cf"
+    },
+    {
+      "source": "internal/clicatalog/port/guidance.go",
+      "destination": "internal/clicatalog/port/guidance.go",
+      "sha256": "2e885010fe77081d2265c286bf40dbd3a999f1ed87ded6ff720d736316bae40f"
     },
     {
       "source": "internal/clicatalog/port/machine.go",
@@ -88,6 +118,21 @@
       "source": "derived:preserve-existing-distribution-commands",
       "destination": "internal/clientconfig/groupops_webhook.go",
       "sha256": "5d56b3b1c87b1b7634d5385a6e8d3227cbfa19d3a88f9404f74665edcc6f78a0"
+    },
+    {
+      "source": "internal/platform/port/error_detail.go",
+      "destination": "internal/clientcontract/error_detail.go",
+      "sha256": "3f0f0796ca5ce512f8918d8470e34b2e4da1b8bf4f95ceebe244b49e12871aa3"
+    },
+    {
+      "source": "internal/platform/port/error_reasons.go",
+      "destination": "internal/clientcontract/error_reasons.go",
+      "sha256": "9db24840cb2a9366dd6c53b92d321356b97f36065a16e970939ae0acac2ba70a"
+    },
+    {
+      "source": "internal/platform/port/error_reasons.json",
+      "destination": "internal/clientcontract/error_reasons.json",
+      "sha256": "2bb6837595b48f389ed0c07ed1a878a786320a0348adf0609ef88e7c7fab48da"
     },
     {
       "source": "internal/crmcli/archive_facts_cli_test.go",
@@ -107,7 +152,7 @@
     {
       "source": "internal/crmcli/client.go",
       "destination": "internal/crmcli/client.go",
-      "sha256": "88ccc4d9c75cdb755cc3607a2f5c2fa849c28b0a2d4fa1b2acbbcf8fdd0c7b2e"
+      "sha256": "7826554d52af9ca8edd774cee6bbd944bb5577ffaa5ab43fea431591939764c7"
     },
     {
       "source": "internal/crmcli/client_test.go",
@@ -117,7 +162,7 @@
     {
       "source": "internal/crmcli/command.go",
       "destination": "internal/crmcli/command.go",
-      "sha256": "8d75836778c9250a43b86e66f07f3652605b483104cc6a04fef703e4177993f5"
+      "sha256": "259d5f588bc8f306beff3e5382a84b3a4a38c198d579819a26eaa6a928664334"
     },
     {
       "source": "internal/crmcli/context.go",
@@ -148,6 +193,16 @@
       "source": "derived:preserve-existing-distribution-commands",
       "destination": "internal/crmcli/distribution_commands.go",
       "sha256": "0e70bb324646e4ca5b380a662dca5a94c1b6566dffe934ffe3fe0508a4f92d38"
+    },
+    {
+      "source": "internal/crmcli/error_detail.go",
+      "destination": "internal/crmcli/error_detail.go",
+      "sha256": "cb06ae03378fa45c774f2cd8e7b16b8af3427c3ca55d75845b061caaaed494f3"
+    },
+    {
+      "source": "internal/crmcli/error_detail_test.go",
+      "destination": "internal/crmcli/error_detail_test.go",
+      "sha256": "d6a7ef2a34b10bfb2c97f00adbe3372d0ac0a815c0cebe2893fd8540b95bc803"
     },
     {
       "source": "internal/crmcli/execution_receipts_test.go",
@@ -375,6 +430,6 @@
       "sha256": "6021b275fd61655a7265ec75195b410db950aa9808bc54edcae857b6a020f693"
     }
   ],
-  "source_head": "cdb98a2c85f7e5ec61f0878d191362a892f59876",
-  "source_tree": "2464c687c63e1ed8860ab8f4d3cd5c5227ea5075"
+  "source_head": "8b1148d81d3eedd111f13e8a8e66cf45ddb827ac",
+  "source_tree": "1ac716c5119fc2d76f0f7981178f90e3441b8555"
 }

@@ -69,6 +69,18 @@ func docsCommands(o *Options) *cobra.Command {
 				matches = append(matches, map[string]any{"kind": "crm_operation", "id": op.ID, "title": op.Summary, "execution": op.Execution, "executable_binding": op.Binding != nil})
 			}
 		}
+		for _, constraint := range catalog.Load().GlobalConstraints {
+			b, _ := json.Marshal(constraint)
+			if strings.Contains(strings.ToLower(string(b)), query) {
+				matches = append(matches, map[string]any{"kind": "cli_constraint", "id": constraint.ID, "reason": constraint.Reason, "source": constraint.Source})
+			}
+		}
+		for _, reason := range catalog.Load().ErrorReasons {
+			b, _ := json.Marshal(reason)
+			if strings.Contains(strings.ToLower(string(b)), query) {
+				matches = append(matches, map[string]any{"kind": "cli_error_reason", "id": reason.Code, "message": reason.Message, "recovery": reason.Recovery})
+			}
+		}
 		for _, doc := range referenceDocs {
 			b, _ := json.Marshal([]any{doc.ID, doc.DocID, doc.Title, doc.Aliases, doc.Tables})
 			if strings.Contains(strings.ToLower(string(b)), query) {
@@ -207,5 +219,9 @@ func operationDocumentation(op catalog.Operation) map[string]any {
 			}
 		}
 	}
-	return map[string]any{"operation": op, "fields": fields, "referenced_definitions": used, "source": "compiled CRM owner contract; official same-name fields are not automatically equivalent", "completeness": "only declared fields are shown; absent response schemas, unresolved response references and missing descriptions remain unknown", "example_workflow": []string{"aicrm-cli schema get " + op.ID, "aicrm-cli auth can-i " + op.ID + " --resource YOUR_RESOURCE_JSON", "aicrm-cli invoke " + op.ID + " [parameters from this contract] --dry-run", "execute explicitly, then read the original owner result"}, "business_permissions": "rechecked by server; documentation is not an authorization receipt"}
+	result := map[string]any{"operation": op, "fields": fields, "referenced_definitions": used, "source": "compiled CRM owner contract; official same-name fields are not automatically equivalent", "completeness": "only declared fields are shown; absent response schemas, unresolved response references and missing descriptions remain unknown", "example_workflow": []string{"aicrm-cli schema get " + op.ID, "aicrm-cli auth can-i " + op.ID + " --resource YOUR_RESOURCE_JSON", "aicrm-cli invoke " + op.ID + " [parameters from this contract] --dry-run", "execute explicitly, then read the original owner result"}, "business_permissions": "rechecked by server; documentation is not an authorization receipt"}
+	for key, value := range catalog.Guidance(op) {
+		result[key] = value
+	}
+	return result
 }

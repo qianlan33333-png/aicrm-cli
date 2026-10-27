@@ -21,6 +21,7 @@ import (
 
 	catalog "github.com/qianlan33333-png/aicrm-cli/internal/clicatalog/port"
 	platformconfig "github.com/qianlan33333-png/aicrm-cli/internal/clientconfig"
+	platformport "github.com/qianlan33333-png/aicrm-cli/internal/clientcontract"
 	"github.com/zalando/go-keyring"
 )
 
@@ -52,11 +53,14 @@ type Client struct {
 	HTTP       *http.Client
 }
 type Failure struct {
-	Code    string `json:"code"`
-	Message string `json:"message"`
-	Status  int    `json:"http_status,omitempty"`
-	Exit    int    `json:"-"`
-	Result  any    `json:"-"`
+	ReasonCode   string                    `json:"reason_code,omitempty"`
+	Detail       *platformport.ErrorDetail `json:"error_detail,omitempty"`
+	DiagnosticID string                    `json:"diagnostic_id,omitempty"`
+	Code         string                    `json:"code"`
+	Message      string                    `json:"message"`
+	Status       int                       `json:"http_status,omitempty"`
+	Exit         int                       `json:"-"`
+	Result       any                       `json:"-"`
 }
 
 func (e *Failure) Error() string { return e.Message }
@@ -311,10 +315,11 @@ func (c *Client) request(ctx context.Context, method, path, content string, body
 	}
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		defer resp.Body.Close()
+		errorBody, readError := io.ReadAll(io.LimitReader(resp.Body, 4097))
 		// Only this registered response may disclose these two recovery facts.
 		// Never forward arbitrary server errors, credentials or customer data.
 		if id, _ := ctx.Value(machineOperationKey{}).(string); id == "admin.saveGroupInvitationPlan" {
-			raw, err := io.ReadAll(io.LimitReader(resp.Body, 4097))
+			raw, err := errorBody, readError
 			var known struct {
 				PlanID    int64 `json:"plan_id"`
 				Committed bool  `json:"local_save_committed"`
@@ -349,7 +354,18 @@ func (c *Client) request(ctx context.Context, method, path, content string, body
 			exit = 7
 		}
 		// Do not echo arbitrary server bodies: they can contain credentials or PII.
-		return nil, &Failure{Code: code, Message: "server rejected request; inspect authorized operation status or server audit", Status: resp.StatusCode, Exit: exit}
+		failure := &Failure{Code: code, Message: "server rejected request; inspect authorized operation status or server audit", Status: resp.StatusCode, Exit: exit}
+		failure.DiagnosticID = safeDiagnosticID(resp.Header.Get("X-AICRM-Diagnostic-ID"))
+		if readError == nil && len(errorBody) <= 4096 {
+			if detail, ok := decodeErrorDetail(errorBody, failure.DiagnosticID); ok {
+				failure.ReasonCode, failure.Detail, failure.Message = detail.ReasonCode, &detail, detail.Message
+				if code == "outcome_unknown" {
+					failure.Detail.NextAction = "read_original"
+					failure.Detail.ExecutionState = "outcome_unknown"
+				}
+			}
+		}
+		return nil, failure
 	}
 	return resp, nil
 }
