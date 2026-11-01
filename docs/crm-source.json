@@ -2,7 +2,7 @@
   "schema_version": 1,
   "cli_repository": "https://github.com/qianlan33333-png/aicrm-cli.git",
   "source_repository": "https://github.com/qianlan33333-png/AI-CRM-v4.git",
-  "payload_sha256": "eddcb609a42fffca3dd222afeaace7a79c4e308a9759b60e82528c322fd80f4e",
+  "payload_sha256": "a1345554ee81b0a06459e40ea2d5599019c7c014abedc668bd32688c956b4b40",
   "files": [
     {
       "source": "cmd/aicrm-cli/main.go",
@@ -12,7 +12,7 @@
     {
       "source": "docs/cli/capability-index.md",
       "destination": "docs/capability-index.md",
-      "sha256": "3f17b1f4a4ccd2a2da4c4b08f727fffd1d1d97b5110e2c55176fb550c22b1b3d"
+      "sha256": "33547fc74ffe088a6d49e691e2e046f62d2dcdde3c532f7206f2891fa2a77359"
     },
     {
       "source": "docs/cli/PRD.md",
@@ -42,12 +42,12 @@
     {
       "source": "docs/cli/constraint-audit.json",
       "destination": "docs/crm/constraint-audit.json",
-      "sha256": "f4179670eb21cd1ccf8759d2c8368cc7f5f88873cb36834b3e891bebbb581fb7"
+      "sha256": "bbf63b157ce81890a933ed5671decd76773f1ee8d7ba2fce4ace27accf4b3f55"
     },
     {
       "source": "docs/cli/limits-and-errors.md",
       "destination": "docs/crm/limits-and-errors.md",
-      "sha256": "885d62d1e10ca983676ac94c67be3b23aa84557bb66e04a69afb48e5dd9fff8c"
+      "sha256": "158c375641385aa27743e3d5ce848881d455f7afc669159dfc736b4efc7f7ea7"
     },
     {
       "source": "docs/cli/rpa-packages.md",
@@ -67,7 +67,7 @@
     {
       "source": "docs/cli/README.md",
       "destination": "docs/server-cli.md",
-      "sha256": "909a39d370fa75274b3dcd07999aabe5dee94706ea47573034aab09a45e86bfe"
+      "sha256": "ace57e029ed402d383d3268b856ffe04f0b10357d493bf915ca12c59609b9e07"
     },
     {
       "source": "derived:current-v4-client-dependencies",
@@ -87,7 +87,7 @@
     {
       "source": "internal/clicatalog/port/catalog.json",
       "destination": "internal/clicatalog/port/catalog.json",
-      "sha256": "f656063c729f62c5a4152b4710f4e1f312f79229f0e04c0d2129ef29c5cf67ad"
+      "sha256": "2a741819b7a30425d57417a0b7bfdf45b6feaaf96fd13a9726379168c058428d"
     },
     {
       "source": "internal/clicatalog/port/constraint_docs.go",
@@ -430,6 +430,6 @@
       "sha256": "6021b275fd61655a7265ec75195b410db950aa9808bc54edcae857b6a020f693"
     }
   ],
-  "source_head": "b7982df9514a66a64119cc7aa18148e8e99eec7a",
-  "source_tree": "e5761111fe275502549cbf185628f595773e1d86"
+  "source_head": "67c052ffcbd26c11b872dc97d6724ef4d98304e7",
+  "source_tree": "e2540b9b71895c5b53f73ac571d3393fd714b9d9"
 }

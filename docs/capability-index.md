@@ -20,6 +20,7 @@
 | admin.acceptCustomerTagCommand | aicrm-cli customers accept-customer-tag-command invoke | human | customer | source_contract_only |
 | admin.confirmOneIDMerge | aicrm-cli identity one-idmerge confirm | human | identity | source_contract_only |
 | admin.createCustomerSyncRun | aicrm-cli customers customer-sync-run create | human | customer | source_contract_only |
+| admin.getAiProfile | aicrm-cli customers ai-profile get | human | customer | source_contract_only |
 | admin.getCustomer360 | aicrm-cli customers customer360 get | human | customer | source_contract_only |
 | admin.getCustomerChatActivity | aicrm-cli customers customer-chat-activity get | human | customer | source_contract_only |
 | admin.getCustomerDirectoryDetail | aicrm-cli customers customer-directory-detail get | human | customer | source_contract_only |

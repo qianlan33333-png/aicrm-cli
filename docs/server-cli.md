@@ -67,6 +67,17 @@ aicrm-cli auth login --wecom --no-browser --secret-output /private/path/credenti
 
 ## 命令、输入与输出
 
+### 读取 AI 画像
+
+```sh
+aicrm-cli customers ai-profile get --query external_userid=YOUR_EXTERNAL_USERID
+aicrm-cli customers ai-profile get --query unionid=YOUR_UNIONID
+# 也可使用准确操作 ID
+aicrm-cli invoke admin.getAiProfile --query unionid=YOUR_UNIONID
+```
+
+两个标识二选一。使用服务端配置的企业/开放平台 scope 解析唯一现有客户，并共用侧边栏画像 Reader；返回基础、背景、诊断的完整 `key/label/value` 明细及原有更新时间/源版本。不调用模型、不建客、不刷新上游或发送消息。未找到、身份歧义、缺少已验证关联和源不可用分别返回明确错误。现有人类客户读取身份或已获受管 CLI 委托的机器身份可按原授权调用；普通机器 Token 不因此新增权限。需要包含该目录的新 CLI 及已安装的新服务。
+
 所有业务操作可以按目录中的 `group + command` 调用，或使用准确的登记 ID：
 
 ```sh

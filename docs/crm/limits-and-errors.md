@@ -3996,6 +3996,18 @@
 
 错误说明：authentication_required、permission_denied、invalid_request、resource_not_found、version_conflict、rate_limited、service_unavailable、outcome_unknown。
 
+## admin.getAiProfile
+
+命令：`aicrm-cli customers ai-profile get`。Owner：customer；身份合同：human；全局规则仍适用。
+
+- **operation_authorization**（，阶段 authorization）：Owner 要求对应身份、操作及资源授权，防止跨主体读取或写入。机器调用管理接口还需独立 CLI 委托；目录和 can-i 不能替代执行时授权。。值 `{"capability":"","csrf_required":false,"identity":"human","required_scope":"read"}`，单位 `authorization`。处理：同一上下文读取 whoami/doctor，核对当前主体、scope、capability 和 CLI 委托；由有权管理员补充对应授权。。可调整性：通过既有授权配置显式调整；不能由请求体自报。。依据：`source_contract_only`。证据：compiled_binding; owner_rechecks_at_execution。
+
+- **schema:query.external_userid:minLength**（query.external_userid，阶段 input_validation）：OpenAPI 声明的字段长度；不得把同名字段推断成企微限制。服务端字节/字符口径以对应 Owner 用途规则为准。。值 `1`，单位 `schema_length`。处理：按字段说明准备内容；发送用途同时检查明确的 UTF-8 字节限制。。可调整性：接口合同；不能由调用者绕过。配置型字段以当前服务端配置为准。。依据：`api/openapi.yaml#admin.getAiProfile/query.external_userid/minLength`。证据：source_contract; capacity_or_encoding_claims_not_inferred。
+
+- **schema:query.unionid:minLength**（query.unionid，阶段 input_validation）：OpenAPI 声明的字段长度；不得把同名字段推断成企微限制。服务端字节/字符口径以对应 Owner 用途规则为准。。值 `1`，单位 `schema_length`。处理：按字段说明准备内容；发送用途同时检查明确的 UTF-8 字节限制。。可调整性：接口合同；不能由调用者绕过。配置型字段以当前服务端配置为准。。依据：`api/openapi.yaml#admin.getAiProfile/query.unionid/minLength`。证据：source_contract; capacity_or_encoding_claims_not_inferred。
+
+错误说明：authentication_required、permission_denied、invalid_request、resource_not_found、version_conflict、rate_limited、service_unavailable、outcome_unknown。
+
 ## admin.getAutomationAgent
 
 命令：`aicrm-cli automation automation-agent get`。Owner：automation；身份合同：human；全局规则仍适用。

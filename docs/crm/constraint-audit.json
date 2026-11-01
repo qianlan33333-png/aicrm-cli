@@ -1050,6 +1050,13 @@
       "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
     },
     {
+      "operation": "admin.getAiProfile",
+      "owner": "customer",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
       "operation": "admin.getAutomationAgent",
       "owner": "automation",
       "status": "contract_extracted",

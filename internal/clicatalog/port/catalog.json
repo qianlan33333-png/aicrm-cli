@@ -12497,6 +12497,89 @@
         "service_unavailable",
         "outcome_unknown"
       ],
+      "id": "admin.getAiProfile",
+      "group": "customers",
+      "module": "customers",
+      "command": "ai-profile get",
+      "summary": "Read the sidebar AI profile by external_userid or unionid",
+      "owner": "customer",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerAIProfile"
+              }
+            }
+          },
+          "description": "Complete display fields; empty arrays mean no stored fields"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "404": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/customers/ai-profile",
+        "auth": "human",
+        "parameters": [
+          {
+            "description": "WeCom external contact ID; mutually exclusive with unionid",
+            "in": "query",
+            "name": "external_userid",
+            "schema": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          {
+            "description": "UnionID in the configured open-platform scope; mutually exclusive with external_userid",
+            "in": "query",
+            "name": "unionid",
+            "schema": {
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
+      "error_reasons": [
+        "authentication_required",
+        "permission_denied",
+        "invalid_request",
+        "resource_not_found",
+        "version_conflict",
+        "rate_limited",
+        "service_unavailable",
+        "outcome_unknown"
+      ],
       "id": "admin.getAutomationAgent",
       "group": "automation",
       "module": "automation",
@@ -53628,6 +53711,48 @@
         "price_minor",
         "currency",
         "images"
+      ],
+      "type": "object"
+    },
+    "CustomerAIProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "background_fields": {
+          "items": {
+            "$ref": "#/components/schemas/SidebarAIProfileField"
+          },
+          "type": "array"
+        },
+        "basic_fields": {
+          "items": {
+            "$ref": "#/components/schemas/SidebarAIProfileField"
+          },
+          "type": "array"
+        },
+        "customer_id": {
+          "$ref": "#/components/schemas/PositiveID"
+        },
+        "diagnosis_fields": {
+          "items": {
+            "$ref": "#/components/schemas/SidebarAIProfileField"
+          },
+          "type": "array"
+        },
+        "source_version": {
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id",
+        "basic_fields",
+        "background_fields",
+        "diagnosis_fields",
+        "updated_at",
+        "source_version"
       ],
       "type": "object"
     },
