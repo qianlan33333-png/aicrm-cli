@@ -61,3 +61,17 @@ func TestConstraintSchemaWalkHandlesNestedCyclesAndFalseWithoutGuessingUnits(t *
 		t.Fatalf("%+v", values)
 	}
 }
+
+func TestAIProfileGuidanceIncludesDistinctIdentityReasons(t *testing.T) {
+	op, ok := Find("admin.getAiProfile")
+	if !ok {
+		t.Fatal("profile operation missing")
+	}
+	guidance, _ := json.Marshal(Guidance(op))
+	for _, code := range []string{"identity_pending", "identity_conflict"} {
+		reason, known := FindErrorReason(code)
+		if !known || reason.NextAction != "read_original" || !strings.Contains(string(guidance), `"reason_code":"`+code+`"`) {
+			t.Fatalf("profile guidance missing %s", code)
+		}
+	}
+}

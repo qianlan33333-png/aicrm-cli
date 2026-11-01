@@ -2,7 +2,7 @@
   "schema_version": 1,
   "cli_repository": "https://github.com/qianlan33333-png/aicrm-cli.git",
   "source_repository": "https://github.com/qianlan33333-png/AI-CRM-v4.git",
-  "payload_sha256": "a1345554ee81b0a06459e40ea2d5599019c7c014abedc668bd32688c956b4b40",
+  "payload_sha256": "2974657a856c3d26dfd2b952108bfa8e8c75b30b9f1d5fcc90b6d3bd21145281",
   "files": [
     {
       "source": "cmd/aicrm-cli/main.go",
@@ -47,7 +47,7 @@
     {
       "source": "docs/cli/limits-and-errors.md",
       "destination": "docs/crm/limits-and-errors.md",
-      "sha256": "158c375641385aa27743e3d5ce848881d455f7afc669159dfc736b4efc7f7ea7"
+      "sha256": "85c8dde50009d36486ce0a93bf2be56216cf0b709607927b75d67b4764b023e9"
     },
     {
       "source": "docs/cli/rpa-packages.md",
@@ -87,7 +87,7 @@
     {
       "source": "internal/clicatalog/port/catalog.json",
       "destination": "internal/clicatalog/port/catalog.json",
-      "sha256": "2a741819b7a30425d57417a0b7bfdf45b6feaaf96fd13a9726379168c058428d"
+      "sha256": "ce7708c936ee8b5493fa262ab5e8a646d17285c1235af69caa0968cae93a7138"
     },
     {
       "source": "internal/clicatalog/port/constraint_docs.go",
@@ -97,7 +97,7 @@
     {
       "source": "internal/clicatalog/port/constraint_docs_test.go",
       "destination": "internal/clicatalog/port/constraint_docs_test.go",
-      "sha256": "db6509f2c7fa1e632c21239a84088bc695817184b6b605063f8803167f4155cf"
+      "sha256": "0147e5ac605b59647dec137245c1574ad921600657cd69b91bdb2c8e8b9e62ad"
     },
     {
       "source": "internal/clicatalog/port/guidance.go",
@@ -132,7 +132,7 @@
     {
       "source": "internal/platform/port/error_reasons.json",
       "destination": "internal/clientcontract/error_reasons.json",
-      "sha256": "2bb6837595b48f389ed0c07ed1a878a786320a0348adf0609ef88e7c7fab48da"
+      "sha256": "e431f5d8c80a6f95be2bcb6d336d4161652c4bf698564706938c1d3fa7545478"
     },
     {
       "source": "internal/crmcli/archive_facts_cli_test.go",
@@ -202,7 +202,7 @@
     {
       "source": "internal/crmcli/error_detail_test.go",
       "destination": "internal/crmcli/error_detail_test.go",
-      "sha256": "d6a7ef2a34b10bfb2c97f00adbe3372d0ac0a815c0cebe2893fd8540b95bc803"
+      "sha256": "325e951b26728def4647ece123467fd336ba60c0270539cfa800f159d062b65b"
     },
     {
       "source": "internal/crmcli/execution_receipts_test.go",
@@ -430,6 +430,6 @@
       "sha256": "6021b275fd61655a7265ec75195b410db950aa9808bc54edcae857b6a020f693"
     }
   ],
-  "source_head": "67c052ffcbd26c11b872dc97d6724ef4d98304e7",
-  "source_tree": "e2540b9b71895c5b53f73ac571d3393fd714b9d9"
+  "source_head": "8acc7c4f1cf69eaa4fd1fc6b56bad182647a9559",
+  "source_tree": "174e577f6cd50f66b46c2360a374d03054fe9664"
 }

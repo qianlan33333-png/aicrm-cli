@@ -15,6 +15,8 @@
  {"reason_code":"idempotency_conflict","message":"相同幂等键对应的业务内容与原请求不同。","next_action":"read_original","recovery":"读取原计划和输入；不要换键重发结果未知的操作。"},
  {"reason_code":"legacy_receipt_requires_reconciliation","message":"旧收据不足以证明本次请求与原业务完全一致。","next_action":"read_original","recovery":"读取返回的原计划，核对原始业务事实；不会自动重建或清除收据。"},
  {"reason_code":"version_conflict","message":"资源版本或当前状态与提交时不一致。","next_action":"read_original","recovery":"重新读取对象并核对变化后，再进行必要的显式确认。"},
+ {"reason_code":"identity_pending","message":"客户缺少当前范围内可用的已验证身份关联，暂不能读取画像。","next_action":"read_original","recovery":"核对现有客户及配置范围的身份关联，由有权人员按既有流程处理；不自报验证、不自动建客。"},
+ {"reason_code":"identity_conflict","message":"身份关联或画像源账号存在冲突，不能选择其中一个画像。","next_action":"read_original","recovery":"核对现有 OneID 关联与源账号冲突，由有权人员按既有流程处理；不猜测、不自动合并。"},
  {"reason_code":"material_drift","message":"素材内容与已冻结或提交的版本不一致。","next_action":"read_original","recovery":"读取原素材和审核内容，重新准备并审核；不修改既有发送快照。"},
  {"reason_code":"material_unavailable","message":"引用的素材不存在、停用或缺少有效依赖。","next_action":"correct_input","recovery":"读取对应素材及封面，选择可用素材；不通过改幂等键重发。"},
  {"reason_code":"material_title_too_long","message":"小程序发送标题超过企微允许的 UTF-8 字节数。","next_action":"correct_input","recovery":"使用现有素材编辑或创建能力准备较短标题；不自动截断原素材，完整标题保存能力保持不变。"},
