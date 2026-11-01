@@ -1,5 +1,7 @@
 # CRM CLI 使用与交付范围
 
+**v0.7.1：画像查询错误原因。** 分别显示身份关联待确认 `identity_pending` 与身份冲突 `identity_conflict` 的安全说明和恢复动作，保留原退出码与旧服务端回退。[更新说明](docs/releases/v0.7.1.md)。
+
 **v0.7.0：读取客户 AI 画像。** 使用 `aicrm-cli customers ai-profile get`，按企微 `external_userid` 或已验证的 `unionid` 查询既有画像，返回基础、背景、诊断字段及来源版本。复用侧边栏读取来源和现有权限，不创建客户或触发画像生成。[更新说明](docs/releases/v0.7.0.md)。
 
 **v0.6.1：限制说明与可解释错误。** 对应命令展示用途限制、原因与恢复方法，安全显示具体错误和诊断号；兼容 v0.6.0 命令及旧服务端。配套服务端修复认证、素材用途、幂等与回执查询。[更新说明](docs/releases/v0.6.1.md)。
@@ -54,7 +56,7 @@ aicrm-cli group-ops webhook send --input groupops-request.json --event-id YOUR_S
 从 [GitHub Release](https://github.com/qianlan33333-png/aicrm-cli/releases/latest) 下载适合系统的压缩包，解压后将 `aicrm-cli` 放入 PATH。也可以从源码安装（Go 1.26.9 或更高）：
 
 ```sh
-go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.7.0
+go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.7.1
 aicrm-cli profile add staging https://your-staging-origin.example
 aicrm-cli profile use staging
 ```
