@@ -1,5 +1,7 @@
 # CRM CLI 使用与交付范围
 
+**v0.7.0：读取客户 AI 画像。** 使用 `aicrm-cli customers ai-profile get`，按企微 `external_userid` 或已验证的 `unionid` 查询既有画像，返回基础、背景、诊断字段及来源版本。复用侧边栏读取来源和现有权限，不创建客户或触发画像生成。[更新说明](docs/releases/v0.7.0.md)。
+
 **v0.6.1：限制说明与可解释错误。** 对应命令展示用途限制、原因与恢复方法，安全显示具体错误和诊断号；兼容 v0.6.0 命令及旧服务端。配套服务端修复认证、素材用途、幂等与回执查询。[更新说明](docs/releases/v0.6.1.md)。
 
 **v0.4.0：企业微信扫码登录。** 执行 `aicrm-cli auth login --wecom`，在浏览器核对终端码与授权账号后确认，CLI 保存凭据并读回身份。远程终端使用 `--no-browser`，无系统钥匙串时显式指定 `--secret-output NEW_FILE`。需要服务器已安装对应认证能力，客户端更新不授予账号权限；真实手机扫码与技术安装分开验收。完整步骤见[登录手册](docs/authentication.md)。
@@ -33,7 +35,7 @@ aicrm-cli docs coverage
 
 这是 AI-CRM 的独立 HTTP 命令行客户端。当前提供 **24 个导航入口的命令映射、现有管理接口的薄客户端、21 项既有机器 V1 操作及权限管理调用**。CLI 调用业务 Owner，不连接数据库或企微 Provider。
 
-**登记与验收分别记录。** 编译目录含 580 项：527 项管理接口绑定、21 项机器绑定、32 项不可执行项。其中 31 项是未核验企微能力及另需业务合同的扩展，1 项旧签名接口不能使用人类会话；其机器 V1 替代操作独立授权。绑定只是源码契约；不证明路由已安装、资源授权、Provider 就绪或业务成功。
+**登记与验收分别记录。** 编译目录含 629 项：576 项管理接口绑定、21 项机器绑定、32 项不可执行项。其中 31 项是未核验企微能力及另需业务合同的扩展，1 项旧签名接口不能使用人类会话；其机器 V1 替代操作独立授权。绑定只是源码契约；不证明路由已安装、资源授权、Provider 就绪或业务成功。
 
 完整逐项目录见 [能力索引](docs/capability-index.md)，群运营的 54 项命令见 [群运营能力](docs/group-ops-capabilities.md)，机器可读目录是 `internal/clicatalog/port/catalog.json`。
 
@@ -52,7 +54,7 @@ aicrm-cli group-ops webhook send --input groupops-request.json --event-id YOUR_S
 从 [GitHub Release](https://github.com/qianlan33333-png/aicrm-cli/releases/latest) 下载适合系统的压缩包，解压后将 `aicrm-cli` 放入 PATH。也可以从源码安装（Go 1.26.9 或更高）：
 
 ```sh
-go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.5.2
+go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.7.0
 aicrm-cli profile add staging https://your-staging-origin.example
 aicrm-cli profile use staging
 ```
@@ -140,6 +142,6 @@ aicrm-cli owners customer-owner-handoff-batch get --param batch_id=YOUR_BATCH_ID
 
 ## 服务端边界
 
-当前目录保留 580 项元数据；目录存在不表示服务端已安装或 Provider 就绪。32 项没有执行绑定。机器身份可调用原生机器合同；明确获授 `cli.admin.execute` 且绑定有效管理授权时，也可调用已登记管理接口。每次均由服务器核对当前权限与资源，不能换用人类 Token。客户端不包含服务端、数据库、Provider、应用部署或账号恢复工具。目录更新需同步兼容服务端契约。
+当前目录保留 629 项元数据；目录存在不表示服务端已安装或 Provider 就绪。32 项没有执行绑定。机器身份可调用原生机器合同；明确获授 `cli.admin.execute` 且绑定有效管理授权时，也可调用已登记管理接口。每次均由服务器核对当前权限与资源，不能换用人类 Token。客户端不包含服务端、数据库、Provider、应用部署或账号恢复工具。目录更新需同步兼容服务端契约。
 
 新增 48 项管理操作的用法见 [v0.6.0 能力补齐](docs/crm/capability-completion.md)。安装需要匹配的服务端目录；原命令及认证方式保持。
