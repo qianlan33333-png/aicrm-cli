@@ -9,7 +9,45 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	catalog "github.com/qianlan33333-png/aicrm-cli/internal/clicatalog/port"
 )
+
+func TestAIProfileErrorReasonsRetainConflictExitAndSafeGuidance(t *testing.T) {
+	op, ok := catalog.Find("admin.getAiProfile")
+	if !ok {
+		t.Fatal("profile operation missing")
+	}
+	for _, reason := range []string{"identity_pending", "identity_conflict"} {
+		t.Run(reason, func(t *testing.T) {
+			calls := 0
+			s := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				calls++
+				if r.Method != "GET" || r.URL.Path != op.Binding.Path || r.URL.Query().Get("unionid") != "fixture-union" {
+					t.Error("wrong profile request")
+				}
+				w.WriteHeader(http.StatusConflict)
+				_ = json.NewEncoder(w).Encode(map[string]any{"error": reason, "error_detail": map[string]any{"version": 1, "reason_code": reason, "message": "PRIVATE source SQL fixture-union", "next_action": "resend"}})
+			}))
+			defer s.Close()
+			c, err := NewClient(s.URL, Credential{Kind: "human", Token: "acl_fixture"}, time.Second)
+			if err != nil {
+				t.Fatal(err)
+			}
+			c.HTTP = s.Client()
+			_, err = c.Call(context.Background(), op, CallInput{Query: map[string]string{"unionid": "fixture-union"}})
+			var failure *Failure
+			expected, known := catalog.FindErrorReason(reason)
+			if !known || !errors.As(err, &failure) || failure.Code != "conflict" || failure.Exit != 5 || failure.Status != 409 || failure.ReasonCode != reason || failure.Message != expected.Message || failure.Detail == nil || failure.Detail.NextAction != expected.NextAction || calls != 1 {
+				t.Fatalf("profile reason not safely retained: %+v", err)
+			}
+			encoded, _ := json.Marshal(failure)
+			if strings.Contains(string(encoded), "PRIVATE") || strings.Contains(string(encoded), "fixture-union") || strings.Contains(string(encoded), "resend") {
+				t.Fatal("CLI trusted unregistered server text")
+			}
+		})
+	}
+}
 
 func TestDetailedErrorsRetainExitCategoriesAndNeverTrustServerText(t *testing.T) {
 	for _, status := range []int{422, 503} {

@@ -4006,7 +4006,7 @@
 
 - **schema:query.unionid:minLength**（query.unionid，阶段 input_validation）：OpenAPI 声明的字段长度；不得把同名字段推断成企微限制。服务端字节/字符口径以对应 Owner 用途规则为准。。值 `1`，单位 `schema_length`。处理：按字段说明准备内容；发送用途同时检查明确的 UTF-8 字节限制。。可调整性：接口合同；不能由调用者绕过。配置型字段以当前服务端配置为准。。依据：`api/openapi.yaml#admin.getAiProfile/query.unionid/minLength`。证据：source_contract; capacity_or_encoding_claims_not_inferred。
 
-错误说明：authentication_required、permission_denied、invalid_request、resource_not_found、version_conflict、rate_limited、service_unavailable、outcome_unknown。
+错误说明：authentication_required、permission_denied、invalid_request、resource_not_found、version_conflict、rate_limited、service_unavailable、outcome_unknown、identity_pending、identity_conflict。
 
 ## admin.getAutomationAgent
 
@@ -13389,6 +13389,10 @@
 - **legacy_receipt_requires_reconciliation**：旧收据不足以证明本次请求与原业务完全一致。 下一步 `read_original`。读取返回的原计划，核对原始业务事实；不会自动重建或清除收据。
 
 - **version_conflict**：资源版本或当前状态与提交时不一致。 下一步 `read_original`。重新读取对象并核对变化后，再进行必要的显式确认。
+
+- **identity_pending**：客户缺少当前范围内可用的已验证身份关联，暂不能读取画像。 下一步 `read_original`。核对现有客户及配置范围的身份关联，由有权人员按既有流程处理；不自报验证、不自动建客。
+
+- **identity_conflict**：身份关联或画像源账号存在冲突，不能选择其中一个画像。 下一步 `read_original`。核对现有 OneID 关联与源账号冲突，由有权人员按既有流程处理；不猜测、不自动合并。
 
 - **material_drift**：素材内容与已冻结或提交的版本不一致。 下一步 `read_original`。读取原素材和审核内容，重新准备并审核；不修改既有发送快照。
 

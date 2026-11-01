@@ -97,6 +97,18 @@
       "recovery": "重新读取对象并核对变化后，再进行必要的显式确认。"
     },
     {
+      "reason_code": "identity_pending",
+      "message": "客户缺少当前范围内可用的已验证身份关联，暂不能读取画像。",
+      "next_action": "read_original",
+      "recovery": "核对现有客户及配置范围的身份关联，由有权人员按既有流程处理；不自报验证、不自动建客。"
+    },
+    {
+      "reason_code": "identity_conflict",
+      "message": "身份关联或画像源账号存在冲突，不能选择其中一个画像。",
+      "next_action": "read_original",
+      "recovery": "核对现有 OneID 关联与源账号冲突，由有权人员按既有流程处理；不猜测、不自动合并。"
+    },
+    {
       "reason_code": "material_drift",
       "message": "素材内容与已冻结或提交的版本不一致。",
       "next_action": "read_original",
@@ -12495,7 +12507,9 @@
         "version_conflict",
         "rate_limited",
         "service_unavailable",
-        "outcome_unknown"
+        "outcome_unknown",
+        "identity_pending",
+        "identity_conflict"
       ],
       "id": "admin.getAiProfile",
       "group": "customers",
