@@ -13,6 +13,18 @@ import (
 )
 
 func TestCLIGroupInvitationRosterFollowsAllGroupCursors(t *testing.T) {
+	for _, cred := range []Credential{
+		{Kind: "human", Token: "acl_ROSTER"},
+		{Kind: "machine", Token: "machine-roster-test"},
+	} {
+		t.Run(cred.Kind, func(t *testing.T) {
+			assertGroupInvitationRosterCursorRead(t, cred)
+		})
+	}
+}
+
+func assertGroupInvitationRosterCursorRead(t *testing.T, cred Credential) {
+	t.Helper()
 	keyring.MockInit()
 	t.Setenv("AICRM_CLI_CONFIG_DIR", t.TempDir())
 	t.Setenv("AICRM_CLI_TOKEN", "")
@@ -20,7 +32,9 @@ func TestCLIGroupInvitationRosterFollowsAllGroupCursors(t *testing.T) {
 
 	server := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet || r.URL.Path != "/api/admin/group-invitations/15/members" ||
-			r.Header.Get("Authorization") != "Bearer acl_ROSTER" {
+			r.Header.Get("Authorization") != "Bearer "+cred.Token ||
+			r.Header.Get("X-AICRM-CLI-Operation") != "admin.listGroupInvitationPlanMembers" ||
+			r.Header.Get("X-CSRF-Token") != "" || r.Header.Get("Cookie") != "" {
 			t.Error("expected an authenticated CLI read for the original plan")
 			w.WriteHeader(http.StatusBadRequest)
 			return
@@ -43,7 +57,8 @@ func TestCLIGroupInvitationRosterFollowsAllGroupCursors(t *testing.T) {
 	if err := SaveConfig(Config{Current: "test", Profiles: map[string]Profile{"test": {Origin: server.URL}}}); err != nil {
 		t.Fatal(err)
 	}
-	if err := StoreCredential(Credential{Origin: server.URL, Kind: "human", Token: "acl_ROSTER"}); err != nil {
+	cred.Origin = server.URL
+	if err := StoreCredential(cred); err != nil {
 		t.Fatal(err)
 	}
 

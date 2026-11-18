@@ -1,5 +1,7 @@
 # CRM CLI 使用与交付范围
 
+**v0.8.1：受管机器 CLI 可读取群邀请计划的实时成员。** 名单查询沿用群计划读取授权，客户端和服务器需升级至支持此修复的版本。[更新说明](docs/releases/v0.8.1.md)。
+
 **v0.8.0：按群邀请计划查询企微成员。** 使用 `aicrm-cli group-invitations group-invitation-plan-members list` 读取计划所绑定群的实时成员。用 `--all` 读取全部绑定群。[更新说明](docs/releases/v0.8.0.md)。
 
 **v0.7.1：画像查询错误原因。** 分别显示身份关联待确认 `identity_pending` 与身份冲突 `identity_conflict` 的安全说明和恢复动作，保留原退出码与旧服务端回退。[更新说明](docs/releases/v0.7.1.md)。
@@ -58,7 +60,7 @@ aicrm-cli group-ops webhook send --input groupops-request.json --event-id YOUR_S
 从 [GitHub Release](https://github.com/qianlan33333-png/aicrm-cli/releases/latest) 下载适合系统的压缩包，解压后将 `aicrm-cli` 放入 PATH。也可以从源码安装（Go 1.26.9 或更高）：
 
 ```sh
-go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.8.0
+go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.8.1
 aicrm-cli profile add staging https://your-staging-origin.example
 aicrm-cli profile use staging
 ```
