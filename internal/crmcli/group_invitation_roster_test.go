@@ -78,3 +78,12 @@ func TestCLIGroupInvitationRosterConflictsHaveDistinctGuidance(t *testing.T) {
 		}
 	}
 }
+
+func TestCLIGroupInvitationRosterProviderFailurePreservesGroupPosition(t *testing.T) {
+	raw := []byte(`{"error_detail":{"version":1,"reason_code":"provider_read_failed","message":"upstream text","field":"groups[1].members","resource_id":15}}`)
+	detail, ok := decodeErrorDetail(raw, "")
+	if !ok || detail.ReasonCode != "provider_read_failed" || detail.Field != "groups[1].members" ||
+		detail.ResourceID != 15 || detail.Message == "upstream text" {
+		t.Fatalf("group-specific failure was not preserved safely: %+v", detail)
+	}
+}

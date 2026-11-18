@@ -22607,6 +22607,7 @@
         "method": "GET",
         "path": "/api/admin/group-invitations/{id}/members",
         "auth": "human",
+        "direct_super_admin": true,
         "parameters": [
           {
             "in": "path",

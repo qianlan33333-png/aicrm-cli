@@ -6,7 +6,7 @@ import "strings"
 // client and the server adapter. It is metadata, never an authorization grant.
 // Owner handlers still authorize the exact current subject and resource.
 func ManagedMachineScope(op Operation) (string, bool) {
-	if op.BlockedReason != "" || op.Binding == nil || op.Binding.Auth != "human" || !strings.HasPrefix(op.Binding.Path, "/api/") {
+	if op.BlockedReason != "" || op.Binding == nil || op.Binding.Auth != "human" || op.Binding.DirectSuperAdmin || !strings.HasPrefix(op.Binding.Path, "/api/") {
 		return "", false
 	}
 	scope := op.Binding.EffectiveScope()
