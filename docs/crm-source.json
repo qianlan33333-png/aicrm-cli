@@ -2,7 +2,7 @@
   "schema_version": 1,
   "cli_repository": "https://github.com/qianlan33333-png/aicrm-cli.git",
   "source_repository": "https://github.com/qianlan33333-png/AI-CRM-v4.git",
-  "payload_sha256": "2693197be18fa1eb17d5d2e1a71739c0e1197129d7c30c93d030e80d4afecc88",
+  "payload_sha256": "791542bba822e147d0b133d0d7722e9f88ced31fce1f0668dfcbbd0e807634a6",
   "files": [
     {
       "source": "cmd/aicrm-cli/main.go",
@@ -47,7 +47,7 @@
     {
       "source": "docs/cli/limits-and-errors.md",
       "destination": "docs/crm/limits-and-errors.md",
-      "sha256": "41bd56b4690432ba0eb5c2866d012aaf6a5d1dd0bc4f8309aaa8c3dfba1fc82e"
+      "sha256": "cea865d2c30df2a67f7016f5694bb9d86cd839c189561b2e49e8d7dba086684d"
     },
     {
       "source": "docs/cli/rpa-packages.md",
@@ -87,7 +87,7 @@
     {
       "source": "internal/clicatalog/port/catalog.json",
       "destination": "internal/clicatalog/port/catalog.json",
-      "sha256": "c2af7fdba741fa3c1b26a6aee6d28c9f41a6b65fb4802030d8927b57a1db458c"
+      "sha256": "441c05ae8a6f26e55bb74ef10f5e6be4e6e658d9ca0dcb51490c95521363167a"
     },
     {
       "source": "internal/clicatalog/port/constraint_docs.go",
@@ -132,7 +132,7 @@
     {
       "source": "internal/platform/port/error_reasons.json",
       "destination": "internal/clientcontract/error_reasons.json",
-      "sha256": "e431f5d8c80a6f95be2bcb6d336d4161652c4bf698564706938c1d3fa7545478"
+      "sha256": "988980fa8941e0a195d734e1614a7f3450b746115a5911c9e68ef7ad2c6498f0"
     },
     {
       "source": "internal/crmcli/archive_facts_cli_test.go",
@@ -212,7 +212,7 @@
     {
       "source": "internal/crmcli/group_invitation_roster_test.go",
       "destination": "internal/crmcli/group_invitation_roster_test.go",
-      "sha256": "c3d70f6fd8ba9b16d94734290c2a315f6795806529c366f69791d646efca0d5a"
+      "sha256": "44a579fb223324491bd6fca18b9859404ea6e15ae5a6da49b08b43e89119ff67"
     },
     {
       "source": "internal/crmcli/journey_test.go",
@@ -435,6 +435,6 @@
       "sha256": "6021b275fd61655a7265ec75195b410db950aa9808bc54edcae857b6a020f693"
     }
   ],
-  "source_head": "dbf168ae11632e659c8e21cd657919598e3ee26f",
-  "source_tree": "aa4b22dd34f0895bcec58432fdd688c30f88bcd6"
+  "source_head": "77fefff886a775010689edbb383c291ce07d16ad",
+  "source_tree": "8ba247e1dce14371aff73987100d70f286a4f7d5"
 }

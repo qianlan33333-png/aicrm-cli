@@ -5858,7 +5858,7 @@
 
 - **required:path.id**（path.id，阶段 input_validation）：路径或请求参数用于确定本次操作对象，不能安全省略。。值 `true`，单位 `presence`。处理：从已授权读取结果取得参数，使用 --param 或 --query 按声明传入。。可调整性：接口合同。依据：`source_contract_only`。证据：compiled_parameter。
 
-错误说明：authentication_required、permission_denied、invalid_request、resource_not_found、version_conflict、rate_limited、service_unavailable、outcome_unknown。
+错误说明：authentication_required、permission_denied、invalid_request、resource_not_found、version_conflict、rate_limited、service_unavailable、outcome_unknown、group_invitation_bindings_missing、provider_read_failed。
 
 ## admin.listGroupInvitationPlans
 
@@ -13401,6 +13401,8 @@
 - **legacy_receipt_requires_reconciliation**：旧收据不足以证明本次请求与原业务完全一致。 下一步 `read_original`。读取返回的原计划，核对原始业务事实；不会自动重建或清除收据。
 
 - **version_conflict**：资源版本或当前状态与提交时不一致。 下一步 `read_original`。重新读取对象并核对变化后，再进行必要的显式确认。
+
+- **group_invitation_bindings_missing**：此群邀请计划没有可查询的企微群绑定。 下一步 `read_original`。读取原群邀请计划的绑定配置，确认计划绑定了可读取的客户群。
 
 - **identity_pending**：客户缺少当前范围内可用的已验证身份关联，暂不能读取画像。 下一步 `read_original`。核对现有客户及配置范围的身份关联，由有权人员按既有流程处理；不自报验证、不自动建客。
 

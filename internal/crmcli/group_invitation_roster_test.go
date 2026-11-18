@@ -67,3 +67,14 @@ func TestCLIGroupInvitationRosterFollowsAllGroupCursors(t *testing.T) {
 		t.Fatal("unexpected extra group")
 	}
 }
+
+func TestCLIGroupInvitationRosterConflictsHaveDistinctGuidance(t *testing.T) {
+	for _, code := range []string{"group_invitation_bindings_missing", "version_conflict"} {
+		body := []byte(fmt.Sprintf(`{"error_detail":{"version":1,"reason_code":%q,"message":"untrusted response"}}`, code))
+		detail, ok := decodeErrorDetail(body, "")
+		if !ok || detail.ReasonCode != code || detail.NextAction != "read_original" ||
+			strings.Contains(detail.Message, "untrusted response") || detail.Message == "" {
+			t.Fatalf("missing compiled guidance for %s: %+v", code, detail)
+		}
+	}
+}
