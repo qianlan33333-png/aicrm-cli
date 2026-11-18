@@ -1,5 +1,7 @@
 # CRM CLI 使用与交付范围
 
+**v0.8.0：按群邀请计划查询企微成员。** 使用 `aicrm-cli group-invitations group-invitation-plan-members list` 读取计划所绑定群的实时成员。用 `--all` 读取全部绑定群。[更新说明](docs/releases/v0.8.0.md)。
+
 **v0.7.1：画像查询错误原因。** 分别显示身份关联待确认 `identity_pending` 与身份冲突 `identity_conflict` 的安全说明和恢复动作，保留原退出码与旧服务端回退。[更新说明](docs/releases/v0.7.1.md)。
 
 **v0.7.0：读取客户 AI 画像。** 使用 `aicrm-cli customers ai-profile get`，按企微 `external_userid` 或已验证的 `unionid` 查询既有画像，返回基础、背景、诊断字段及来源版本。复用侧边栏读取来源和现有权限，不创建客户或触发画像生成。[更新说明](docs/releases/v0.7.0.md)。
@@ -37,7 +39,7 @@ aicrm-cli docs coverage
 
 这是 AI-CRM 的独立 HTTP 命令行客户端。当前提供 **24 个导航入口的命令映射、现有管理接口的薄客户端、21 项既有机器 V1 操作及权限管理调用**。CLI 调用业务 Owner，不连接数据库或企微 Provider。
 
-**登记与验收分别记录。** 编译目录含 629 项：576 项管理接口绑定、21 项机器绑定、32 项不可执行项。其中 31 项是未核验企微能力及另需业务合同的扩展，1 项旧签名接口不能使用人类会话；其机器 V1 替代操作独立授权。绑定只是源码契约；不证明路由已安装、资源授权、Provider 就绪或业务成功。
+**登记与验收分别记录。** 编译目录含 630 项：577 项管理接口绑定、21 项机器绑定、32 项不可执行项。其中 31 项是未核验企微能力及另需业务合同的扩展，1 项旧签名接口不能使用人类会话；其机器 V1 替代操作独立授权。绑定只是源码契约；不证明路由已安装、资源授权、Provider 就绪或业务成功。
 
 完整逐项目录见 [能力索引](docs/capability-index.md)，群运营的 54 项命令见 [群运营能力](docs/group-ops-capabilities.md)，机器可读目录是 `internal/clicatalog/port/catalog.json`。
 
@@ -56,7 +58,7 @@ aicrm-cli group-ops webhook send --input groupops-request.json --event-id YOUR_S
 从 [GitHub Release](https://github.com/qianlan33333-png/aicrm-cli/releases/latest) 下载适合系统的压缩包，解压后将 `aicrm-cli` 放入 PATH。也可以从源码安装（Go 1.26.9 或更高）：
 
 ```sh
-go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.7.1
+go install github.com/qianlan33333-png/aicrm-cli/cmd/aicrm-cli@v0.8.0
 aicrm-cli profile add staging https://your-staging-origin.example
 aicrm-cli profile use staging
 ```
