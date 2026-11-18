@@ -2,7 +2,7 @@
   "schema_version": 1,
   "cli_repository": "https://github.com/qianlan33333-png/aicrm-cli.git",
   "source_repository": "https://github.com/qianlan33333-png/AI-CRM-v4.git",
-  "payload_sha256": "2974657a856c3d26dfd2b952108bfa8e8c75b30b9f1d5fcc90b6d3bd21145281",
+  "payload_sha256": "212547125cc3958fa7877f088de0c2adca0638dd2c694b907883ac3f1942de3b",
   "files": [
     {
       "source": "cmd/aicrm-cli/main.go",
@@ -12,7 +12,7 @@
     {
       "source": "docs/cli/capability-index.md",
       "destination": "docs/capability-index.md",
-      "sha256": "33547fc74ffe088a6d49e691e2e046f62d2dcdde3c532f7206f2891fa2a77359"
+      "sha256": "804d52a6d194e171aca57e57ee552fa4a2e8cfc4c50a14960759f205bd058f80"
     },
     {
       "source": "docs/cli/PRD.md",
@@ -42,12 +42,12 @@
     {
       "source": "docs/cli/constraint-audit.json",
       "destination": "docs/crm/constraint-audit.json",
-      "sha256": "bbf63b157ce81890a933ed5671decd76773f1ee8d7ba2fce4ace27accf4b3f55"
+      "sha256": "9c73d5b10ee26f1a5b1e5fc8e40ca0de8883592e07b50c88859e7daa4bd5e8ca"
     },
     {
       "source": "docs/cli/limits-and-errors.md",
       "destination": "docs/crm/limits-and-errors.md",
-      "sha256": "85c8dde50009d36486ce0a93bf2be56216cf0b709607927b75d67b4764b023e9"
+      "sha256": "cea865d2c30df2a67f7016f5694bb9d86cd839c189561b2e49e8d7dba086684d"
     },
     {
       "source": "docs/cli/rpa-packages.md",
@@ -82,12 +82,12 @@
     {
       "source": "internal/clicatalog/port/catalog.go",
       "destination": "internal/clicatalog/port/catalog.go",
-      "sha256": "33c25b054168e2a4880159157e2ed6866c53611d9365868780fcc907e804d4d6"
+      "sha256": "262094e7cf000076d0868c3c2d9c8dae5a243e32d848475524f67d98d76e14a1"
     },
     {
       "source": "internal/clicatalog/port/catalog.json",
       "destination": "internal/clicatalog/port/catalog.json",
-      "sha256": "ce7708c936ee8b5493fa262ab5e8a646d17285c1235af69caa0968cae93a7138"
+      "sha256": "7e55ea279d4ad630bb5d86ee95768be36d6248b183b4e6ce996d75fbb8eba0d6"
     },
     {
       "source": "internal/clicatalog/port/constraint_docs.go",
@@ -107,7 +107,7 @@
     {
       "source": "internal/clicatalog/port/machine.go",
       "destination": "internal/clicatalog/port/machine.go",
-      "sha256": "498d9c82dcb77fd6266a4e2472063c5f79f5b48736f258904fa3628876eacd83"
+      "sha256": "67322802252d9c0d19877aba5f21bc05dd65d3b31034e6479347b2e88261f438"
     },
     {
       "source": "internal/platform/config/cli.go",
@@ -132,7 +132,7 @@
     {
       "source": "internal/platform/port/error_reasons.json",
       "destination": "internal/clientcontract/error_reasons.json",
-      "sha256": "e431f5d8c80a6f95be2bcb6d336d4161652c4bf698564706938c1d3fa7545478"
+      "sha256": "988980fa8941e0a195d734e1614a7f3450b746115a5911c9e68ef7ad2c6498f0"
     },
     {
       "source": "internal/crmcli/archive_facts_cli_test.go",
@@ -208,6 +208,11 @@
       "source": "internal/crmcli/execution_receipts_test.go",
       "destination": "internal/crmcli/execution_receipts_test.go",
       "sha256": "e4c53fff023a89c72a55080155c2ac42c8d62f40d940d16c6e2149e5975f558f"
+    },
+    {
+      "source": "internal/crmcli/group_invitation_roster_test.go",
+      "destination": "internal/crmcli/group_invitation_roster_test.go",
+      "sha256": "edddb7bcd313c6b92676b1fca891820474e4354add6da6feb07edf2f9de320d3"
     },
     {
       "source": "internal/crmcli/journey_test.go",
@@ -430,6 +435,6 @@
       "sha256": "6021b275fd61655a7265ec75195b410db950aa9808bc54edcae857b6a020f693"
     }
   ],
-  "source_head": "8acc7c4f1cf69eaa4fd1fc6b56bad182647a9559",
-  "source_tree": "174e577f6cd50f66b46c2360a374d03054fe9664"
+  "source_head": "6ba0d14e17927037998ecb0ca4273791bdd3de25",
+  "source_tree": "ff4748928dcd174994b699d5c508050294696ea0"
 }
