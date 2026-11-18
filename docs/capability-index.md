@@ -331,6 +331,7 @@
 | admin.getMediaGroupInvite | aicrm-cli group-invitations media-group-invite get | human | groupinvitation | source_contract_only |
 | admin.listGroupDirectory | aicrm-cli group-invitations group-directory list | human | media | source_contract_only |
 | admin.listGroupInvitationHistory | aicrm-cli group-invitations group-invitation-history list | human | media | source_contract_only |
+| admin.listGroupInvitationPlanMembers | aicrm-cli group-invitations group-invitation-plan-members list | human | media | source_contract_only |
 | admin.listGroupInvitationPlans | aicrm-cli group-invitations group-invitation-plans list | human | media | source_contract_only |
 | admin.listMediaGroupInvites | aicrm-cli group-invitations media-group-invites list | human | groupinvitation | source_contract_only |
 | admin.refreshGroupDirectory | aicrm-cli group-invitations group-directory refresh | human | media | source_contract_only |

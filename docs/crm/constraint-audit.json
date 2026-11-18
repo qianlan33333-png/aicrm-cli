@@ -2051,6 +2051,13 @@
       "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
     },
     {
+      "operation": "admin.listGroupInvitationPlanMembers",
+      "owner": "media",
+      "status": "contract_extracted",
+      "constraints": 3,
+      "runtime": "合同已提取；逐项真实运行/Provider结果另行验收，不由静态扫描证明"
+    },
+    {
       "operation": "admin.listGroupInvitationPlans",
       "owner": "media",
       "status": "contract_extracted",

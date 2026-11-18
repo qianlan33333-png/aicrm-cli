@@ -22483,6 +22483,156 @@
         "service_unavailable",
         "outcome_unknown"
       ],
+      "id": "admin.listGroupInvitationPlanMembers",
+      "group": "group-invitations",
+      "module": "group-invitations",
+      "command": "group-invitation-plan-members list",
+      "summary": "Read live WeCom members of the groups recorded on an invitation plan",
+      "owner": "media",
+      "execution": "read",
+      "implementation": "admin_contract",
+      "evidence": "source_contract_only",
+      "version": 1,
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "chat_id": {
+                    "type": "string"
+                  },
+                  "group_name": {
+                    "type": "string"
+                  },
+                  "member_count": {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "members": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "group_nickname": {
+                          "description": "Member nickname for this specific group",
+                          "type": "string"
+                        },
+                        "name": {
+                          "description": "WeCom display name when available",
+                          "type": "string"
+                        },
+                        "type": {
+                          "description": "1 for enterprise member and 2 for external member",
+                          "enum": [
+                            1,
+                            2
+                          ],
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "group_nickname",
+                        "type"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "next_cursor": {
+                    "description": "Empty on the last group",
+                    "type": "string"
+                  },
+                  "plan_id": {
+                    "format": "int64",
+                    "type": "integer"
+                  },
+                  "plan_version": {
+                    "format": "int64",
+                    "type": "integer"
+                  },
+                  "retired": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "plan_id",
+                  "plan_version",
+                  "chat_id",
+                  "group_name",
+                  "retired",
+                  "member_count",
+                  "members",
+                  "next_cursor"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "description": "Current WeCom roster for one bound group"
+        },
+        "400": {
+          "$ref": "#/components/responses/Error"
+        },
+        "401": {
+          "$ref": "#/components/responses/Error"
+        },
+        "403": {
+          "$ref": "#/components/responses/Error"
+        },
+        "404": {
+          "$ref": "#/components/responses/Error"
+        },
+        "409": {
+          "$ref": "#/components/responses/Error"
+        },
+        "503": {
+          "$ref": "#/components/responses/Unavailable"
+        }
+      },
+      "prerequisites": [
+        "current human session",
+        "owner route authorization and business conditions"
+      ],
+      "binding": {
+        "method": "GET",
+        "path": "/api/admin/group-invitations/{id}/members",
+        "auth": "human",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Cursor returned by the previous page for this plan",
+            "in": "query",
+            "name": "cursor",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "idempotency_required": false,
+        "body_required": false
+      }
+    },
+    {
+      "error_reasons": [
+        "authentication_required",
+        "permission_denied",
+        "invalid_request",
+        "resource_not_found",
+        "version_conflict",
+        "rate_limited",
+        "service_unavailable",
+        "outcome_unknown"
+      ],
       "id": "admin.listGroupInvitationPlans",
       "group": "group-invitations",
       "module": "group-invitations",
